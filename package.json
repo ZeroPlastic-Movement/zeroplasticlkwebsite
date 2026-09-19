@@ -1,0 +1,19 @@
+{
+  "name": "zeroplastic-lk-website",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fast, SEO-optimised static front end for zeroplastic.lk, built from the existing WordPress content via the REST API.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.12",
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^7.3.3",
+    "sharp": "^0.34.4"
+  }
+}

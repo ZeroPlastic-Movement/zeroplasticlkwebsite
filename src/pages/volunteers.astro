@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { CONTACT, SITE, VOLUNTEER_OPTIONS } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+
+// The volunteer sign-up form still lives on the WordPress install. Linking to it
+// keeps a single source of submissions rather than splitting them across systems.
+const REGISTRATION_URL = `${SITE.wpBase}/volunteers/`;
+const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
+---
+
+<BaseLayout
+  title="Volunteer with ZeroPlastic"
+  description="Join 11,000+ ZeroPlastic volunteers across Sri Lanka. Take part in clean-ups and awareness sessions on the ground, or contribute remotely through design, content and campaign work."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Volunteer', url: '/volunteers/' },
+    ]),
+  ]}
+>
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Volunteers</p>
+      <h1>Give your time to a plastic-free Sri Lanka</h1>
+      <p class="lede">
+        Thank you for your interest in volunteering with the ZeroPlastic Movement. We are on a
+        mission to build a cleaner, greener Sri Lanka through clean-up initiatives, community
+        engagement, awareness campaigns, project management and advocacy work — both online and on
+        the ground.
+      </p>
+      <p class="hero__actions">
+        <a class="button" href={REGISTRATION_URL}>Register as a volunteer</a>
+        <a class="button button--ghost" href={APP_URL}>Download the app</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Two ways to take part</h2>
+      <p class="lede">
+        We understand that not everyone can join physical activities, so volunteering is flexible.
+      </p>
+      <div class="grid grid--3" style="margin-top:2rem">
+        {
+          VOLUNTEER_OPTIONS.map((option) => (
+            <div class="card" style="padding:1.5rem">
+              <h3>{option.title}</h3>
+              <p style="color:var(--ink-500);margin:0">{option.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <h2>Who can join</h2>
+      <p>
+        Our strength lies in our volunteers, and we welcome individuals from all walks of life to
+        contribute their time, skills and passion toward a plastic-free future. Students, working
+        professionals, retirees and whole university clubs are all part of the network.
+      </p>
+
+      <h2>Questions before you sign up?</h2>
+      <p>
+        Email us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> or call
+        <a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a> and someone from the team will help.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

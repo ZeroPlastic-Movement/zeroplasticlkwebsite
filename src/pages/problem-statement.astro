@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { PROBLEM_FACTS, PROBLEM_POINTS } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+---
+
+<BaseLayout
+  title="The plastic problem in Sri Lanka"
+  description="Sri Lanka produces 1.59 million tonnes of plastic waste a year and ranks among the world's largest plastic polluters. Here is the problem ZeroPlastic exists to solve."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'The Problem', url: '/problem-statement/' },
+    ]),
+  ]}
+>
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Problem statement</p>
+      <h1>Sri Lanka is drowning in plastic</h1>
+      <p class="lede">
+        A small island of 65,610 km² holds one of the highest plastic-pollution rankings in the
+        world — and the cost is landing on the communities and fisheries that depend on its coasts.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="grid grid--3">
+        {
+          PROBLEM_FACTS.map((fact) => (
+            <div class="stat">
+              <span class="stat__value">{fact.value}</span>
+              <span class="stat__label">
+                <strong>{fact.unit}</strong> — {fact.label}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <h2>What the numbers mean</h2>
+      <p>
+        Sri Lanka produces roughly 1.59 million tonnes of plastic waste every year, much of which
+        ends up in the ocean. The effect on marine life is measurable: fishing stocks have fallen
+        from around 300,000 tonnes in 1980 to just 50,000 tonnes in 2020.
+      </p>
+
+      <h2>Three gaps we are working to close</h2>
+      <ul>
+        {PROBLEM_POINTS.map((point) => <li>{point}</li>)}
+      </ul>
+
+      <p>
+        Individual campaigns exist, but without sustained education, a supply of viable alternatives
+        and a market that rewards them, behaviour does not change. ZeroPlastic works on all three at
+        once — awareness, alternatives, and the entrepreneurs who produce them.
+      </p>
+
+      <p>
+        <a class="button" href="/volunteers/">Help us close the gap</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

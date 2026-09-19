@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { CONTACT, SITE, SOCIAL } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+
+const CONTACT_FORM_URL = `${SITE.wpBase}/contact/`;
+---
+
+<BaseLayout
+  title="Contact ZeroPlastic Movement"
+  description="Get in touch with the ZeroPlastic Movement HQ in Athurugiriya, Sri Lanka — by email, phone, or through our social channels."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Contact', url: '/contact/' },
+    ]),
+  ]}
+>
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Contact</p>
+      <h1>Get in touch</h1>
+      <p class="lede">
+        Whether you want to volunteer, partner with us, or ask about our work with plastic
+        alternatives, we would like to hear from you.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="grid grid--3">
+        <div class="card" style="padding:1.5rem">
+          <h2>Email</h2>
+          <p><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></p>
+        </div>
+
+        <div class="card" style="padding:1.5rem">
+          <h2>Phone</h2>
+          <p><a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a></p>
+        </div>
+
+        <div class="card" style="padding:1.5rem">
+          <h2>Address</h2>
+          <address>
+            {CONTACT.address.name}<br />
+            {CONTACT.address.street}<br />
+            {CONTACT.address.locality}<br />
+            {CONTACT.address.country}
+          </address>
+        </div>
+      </div>
+
+      <p style="margin-top:2rem">
+        <a class="button" href={CONTACT_FORM_URL}>Send us a message</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Follow the movement</h2>
+      <ul class="social-list">
+        {
+          SOCIAL.map((item) => (
+            <li>
+              <a class="button button--ghost" href={item.url} rel="noopener noreferrer me" target="_blank">
+                {item.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact h2,
+  .card h2 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--green-600);
+  }
+  address {
+    font-style: normal;
+    line-height: 1.7;
+  }
+  .social-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0;
+    margin: 1.5rem 0 0;
+  }
+</style>

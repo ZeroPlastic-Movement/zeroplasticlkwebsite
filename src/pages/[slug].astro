@@ -1,0 +1,159 @@
+---
+import type { GetStaticPaths } from 'astro';
+
+import PostCard from '../components/PostCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { articleSchema, breadcrumbSchema, organizationSchema } from '../lib/schema';
+import { getAllPosts, type WPPost } from '../lib/wp';
+
+/**
+ * Post pages live at the site root (/<slug>/) because that is where they live on
+ * the current WordPress site. Keeping the URLs identical means none of the 657
+ * existing posts lose their accumulated search ranking.
+ */
+
+export const getStaticPaths = (async () => {
+  // Static routes that must win over a post of the same name. Declared inside
+  // getStaticPaths because Astro hoists this function out of component scope.
+  const RESERVED = new Set([
+    'about',
+    'blog',
+    'contact',
+    'problem-statement',
+    'volunteers',
+    '404',
+    'rss.xml',
+  ]);
+
+  const posts = (await getAllPosts()).filter((post) => !RESERVED.has(post.slug));
+
+  return posts.map((post, index) => ({
+    params: { slug: post.slug },
+    props: {
+      post,
+      // The next few posts in date order, wrapping around at the end of the list.
+      related: [1, 2, 3]
+        .map((offset) => posts[(index + offset) % posts.length])
+        .filter((item): item is WPPost => Boolean(item) && item.id !== post.id),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: WPPost;
+  related: WPPost[];
+}
+
+const { post, related } = Astro.props;
+
+const published = new Date(post.date);
+const displayDate = published.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+const description = post.excerpt.slice(0, 158) || `${post.title} — a ZeroPlastic Movement project.`;
+---
+
+<BaseLayout
+  title={post.title}
+  description={description}
+  image={post.image?.src}
+  type="article"
+  publishedTime={post.date}
+  modifiedTime={post.modified}
+  schema={[
+    organizationSchema(),
+    articleSchema(post),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Projects', url: '/blog/' },
+      { name: post.title, url: `/${post.slug}/` },
+    ]),
+  ]}
+>
+  <article class="section">
+    <div class="container">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a> <span aria-hidden="true">/</span>
+        <a href="/blog/">Projects</a>
+      </nav>
+
+      {post.categories.length > 0 && <p class="eyebrow">{post.categories.join(' · ')}</p>}
+
+      <h1>{post.title}</h1>
+
+      <p class="post-meta">
+        <time datetime={post.date}>{displayDate}</time>
+        <span aria-hidden="true">·</span>
+        <span>{post.readingMinutes} min read</span>
+      </p>
+
+      {
+        post.image && (
+          <img
+            class="post-hero"
+            src={post.image.src}
+            srcset={post.image.srcset}
+            sizes="(max-width: 72rem) 100vw, 68rem"
+            width={post.image.width}
+            height={post.image.height}
+            alt={post.image.alt}
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+          />
+        )
+      }
+
+      <div class="prose" set:html={post.content} />
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="section section--alt">
+        <div class="container">
+          <h2>More projects</h2>
+          <div class="grid grid--3" style="margin-top:2rem">
+            {related.map((item) => (
+              <PostCard post={item} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .crumbs {
+    font-size: 0.85rem;
+    color: var(--ink-300);
+    margin-bottom: 1.25rem;
+  }
+  .crumbs a {
+    color: var(--ink-500);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--green-600);
+    text-decoration: underline;
+  }
+  .post-meta {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--ink-300);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  .post-hero {
+    width: 100%;
+    border-radius: var(--radius);
+    margin-bottom: 2.5rem;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: var(--surface-alt);
+  }
+</style>

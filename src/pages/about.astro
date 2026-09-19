@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { GOALS, MISSION, SITE, STATS } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+---
+
+<BaseLayout
+  title="About the ZeroPlastic Movement"
+  description="ZeroPlastic is a Sri Lankan environmental movement of 11,000+ volunteers working to cut plastic waste, grow demand for local alternatives and restore the island's coasts and waterways."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'About', url: '/about/' },
+    ]),
+  ]}
+>
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">About us</p>
+      <h1>A volunteer movement for a plastic-free Sri Lanka</h1>
+      <p class="lede">{MISSION}</p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="grid grid--stats">
+        {
+          STATS.map((stat) => (
+            <div class="stat">
+              <span class="stat__value">{stat.value}</span>
+              <span class="stat__label">{stat.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <h2>What we have built</h2>
+      <p>
+        Supported by a network of over 11,000 dedicated volunteers, the ZeroPlastic Movement has
+        engaged more than 100,000 individuals in environmental education and clean-up initiatives,
+        conducted over 1,000 clean-up events, and removed more than 250 metric tons of plastic waste.
+      </p>
+      <p>
+        The movement has also empowered and supported over 120 industries focused on plastic
+        alternatives and featured over 350 products on its marketplace. Innovative initiatives
+        include the creation and deployment of canal and river strainers that stop waste before it
+        reaches the ocean, and the ZeroPlastic App, which makes volunteering accessible to young
+        people and communities across the island.
+      </p>
+      <p>
+        Our club network spans state universities and campuses nationwide and continues to grow, with
+        new ZeroPlastic clubs forming each year. That network is what turns national campaigns into
+        local action.
+      </p>
+
+      <h2>How we work</h2>
+      <p>
+        Every project is designed around the 3R methodology — reduce, reuse, recycle — and delivered
+        in partnership with institutions that can carry the change further. We have worked alongside
+        the Central Environmental Authority, the Colombo Municipal Council, the Media Center for
+        National Development, and private partners including Good Market and Earth Lanka.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Our three goals</h2>
+      <div class="grid grid--3" style="margin-top:2rem">
+        {
+          GOALS.map((goal) => (
+            <div>
+              <h3>{goal.title}</h3>
+              <p style="color:var(--ink-500)">{goal.body}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p style="margin-top:2rem">
+        <a class="button" href="/volunteers/">Join {SITE.shortName}</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

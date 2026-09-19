@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page not found"
+  description="The page you were looking for does not exist."
+  noindex
+>
+  <section class="section">
+    <div class="container" style="text-align:center;padding-block:3rem">
+      <p class="eyebrow">404</p>
+      <h1>We could not find that page</h1>
+      <p class="lede" style="margin-inline:auto">
+        The link may be out of date. Try the projects archive, or head back to the homepage.
+      </p>
+      <p style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
+        <a class="button" href="/">Go to homepage</a>
+        <a class="button button--ghost" href="/blog/">Browse projects</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

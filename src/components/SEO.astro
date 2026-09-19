@@ -1,0 +1,75 @@
+---
+/**
+ * Per-page SEO head tags.
+ *
+ * The current WordPress homepage has no meaningful <h1> and only one JSON-LD
+ * block; every page rendered through this component gets a unique title and
+ * description, a canonical URL, social cards and typed structured data.
+ */
+import { SITE } from '../consts';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Absolute or site-relative URL of the social share image. */
+  image?: string;
+  /** 'website' for landing pages, 'article' for posts. */
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Extra JSON-LD objects to emit alongside the defaults. */
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  schema = [],
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
+const socialImage = image ? new URL(image, Astro.site ?? SITE.url).href : undefined;
+
+// Keep the brand suffix off pages that already lead with it, so titles stay
+// inside the ~60 character range search engines display.
+const fullTitle = title.toLowerCase().includes('zeroplastic')
+  ? title
+  : `${title} | ${SITE.name}`;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, follow" />}
+
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={SITE.locale} />
+{socialImage && <meta property="og:image" content={socialImage} />}
+
+<meta name="twitter:card" content={socialImage ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+{socialImage && <meta name="twitter:image" content={socialImage} />}
+
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+{
+  schema.map((entry) => (
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(entry)}
+    />
+  ))
+}

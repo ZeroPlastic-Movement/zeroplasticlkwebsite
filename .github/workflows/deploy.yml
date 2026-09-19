@@ -1,0 +1,53 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  # Content lives in WordPress, so rebuild daily to pick up new posts.
+  schedule:
+    - cron: '0 2 * * *'
+  # Allows a WordPress webhook (or a person) to trigger a rebuild on publish.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          # Override in repository variables to target a different host.
+          SITE_URL: ${{ vars.SITE_URL || 'https://www.zeroplastic.lk' }}
+          BASE_PATH: ${{ vars.BASE_PATH || '/' }}
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

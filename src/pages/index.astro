@@ -1,0 +1,148 @@
+---
+import PostCard from '../components/PostCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { GOALS, MISSION, PROBLEM_FACTS, SITE, STATS } from '../consts';
+import { organizationSchema, websiteSchema } from '../lib/schema';
+import { getRecentPosts } from '../lib/wp';
+
+const posts = await getRecentPosts(6);
+---
+
+<BaseLayout
+  title="ZeroPlastic Movement | Ending plastic pollution in Sri Lanka"
+  description={SITE.description}
+  image={posts[0]?.image?.src}
+  schema={[organizationSchema(), websiteSchema()]}
+>
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Sri Lanka · Since 2020</p>
+      <!-- The single, descriptive H1 the live WordPress homepage is missing. -->
+      <h1>We say no to plastic.</h1>
+      <p class="lede hero__lede">{MISSION}</p>
+      <p class="hero__actions">
+        <a class="button" href="/volunteers/">Become a volunteer</a>
+        <a class="button button--ghost" href="/problem-statement/">Why it matters</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>The movement in numbers</h2>
+      <p class="lede">
+        What a volunteer network of more than eleven thousand people has achieved so far.
+      </p>
+      <div class="grid grid--stats" style="margin-top:2rem">
+        {
+          STATS.map((stat) => (
+            <div class="stat">
+              <span class="stat__value">{stat.value}</span>
+              <span class="stat__label">{stat.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Three goals drive everything we do</h2>
+      <div class="grid grid--3" style="margin-top:2rem">
+        {
+          GOALS.map((goal, index) => (
+            <div class="goal">
+              <span class="goal__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <h3>{goal.title}</h3>
+              <p>{goal.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Sri Lanka has a plastic problem</h2>
+      <div class="grid grid--3" style="margin-top:2rem">
+        {
+          PROBLEM_FACTS.map((fact) => (
+            <div class="stat">
+              <span class="stat__value">{fact.value}</span>
+              <span class="stat__label">
+                <strong>{fact.unit}</strong> — {fact.label}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+      <p style="margin-top:2rem">
+        <a class="button button--ghost" href="/problem-statement/">Read the problem statement</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <h2>Latest projects</h2>
+          <p class="lede">Clean-ups, workshops and campaigns run by our volunteer clubs.</p>
+        </div>
+        <a class="button button--ghost" href="/blog/">All projects</a>
+      </div>
+
+      <div class="grid grid--3" style="margin-top:2rem">
+        {posts.map((post, index) => <PostCard post={post} eager={index < 3} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: clamp(3rem, 8vw, 6rem);
+    background:
+      radial-gradient(60rem 30rem at 15% -10%, var(--green-50), transparent 60%),
+      var(--surface);
+  }
+  .hero__lede {
+    font-size: 1.22rem;
+    margin-bottom: 1.8rem;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .goal__number {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 750;
+    color: var(--green-500);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+  .goal h3 {
+    margin-bottom: 0.4rem;
+  }
+  .goal p {
+    color: var(--ink-500);
+    margin: 0;
+  }
+
+  .section__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .section__head h2 {
+    margin-bottom: 0.25rem;
+  }
+</style>

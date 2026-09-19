@@ -1,0 +1,100 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+
+import PostCard from '../../components/PostCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { POSTS_PER_PAGE } from '../../consts';
+import { breadcrumbSchema, organizationSchema } from '../../lib/schema';
+import { getAllPosts, type WPPost } from '../../lib/wp';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getAllPosts();
+  return paginate(posts, { pageSize: POSTS_PER_PAGE });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<WPPost>;
+}
+
+const { page } = Astro.props;
+
+const isFirstPage = page.currentPage === 1;
+const title = isFirstPage
+  ? 'Projects & news'
+  : `Projects & news — page ${page.currentPage} of ${page.lastPage}`;
+---
+
+<BaseLayout
+  title={title}
+  description="Clean-ups, workshops, campaigns and community projects run by ZeroPlastic volunteer clubs across Sri Lanka."
+  image={page.data[0]?.image?.src}
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Projects', url: '/blog/' },
+    ]),
+  ]}
+>
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Projects</p>
+      <h1>What our volunteers are doing</h1>
+      <p class="lede">
+        Every clean-up, workshop and campaign run by ZeroPlastic clubs and communities across the
+        island — {page.total} projects and counting.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="grid grid--3">
+        {page.data.map((post, index) => <PostCard post={post} eager={isFirstPage && index < 3} />)}
+      </div>
+
+      <nav class="pagination" aria-label="Pagination">
+        {
+          page.url.prev ? (
+            <a class="button button--ghost" href={page.url.prev} rel="prev">
+              ← Newer
+            </a>
+          ) : (
+            <span />
+          )
+        }
+
+        <p class="pagination__status">
+          Page {page.currentPage} of {page.lastPage}
+        </p>
+
+        {
+          page.url.next ? (
+            <a class="button button--ghost" href={page.url.next} rel="next">
+              Older →
+            </a>
+          ) : (
+            <span />
+          )
+        }
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .pagination__status {
+    margin: 0;
+    color: var(--ink-500);
+    font-size: 0.9rem;
+  }
+</style>
