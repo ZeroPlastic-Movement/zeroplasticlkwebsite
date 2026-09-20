@@ -1,17 +1,18 @@
 ---
+import Figure from '../components/Figure.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { CONTACT, SITE, VOLUNTEER_OPTIONS } from '../consts';
+import { CONTACT, EXTERNAL, SITE, VOLUNTEER_INTERNATIONAL, VOLUNTEER_LOCAL } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
-// The volunteer sign-up form still lives on the WordPress install. Linking to it
-// keeps a single source of submissions rather than splitting them across systems.
+// Volunteer registration still runs on the existing WordPress form, so every
+// submission continues to arrive in one place.
 const REGISTRATION_URL = `${SITE.wpBase}/volunteers/`;
 const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
 ---
 
 <BaseLayout
   title="Volunteer with ZeroPlastic"
-  description="Join 11,000+ ZeroPlastic volunteers across Sri Lanka. Take part in clean-ups and awareness sessions on the ground, or contribute remotely through design, content and campaign work."
+  description="Volunteer with ZeroPlastic in Sri Lanka — clean-ups, education, advocacy, research and communications — or join from abroad and volunteer for the environment while you travel."
   schema={[
     organizationSchema(),
     breadcrumbSchema([
@@ -20,64 +21,178 @@ const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
     ]),
   ]}
 >
-  <section class="section">
+  <section class="page-hero">
     <div class="container">
-      <p class="eyebrow">Volunteers</p>
+      <p class="eyebrow">Get involved</p>
       <h1>Give your time to a plastic-free Sri Lanka</h1>
       <p class="lede">
-        Thank you for your interest in volunteering with the ZeroPlastic Movement. We are on a
-        mission to build a cleaner, greener Sri Lanka through clean-up initiatives, community
-        engagement, awareness campaigns, project management and advocacy work — both online and on
-        the ground.
+        Volunteers are the movement. Whether you are in Colombo, Kandy or arriving on a flight next
+        month, there is a way to contribute.
       </p>
-      <p class="hero__actions">
-        <a class="button" href={REGISTRATION_URL}>Register as a volunteer</a>
-        <a class="button button--ghost" href={APP_URL}>Download the app</a>
+      <p class="hero-actions">
+        <a class="button" href="#local">Volunteer in Sri Lanka</a>
+        <a class="button button--ghost" href="#international">International volunteering</a>
       </p>
     </div>
   </section>
 
-  <section class="section section--alt">
+  <!-- ===================== LOCAL ===================== -->
+  <section class="section" id="local">
     <div class="container">
-      <h2>Two ways to take part</h2>
+      <p class="eyebrow">Pathway one</p>
+      <h2 class="section__title">Volunteer in Sri Lanka</h2>
       <p class="lede">
-        We understand that not everyone can join physical activities, so volunteering is flexible.
+        For people living in Sri Lanka who want to work on plastic pollution — through a
+        university, school or community club, or independently.
       </p>
-      <div class="grid grid--3" style="margin-top:2rem">
-        {
-          VOLUNTEER_OPTIONS.map((option) => (
-            <div class="card" style="padding:1.5rem">
-              <h3>{option.title}</h3>
-              <p style="color:var(--ink-500);margin:0">{option.body}</p>
-            </div>
-          ))
-        }
+
+      <h3 class="subhead">Where you can contribute</h3>
+      <ul class="ticks">
+        {VOLUNTEER_LOCAL.map((item) => <li>{item}</li>)}
+      </ul>
+
+      <div class="tile-grid tile-grid--2">
+        <div class="tile">
+          <h3>On the ground</h3>
+          <p>
+            Clean-up drives, awareness sessions, community events and project logistics, run with a
+            club or a campaign near you.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Remotely</h3>
+          <p>
+            Design, content, social media campaigns, project planning, press releases and research —
+            contributed from anywhere in the country.
+          </p>
+        </div>
+      </div>
+
+      <p class="actions">
+        <a class="button" href={REGISTRATION_URL}>Register as a volunteer</a>
+        <a class="button button--ghost" href={APP_URL}>Download the volunteer app</a>
+        <a class="button button--ghost" href="/clubs/">Start a club instead</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ================== INTERNATIONAL ================== -->
+  <section class="section section--dark" id="international">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow eyebrow--light">Pathway two</p>
+          <h2 class="section__title section__title--wide">
+            Visit Sri Lanka. Volunteer for the environment. Experience the country differently.
+          </h2>
+          <p class="lede">
+            Every year thousands of travellers come to Sri Lanka for the coast, the hills and the
+            heritage. A smaller number leave having worked alongside the communities protecting
+            them. This is for that smaller number.
+          </p>
+        </div>
+
+        <Figure
+          name="traveller-craft"
+          alt="International visitors making coconut-shell craft at a workbench during an Impact Center session."
+          width={1200}
+          height={900}
+          sizes="(max-width: 52rem) 100vw, 30rem"
+        />
+      </div>
+
+      <h3 class="subhead subhead--light">Where international volunteers contribute</h3>
+      <ul class="ticks">
+        {VOLUNTEER_INTERNATIONAL.map((item) => <li>{item}</li>)}
+      </ul>
+
+      <div class="enquiry">
+        <h3>Arranging a placement</h3>
+        <p>
+          Placements are arranged individually, so that what you work on matches the time you have
+          and the skills you bring. Write to us with your dates and interests and we will tell you
+          what is running while you are here.
+        </p>
+        <p class="actions">
+          <a class="button" href={`mailto:${CONTACT.email}?subject=International%20volunteering`}>
+            Email {CONTACT.email}
+          </a>
+          <a class="button button--outline" href="/sustainable-travel/">Sustainable travel</a>
+        </p>
+        <p class="note">
+          We have not published programme fees, visa guidance or accommodation arrangements on this
+          page, because those depend on the placement and on your own circumstances. Ask us and we
+          will answer directly.
+        </p>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container prose">
-      <h2>Who can join</h2>
-      <p>
-        Our strength lies in our volunteers, and we welcome individuals from all walks of life to
-        contribute their time, skills and passion toward a plastic-free future. Students, working
-        professionals, retirees and whole university clubs are all part of the network.
-      </p>
-
-      <h2>Questions before you sign up?</h2>
-      <p>
-        Email us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> or call
-        <a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a> and someone from the team will help.
-      </p>
+  <!-- ==================== ACADEMY ==================== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="tile-grid tile-grid--2">
+        <div class="tile">
+          <h3>Volunteers Academy</h3>
+          <p>
+            The youth-development and volunteer-development arm of the ZeroPlastic ecosystem,
+            training the volunteers who go on to lead campaigns and clubs. It runs on its own
+            platform.
+          </p>
+          <p class="tile__cta">
+            <a class="ext-link" href={EXTERNAL.volunteersAcademy} rel="noopener noreferrer" target="_blank">
+              Visit Volunteers Academy
+            </a>
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Questions first?</h3>
+          <p>
+            Email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> or call
+            <a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a> and someone from the team will
+            help.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .hero__actions {
+  .hero-actions,
+  .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .subhead {
+    margin-top: 2.5rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-300);
+  }
+  .subhead--light {
+    color: rgb(255 255 255 / 55%);
+  }
+  .enquiry {
+    margin-top: 2.5rem;
+    border: 1px solid rgb(255 255 255 / 16%);
+    border-radius: var(--radius);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    background: rgb(255 255 255 / 4%);
+  }
+  .enquiry h3 {
+    margin-bottom: 0.5rem;
+  }
+  .enquiry p {
+    color: rgb(255 255 255 / 70%);
+    max-width: 62ch;
+  }
+  .note {
+    font-size: 0.86rem;
+    color: rgb(255 255 255 / 52%) !important;
+    margin-bottom: 0;
   }
 </style>

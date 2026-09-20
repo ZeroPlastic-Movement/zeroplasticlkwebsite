@@ -1,0 +1,48 @@
+---
+/**
+ * Responsive section photograph.
+ *
+ * Every variant is pre-encoded at build-prep time (scripts/build-images.mjs),
+ * so pages pay no encoding cost and the browser gets AVIF where it can.
+ * Dimensions are always explicit, which keeps cumulative layout shift at zero.
+ */
+import { SECTION_IMAGE_WIDTHS } from '../consts';
+
+interface Props {
+  /** File stem in /public/images, e.g. "impact-center". */
+  name: string;
+  alt: string;
+  width: number;
+  height: number;
+  sizes?: string;
+  /** Above-the-fold images should not be lazy. */
+  eager?: boolean;
+  class?: string;
+}
+
+const {
+  name,
+  alt,
+  width,
+  height,
+  sizes = '(max-width: 52rem) 100vw, 40rem',
+  eager = false,
+  class: className,
+} = Astro.props;
+
+const srcset = (ext: string) =>
+  SECTION_IMAGE_WIDTHS.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
+---
+
+<picture class={className}>
+  <source type="image/avif" srcset={srcset('avif')} sizes={sizes} />
+  <source type="image/webp" srcset={srcset('webp')} sizes={sizes} />
+  <img
+    src={`/images/${name}-800.jpg`}
+    width={width}
+    height={height}
+    alt={alt}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding={eager ? 'sync' : 'async'}
+  />
+</picture>

@@ -326,3 +326,208 @@ main {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* ---------------------------------------------------------------- */
+/* shared section furniture                                          */
+/*                                                                   */
+/* Defined once here rather than per-page so the homepage and every  */
+/* internal page share one visual language.                          */
+/* ---------------------------------------------------------------- */
+
+.section__title {
+  max-width: 24ch;
+  margin-bottom: 0.7rem;
+}
+.section__title--wide {
+  max-width: 32ch;
+}
+
+.section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.section--dark {
+  background: var(--ink-900);
+  color: #c6d4cb;
+}
+.section--dark .section__title,
+.section--dark h3 {
+  color: #fff;
+}
+.section--dark .lede {
+  color: rgb(255 255 255 / 68%);
+}
+.eyebrow--light {
+  color: var(--green-400);
+}
+
+/* Page banner used at the top of internal pages. */
+.page-hero {
+  background:
+    radial-gradient(52rem 26rem at 12% -20%, var(--green-50), transparent 62%),
+    var(--surface);
+  padding-block: clamp(2.5rem, 6vw, 4rem);
+  border-bottom: 1px solid var(--border);
+}
+.page-hero h1 {
+  max-width: 20ch;
+}
+.page-hero .lede {
+  margin-bottom: 0;
+}
+
+/* Generic card grid. */
+.tile-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  margin-top: 2.25rem;
+}
+.tile-grid--2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.6rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.tile h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+.tile p {
+  color: var(--ink-500);
+  font-size: 0.93rem;
+}
+.tile p:last-child {
+  margin-bottom: 0;
+}
+.tile__meta {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  font-weight: 700;
+  color: var(--green-600);
+  margin: 0 0 0.6rem;
+}
+.tile__cta {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+.section--dark .tile {
+  background: rgb(255 255 255 / 4%);
+  border-color: rgb(255 255 255 / 14%);
+}
+.section--dark .tile p {
+  color: rgb(255 255 255 / 66%);
+}
+
+/* External-link affordance. */
+.ext-link {
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+.ext-link:hover {
+  text-decoration: underline;
+}
+.ext-link::after {
+  content: '↗';
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+.section--dark .ext-link {
+  color: var(--green-400);
+}
+
+/* Two-column text + image. */
+.split {
+  display: grid;
+  gap: clamp(1.75rem, 5vw, 3.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  align-items: center;
+}
+.split img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+.split--reverse > *:first-child {
+  order: 2;
+}
+@media (max-width: 52rem) {
+  .split--reverse > *:first-child {
+    order: 0;
+  }
+}
+
+/* Checklist of short items. */
+.ticks {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0 0;
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+.ticks li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: 0.93rem;
+  color: var(--ink-500);
+}
+.ticks li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 2px;
+  background: var(--green-500);
+}
+.section--dark .ticks li {
+  color: rgb(255 255 255 / 70%);
+}
+
+/* Full-width call to action band. */
+.cta-band {
+  background: var(--green-500);
+  color: #10240f;
+  border-radius: var(--radius);
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.cta-band h2 {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.35rem, 1rem + 1.4vw, 1.9rem);
+  color: #10240f;
+}
+.cta-band p {
+  margin: 0;
+  max-width: 48ch;
+  color: #24401f;
+}
+.cta-band .button {
+  background: #10240f;
+  color: #fff;
+  flex: none;
+}
+.cta-band .button:hover {
+  background: #1d3a1a;
+  color: #fff;
+}

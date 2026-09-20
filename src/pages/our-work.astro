@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ADVOCACY, MOVEMENT, PILLARS } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+---
+
+<BaseLayout
+  title="Our work"
+  description="How ZeroPlastic cuts plastic at the source in Sri Lanka: prevention, assessment, removal and reduction, backed by policy advocacy and a nationwide club network."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Our work', url: '/our-work/' },
+    ]),
+  ]}
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Our work</p>
+      <h1>Four stages, one goal: plastic that never reaches nature</h1>
+      <p class="lede">
+        ZeroPlastic works across the whole chain — stopping plastic before it is used, recognising
+        the organisations that cut it, removing what has already escaped, and building the
+        alternatives that replace it.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section__title">What we do</h2>
+      <ol class="pillars">
+        {
+          PILLARS.map((pillar, index) => (
+            <li class="pillar">
+              <span class="pillar__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <p class="pillar__stage">{pillar.stage}</p>
+              <h3>{pillar.title}</h3>
+              <p class="pillar__body">{pillar.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <p class="eyebrow">Advocacy &amp; system change</p>
+      <h2 class="section__title">The part that outlasts a campaign</h2>
+      <p class="lede">
+        A clean beach stays clean only if something upstream changes. These are the policy and
+        market shifts we are working towards.
+      </p>
+
+      <div class="tile-grid">
+        {
+          ADVOCACY.map((item) => (
+            <div class="tile">
+              <p class="tile__meta">{item.tag}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <p style="margin-top:2rem">
+        <a class="button" href="/advocacy/">Read more on advocacy</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <p class="eyebrow eyebrow--light">Our movement</p>
+      <h2 class="section__title section__title--wide">Where the work happens</h2>
+
+      <div class="tile-grid">
+        {
+          MOVEMENT.map((item) => (
+            <div class="tile">
+              <p class="tile__meta">{item.meta}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              {'href' in item && item.href && (
+                <p class="tile__cta">
+                  <a class="ext-link" href={item.href}>Explore ZeroPlastic Clubs</a>
+                </p>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

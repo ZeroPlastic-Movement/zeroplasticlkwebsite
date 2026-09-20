@@ -1,15 +1,19 @@
 ---
+import Figure from '../components/Figure.astro';
 import PostCard from '../components/PostCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
+  ADVOCACY,
   ALERT_URL,
+  ECOSYSTEM,
+  EXTERNAL,
   HERO,
-  MISSION,
+  MOVEMENT,
   PILLARS,
   POSITIONING,
-  PROBLEM_FACTS,
   SITE,
   STATS,
+  TRAVEL,
 } from '../consts';
 import { organizationSchema, websiteSchema } from '../lib/schema';
 import { getRecentPosts } from '../lib/wp';
@@ -19,8 +23,7 @@ const posts = await getRecentPosts(3);
 const srcset = (ext: string) =>
   HERO.widths.map((w) => `${HERO.base}-${w}.${ext} ${w}w`).join(', ');
 
-// The three figures that carry the most weight in the hero strip.
-const heroStats = STATS.slice(0, 3);
+const [impactCenter, travelPledge] = TRAVEL;
 ---
 
 <BaseLayout
@@ -29,6 +32,7 @@ const heroStats = STATS.slice(0, 3);
   image="/images/og-home.jpg"
   schema={[organizationSchema(), websiteSchema()]}
 >
+  <!-- ============================= HERO ============================= -->
   <section class="hero">
     <picture class="hero__media">
       <source type="image/avif" srcset={srcset('avif')} sizes="100vw" />
@@ -47,21 +51,33 @@ const heroStats = STATS.slice(0, 3);
     <div class="container hero__inner">
       <p class="hero__eyebrow">ZeroPlastic Movement · Sri Lanka</p>
       <h1 class="hero__title">{POSITIONING}</h1>
-      <p class="hero__lede">{MISSION}</p>
+      <p class="hero__lede">
+        One of Sri Lanka's largest youth environmental movements — cutting plastic at the source
+        through education, advocacy, clean-ups and the alternatives that replace plastic for good.
+      </p>
 
       <div class="hero__actions">
-        <a class="button button--lg" href="/volunteers/">Become a volunteer</a>
-        <a class="button button--lg button--outline" href={ALERT_URL}>
-          Report plastic pollution
-        </a>
+        <a class="button button--lg" href="/volunteers/">Join the Movement</a>
+        <a class="button button--lg button--outline" href="#impact">Explore Our Impact</a>
       </div>
+    </div>
+  </section>
 
-      <dl class="hero__stats">
+  <!-- ========================= IMPACT NUMBERS ======================== -->
+  <section class="section section--dark" id="impact">
+    <div class="container">
+      <p class="eyebrow eyebrow--light">Our impact</p>
+      <h2 class="section__title section__title--wide">A movement measured in people, not press releases</h2>
+
+      <dl class="impact">
         {
-          heroStats.map((stat) => (
-            <div>
-              <dt>{stat.value}</dt>
-              <dd>{stat.label}</dd>
+          STATS.map((stat) => (
+            <div class="impact__item">
+              <dt class="impact__value">{stat.value}</dt>
+              <dd class="impact__label">
+                {stat.label}
+                <span class="impact__detail">{stat.detail}</span>
+              </dd>
             </div>
           ))
         }
@@ -69,14 +85,35 @@ const heroStats = STATS.slice(0, 3);
     </div>
   </section>
 
+  <!-- ========================== WHO WE ARE ========================== -->
   <section class="section">
+    <div class="container who">
+      <div>
+        <p class="eyebrow">Who we are</p>
+        <h2 class="section__title">A volunteer movement for a plastic-free Sri Lanka</h2>
+      </div>
+      <div>
+        <p class="lede">
+          ZeroPlastic is a Sri Lankan environmental movement built on volunteers. We work to change
+          everyday behaviour around plastic, push for the policy that makes that change stick, and
+          build the market for local alternatives.
+        </p>
+        <p>
+          Our clubs operate across universities, schools and communities, giving the movement a
+          permanent presence in Sri Lankan education rather than a series of one-off campaigns.
+        </p>
+        <p>
+          <a class="button button--ghost" href="/about/">More about the movement</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================== WHAT WE DO ========================== -->
+  <section class="section section--alt">
     <div class="container">
       <p class="eyebrow">What we do</p>
       <h2 class="section__title">Four ways we cut plastic at the source</h2>
-      <p class="lede">
-        Awareness alone does not change behaviour. We work across the whole chain — from
-        education to certification, removal and the alternatives that replace plastic for good.
-      </p>
 
       <ol class="pillars">
         {
@@ -90,21 +127,46 @@ const heroStats = STATS.slice(0, 3);
           ))
         }
       </ol>
+
+      <p style="margin-top:2rem">
+        <a class="button button--ghost" href="/our-work/">See how our work fits together</a>
+      </p>
     </div>
   </section>
 
-  <section class="section section--dark">
+  <!-- ==================== ADVOCACY & SYSTEM CHANGE =================== -->
+  <section class="section">
     <div class="container">
-      <p class="eyebrow eyebrow--light">Our impact</p>
-      <h2 class="section__title section__title--light">What 11,000 volunteers have changed</h2>
+      <div class="split">
+        <div>
+          <p class="eyebrow">Advocacy &amp; system change</p>
+          <h2 class="section__title">Clean-ups treat the symptom. Policy treats the cause.</h2>
+          <p class="lede">
+            ZeroPlastic is not only a clean-up organisation. We work on behavioural change, policy
+            advocacy and systemic solutions — because the plastic on a beach was a decision made
+            somewhere upstream.
+          </p>
+          <p>
+            <a class="button" href="/advocacy/">Our advocacy work</a>
+          </p>
+        </div>
 
-      <div class="impact">
+        <Figure
+          name="advocacy-sculpture"
+          alt="A life-size elephant sculpture constructed entirely from recovered plastic waste."
+          width={1367}
+          height={1025}
+          sizes="(max-width: 52rem) 100vw, 32rem"
+        />
+      </div>
+
+      <div class="tile-grid">
         {
-          STATS.map((stat) => (
-            <div class="impact__item">
-              <p class="impact__value">{stat.value}</p>
-              <p class="impact__label">{stat.label}</p>
-              <p class="impact__detail">{stat.detail}</p>
+          ADVOCACY.map((item) => (
+            <div class="tile">
+              <p class="tile__meta">{item.tag}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
             </div>
           ))
         }
@@ -112,43 +174,112 @@ const heroStats = STATS.slice(0, 3);
     </div>
   </section>
 
-  <section class="section">
-    <div class="container problem">
-      <div>
-        <p class="eyebrow">The problem</p>
-        <h2 class="section__title">Sri Lanka is among the world's largest plastic polluters</h2>
-        <p class="lede">
-          An island of 65,610 km² produces 1.59 million tonnes of plastic waste a year, and much
-          of it reaches the ocean. The cost lands on the coastal communities and fisheries that
-          depend on it.
-        </p>
-        <p>
-          <a class="button button--ghost" href="/problem-statement/">Read the problem statement</a>
-        </p>
-      </div>
+  <!-- ========================= OUR MOVEMENT ========================== -->
+  <section class="section section--dark">
+    <div class="container">
+      <p class="eyebrow eyebrow--light">Our movement</p>
+      <h2 class="section__title section__title--wide">National campaigns, global days of action</h2>
 
-      <ul class="facts">
+      <div class="tile-grid">
         {
-          PROBLEM_FACTS.map((fact) => (
-            <li>
-              <span class="facts__value">{fact.value}</span>
-              <span class="facts__unit">{fact.unit}</span>
-              <span class="facts__label">{fact.label}</span>
-            </li>
+          MOVEMENT.map((item) => (
+            <div class="tile">
+              <p class="tile__meta">{item.meta}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              {'href' in item && item.href && (
+                <p class="tile__cta">
+                  <a class="ext-link" href={item.href}>Explore ZeroPlastic Clubs</a>
+                </p>
+              )}
+            </div>
           ))
         }
-      </ul>
+      </div>
     </div>
   </section>
 
-  <section class="section section--alt">
+  <!-- ======================= SUSTAINABLE TRAVEL ====================== -->
+  <section class="section">
     <div class="container">
       <div class="section__head">
         <div>
-          <p class="eyebrow">Latest projects</p>
+          <p class="eyebrow">Sustainable travel</p>
+          <h2 class="section__title">Travel that leaves less behind</h2>
+        </div>
+        <a class="button button--ghost" href="/sustainable-travel/">All travel initiatives</a>
+      </div>
+
+      <div class="tile-grid tile-grid--2">
+        {
+          [impactCenter, travelPledge].map((item) => (
+            <article class="travel-card">
+              <Figure
+                name={item.image}
+                alt={item.alt}
+                width={1200}
+                height={item.image === 'impact-center' ? 675 : 900}
+                sizes="(max-width: 52rem) 100vw, 30rem"
+              />
+              <div class="travel-card__body">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+                <p class="tile__cta">
+                  <a class="ext-link" href={item.href} rel="noopener noreferrer" target="_blank">
+                    {item.cta}
+                  </a>
+                </p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== VOLUNTEER =========================== -->
+  <section class="section section--alt">
+    <div class="container">
+      <p class="eyebrow">Volunteer</p>
+      <h2 class="section__title">Two ways to give your time</h2>
+
+      <div class="tile-grid tile-grid--2">
+        <div class="tile">
+          <h3>Volunteer in Sri Lanka</h3>
+          <p>
+            Join campaigns, clean-ups, awareness and education work, advocacy, research and
+            communications — through a university, school or community club, or on your own.
+          </p>
+          <p class="tile__cta">
+            <a class="button" href="/volunteers/">Volunteer locally</a>
+          </p>
+        </div>
+
+        <div class="tile">
+          <h3>International volunteering</h3>
+          <p>
+            Visit Sri Lanka, volunteer for the environment, and experience the country differently —
+            through clean-ups, community engagement, education and Impact Center activities.
+          </p>
+          <p class="tile__cta">
+            <a class="button button--ghost" href="/volunteers/#international">
+              Volunteer from abroad
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= LATEST STORIES ======================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <p class="eyebrow">Latest stories</p>
           <h2 class="section__title">What our clubs did this month</h2>
         </div>
-        <a class="button button--ghost" href="/blog/">All projects</a>
+        <a class="button button--ghost" href="/blog/">All stories</a>
       </div>
 
       <div class="grid grid--3" style="margin-top:2.25rem">
@@ -157,44 +288,66 @@ const heroStats = STATS.slice(0, 3);
     </div>
   </section>
 
-  <section class="section">
-    <div class="container cta-pair">
-      <div class="cta cta--primary">
-        <h2>Give your time</h2>
-        <p>
-          Join more than 11,000 volunteers running clean-ups, workshops and campaigns across the
-          island — on the ground or remotely.
-        </p>
-        <a class="button" href="/volunteers/">Become a volunteer</a>
-      </div>
+  <!-- ===================== INITIATIVES / ECOSYSTEM =================== -->
+  <section class="section section--alt">
+    <div class="container">
+      <p class="eyebrow">Initiatives</p>
+      <h2 class="section__title section__title--wide">The wider ZeroPlastic ecosystem</h2>
+      <p class="lede">
+        Each of these runs on its own dedicated platform. Here is what they do and where to go next.
+      </p>
 
-      <div class="cta cta--alert">
-        <h2>Seen plastic pollution?</h2>
-        <p>
-          Submit a violation and we notify the relevant authorities, so environmental action
-          happens faster.
-        </p>
-        <a class="button button--outline-dark" href={ALERT_URL}>Report an issue</a>
+      <div class="tile-grid">
+        {
+          ECOSYSTEM.map((item) => (
+            <div class="tile">
+              <h3>{item.title}</h3>
+              <p class="tile__meta" style="color:var(--ink-300);text-transform:none;letter-spacing:0;font-weight:600">
+                {item.tagline}
+              </p>
+              <p>{item.body}</p>
+              <p class="tile__cta">
+                <a class="ext-link" href={item.href} rel="noopener noreferrer" target="_blank">
+                  {item.cta}
+                </a>
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== REPORT PLASTIC POLLUTION ================= -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Seen plastic pollution?</h2>
+          <p>
+            Submit the violation and we notify the relevant authorities, so environmental action
+            happens faster.
+          </p>
+        </div>
+        <a class="button button--lg" href={ALERT_URL} rel="noopener noreferrer" target="_blank">
+          Report Plastic Pollution
+        </a>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  /* ---------------------------------------------------------------- */
-  /* hero                                                              */
-  /* ---------------------------------------------------------------- */
-
+  /* ------------------------------- hero ------------------------------- */
   .hero {
     position: relative;
     isolation: isolate;
     display: flex;
     align-items: flex-end;
-    min-height: min(82vh, 720px);
+    min-height: min(80vh, 680px);
     padding-block: clamp(3rem, 10vw, 5.5rem);
     background: var(--ink-900);
   }
-
   .hero__media {
     position: absolute;
     inset: 0;
@@ -206,9 +359,6 @@ const heroStats = STATS.slice(0, 3);
     object-fit: cover;
     object-position: 58% 60%;
   }
-
-  /* Scrim: dark at the left where the text sits, clearing to the right so the
-     volunteers stay visible. */
   .hero::after {
     content: '';
     position: absolute;
@@ -216,23 +366,17 @@ const heroStats = STATS.slice(0, 3);
     z-index: -1;
     background:
       linear-gradient(105deg, rgb(10 22 12 / 88%) 0%, rgb(10 22 12 / 72%) 38%, rgb(10 22 12 / 24%) 72%, rgb(10 22 12 / 38%) 100%),
-      linear-gradient(to top, rgb(10 22 12 / 65%) 0%, transparent 45%);
+      linear-gradient(to top, rgb(10 22 12 / 62%) 0%, transparent 45%);
   }
-
-  /* On narrow screens the angled gradient no longer covers the text column,
-     so switch to a stronger vertical scrim. */
   @media (max-width: 56rem) {
     .hero::after {
-      background:
-        linear-gradient(to bottom, rgb(10 22 12 / 82%) 0%, rgb(10 22 12 / 68%) 45%, rgb(10 22 12 / 78%) 100%);
+      background: linear-gradient(to bottom, rgb(10 22 12 / 82%) 0%, rgb(10 22 12 / 68%) 45%, rgb(10 22 12 / 78%) 100%);
     }
   }
-
   .hero__inner {
     position: relative;
     max-width: 64rem;
   }
-
   .hero__eyebrow {
     color: var(--green-400);
     text-transform: uppercase;
@@ -241,7 +385,6 @@ const heroStats = STATS.slice(0, 3);
     font-weight: 700;
     margin: 0 0 1rem;
   }
-
   .hero__title {
     color: #fff;
     font-size: clamp(2.1rem, 1.1rem + 3.8vw, 4rem);
@@ -250,57 +393,58 @@ const heroStats = STATS.slice(0, 3);
     max-width: 18ch;
     margin: 0 0 1.1rem;
   }
-
   .hero__lede {
     color: rgb(255 255 255 / 84%);
-    font-size: clamp(1rem, 0.94rem + 0.4vw, 1.2rem);
-    max-width: 52ch;
+    font-size: clamp(1rem, 0.94rem + 0.4vw, 1.18rem);
+    max-width: 54ch;
     margin: 0 0 2rem;
   }
-
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.85rem;
-    margin-bottom: 2.75rem;
   }
 
-  .hero__stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(1.5rem, 5vw, 3.5rem);
-    margin: 0;
-    padding-top: 1.75rem;
-    border-top: 1px solid rgb(255 255 255 / 22%);
+  /* ------------------------------ impact ------------------------------ */
+  .impact {
+    display: grid;
+    gap: 2rem 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    margin: 2.5rem 0 0;
   }
-  .hero__stats div {
-    min-width: 7rem;
-  }
-  .hero__stats dt {
-    font-size: clamp(1.35rem, 1rem + 1.4vw, 2rem);
+  .impact__value {
+    font-size: clamp(2rem, 1.3rem + 2.4vw, 3rem);
     font-weight: 750;
+    color: var(--green-400);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .impact__label {
     color: #fff;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    font-weight: 650;
+    margin: 0;
   }
-  .hero__stats dd {
-    margin: 0.2rem 0 0;
-    font-size: 0.82rem;
-    color: rgb(255 255 255 / 70%);
-  }
-
-  /* ---------------------------------------------------------------- */
-  /* sections                                                          */
-  /* ---------------------------------------------------------------- */
-
-  .section__title {
-    max-width: 22ch;
-    margin-bottom: 0.7rem;
+  .impact__detail {
+    display: block;
+    color: rgb(255 255 255 / 58%);
+    font-weight: 400;
+    font-size: 0.86rem;
+    margin-top: 0.3rem;
   }
 
+  /* ----------------------------- who we are --------------------------- */
+  .who {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    align-items: start;
+  }
+
+  /* ------------------------------ pillars ----------------------------- */
   .pillars {
     list-style: none;
-    margin: 2.5rem 0 0;
+    margin: 2.25rem 0 0;
     padding: 0;
     display: grid;
     gap: 1px;
@@ -312,7 +456,7 @@ const heroStats = STATS.slice(0, 3);
   }
   .pillar {
     background: var(--surface);
-    padding: 1.75rem 1.5rem;
+    padding: 1.6rem 1.4rem;
   }
   .pillar__index {
     font-size: 0.72rem;
@@ -329,7 +473,7 @@ const heroStats = STATS.slice(0, 3);
     font-weight: 700;
   }
   .pillar h3 {
-    font-size: 1.1rem;
+    font-size: 1.08rem;
     margin-bottom: 0.5rem;
   }
   .pillar__body {
@@ -338,118 +482,32 @@ const heroStats = STATS.slice(0, 3);
     margin: 0;
   }
 
-  .section--dark {
-    background: var(--ink-900);
-  }
-  .eyebrow--light {
-    color: var(--green-400);
-  }
-  .section__title--light {
-    color: #fff;
-  }
-
-  .impact {
-    display: grid;
-    gap: 2rem 2.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-    margin-top: 2.5rem;
-  }
-  .impact__value {
-    font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem);
-    font-weight: 750;
-    color: var(--green-400);
-    letter-spacing: -0.025em;
-    line-height: 1;
-    margin: 0 0 0.45rem;
-  }
-  .impact__label {
-    color: #fff;
-    font-weight: 650;
-    margin: 0 0 0.3rem;
-  }
-  .impact__detail {
-    color: rgb(255 255 255 / 62%);
-    font-size: 0.88rem;
-    margin: 0;
-  }
-
-  .problem {
-    display: grid;
-    gap: clamp(2rem, 5vw, 4rem);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-    align-items: start;
-  }
-  .facts {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 1rem;
-  }
-  .facts li {
-    background: var(--surface-alt);
+  /* --------------------------- travel cards --------------------------- */
+  .travel-card {
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--green-500);
-    border-radius: 10px;
-    padding: 1.1rem 1.25rem;
-  }
-  .facts__value {
-    display: block;
-    font-size: 1.45rem;
-    font-weight: 750;
-    color: var(--ink-900);
-    letter-spacing: -0.02em;
-  }
-  .facts__unit {
-    display: inline-block;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--green-600);
-    font-weight: 700;
-    margin-bottom: 0.35rem;
-  }
-  .facts__label {
-    display: block;
-    color: var(--ink-500);
-    font-size: 0.9rem;
-  }
-
-  .section__head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  /* ---------------------------------------------------------------- */
-  /* closing calls to action                                           */
-  /* ---------------------------------------------------------------- */
-
-  .cta-pair {
-    display: grid;
-    gap: 1.25rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
-  }
-  .cta {
     border-radius: var(--radius);
-    padding: clamp(1.75rem, 4vw, 2.5rem);
-    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
-  .cta h2 {
-    font-size: 1.5rem;
+  .travel-card :global(img) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .travel-card__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .travel-card h3 {
+    font-size: 1.15rem;
     margin-bottom: 0.5rem;
   }
-  .cta p {
+  .travel-card p {
     color: var(--ink-500);
-    max-width: 42ch;
-  }
-  .cta--primary {
-    background: var(--green-50);
-    border-color: #d8e8bf;
-  }
-  .cta--alert {
-    background: var(--surface-alt);
+    font-size: 0.93rem;
   }
 </style>

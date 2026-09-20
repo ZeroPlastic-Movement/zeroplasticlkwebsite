@@ -16,7 +16,9 @@ import sharp from 'sharp';
 const [heroSrc, logoSrc] = process.argv.slice(2);
 
 if (!heroSrc || !logoSrc) {
-  console.error('usage: node scripts/build-images.mjs <hero-original> <logo-original>');
+  console.error(
+    'usage: node scripts/build-images.mjs <hero-original> <logo-original> [impact-center] [traveller-craft] [advocacy-sculpture]',
+  );
   process.exit(1);
 }
 
@@ -45,6 +47,38 @@ record(`${OUT}/hero-cleanup-1280.jpg`);
 await hero.clone().resize({ width: 1200, height: 630, fit: 'cover', position: 'attention' })
   .jpeg({ quality: 72, mozjpeg: true }).toFile(`${OUT}/og-home.jpg`);
 record(`${OUT}/og-home.jpg`);
+
+/**
+ * Section photographs. Sources come from the Impact Center media library:
+ *   impact-center      Impact Center building at dusk
+ *   traveller-craft    visitors making coconut-shell craft
+ *   advocacy-sculpture elephant sculpture built from recovered plastic
+ * Pass them as additional arguments, in that order, to regenerate.
+ */
+const SECTION_WIDTHS = [480, 800, 1200];
+const sections = process.argv.slice(4);
+const sectionNames = ['impact-center', 'traveller-craft', 'advocacy-sculpture'];
+const sectionRatios = [16 / 9, 4 / 3, 4 / 3];
+
+for (let i = 0; i < sections.length && i < sectionNames.length; i++) {
+  const meta = await sharp(sections[i]).metadata();
+  const height = Math.min(Math.round(meta.width / sectionRatios[i]), meta.height);
+  const top = Math.round((meta.height - height) * 0.35);
+  const base = sharp(sections[i]).extract({ left: 0, top, width: meta.width, height });
+
+  for (const width of SECTION_WIDTHS) {
+    if (width > meta.width) continue;
+    const avif = `${OUT}/${sectionNames[i]}-${width}.avif`;
+    const webp = `${OUT}/${sectionNames[i]}-${width}.webp`;
+    await base.clone().resize({ width }).avif({ quality: 44, effort: 9 }).toFile(avif);
+    await base.clone().resize({ width }).webp({ quality: 70, effort: 6 }).toFile(webp);
+    record(avif);
+    record(webp);
+  }
+  const jpg = `${OUT}/${sectionNames[i]}-800.jpg`;
+  await base.clone().resize({ width: 800 }).jpeg({ quality: 74, mozjpeg: true }).toFile(jpg);
+  record(jpg);
+}
 
 // The wordmark is only recompressed, never resized or redrawn.
 await sharp(logoSrc).png({ compressionLevel: 9, palette: true })

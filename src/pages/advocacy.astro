@@ -1,0 +1,92 @@
+---
+import Figure from '../components/Figure.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ADVOCACY, ALERT_URL } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+---
+
+<BaseLayout
+  title="Advocacy & system change"
+  description="ZeroPlastic campaigns to end single-use PET water bottles in Sri Lankan government institutions, to make Extended Producer Responsibility mandatory, and to build the market for sustainable alternatives."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Our work', url: '/our-work/' },
+      { name: 'Advocacy', url: '/advocacy/' },
+    ]),
+  ]}
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Advocacy &amp; system change</p>
+      <h1>Clean-ups treat the symptom. Policy treats the cause.</h1>
+      <p class="lede">
+        ZeroPlastic is not only a clean-up organisation. Alongside the volunteers on the ground, we
+        work on behavioural change, policy advocacy and systemic solutions — because every piece of
+        plastic on a Sri Lankan beach was a decision made somewhere upstream.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="split split--reverse">
+        <Figure
+          name="advocacy-sculpture"
+          alt="A life-size elephant sculpture constructed entirely from recovered plastic waste."
+          width={1367}
+          height={1025}
+          sizes="(max-width: 52rem) 100vw, 32rem"
+        />
+        <div>
+          <h2 class="section__title">Three levers, used together</h2>
+          <p>
+            Behaviour change gets people to refuse plastic. Policy makes refusing it the default.
+            Market building makes the alternative available at the moment someone reaches for it.
+            Pull any one of those out and the other two stall.
+          </p>
+          <p>
+            That is why our advocacy runs in parallel with the club network and the clean-ups
+            rather than instead of them.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section__title">What we are campaigning for</h2>
+
+      <div class="tile-grid">
+        {
+          ADVOCACY.map((item) => (
+            <div class="tile">
+              <p class="tile__meta">{item.tag}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Evidence helps the case</h2>
+          <p>
+            Reports of plastic pollution build the record we take to institutions and regulators.
+            If you see a violation, tell us.
+          </p>
+        </div>
+        <a class="button button--lg" href={ALERT_URL} rel="noopener noreferrer" target="_blank">
+          Report Plastic Pollution
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

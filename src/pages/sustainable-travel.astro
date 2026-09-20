@@ -1,0 +1,115 @@
+---
+import Figure from '../components/Figure.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { TRAVEL } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+
+const [impactCenter, pledge] = TRAVEL;
+---
+
+<BaseLayout
+  title="Sustainable travel"
+  description="How ZeroPlastic applies its mission to tourism in Sri Lanka: the Impact Center by ZeroPlastic in Sigiriya, and the Travel Without Plastic pledge for visitors."
+  image="/images/impact-center-800.jpg"
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Sustainable travel', url: '/sustainable-travel/' },
+    ]),
+  ]}
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Sustainable travel</p>
+      <h1>Travel that leaves less behind</h1>
+      <p class="lede">
+        Tourism brings millions of visitors to Sri Lanka, and a great deal of single-use plastic
+        with them. These initiatives turn that flow into something the island benefits from.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow">Initiative</p>
+          <h2 class="section__title">{impactCenter.title}</h2>
+          <p class="lede">{impactCenter.body}</p>
+          <p>Travellers who visit can experience:</p>
+          <ul class="ticks">
+            {impactCenter.points.map((point) => <li>{point}</li>)}
+          </ul>
+          <p style="margin-top:1.75rem">
+            <a class="button" href={impactCenter.href} rel="noopener noreferrer" target="_blank">
+              {impactCenter.cta}
+            </a>
+          </p>
+          <p class="note">
+            The Impact Center has its own website, where experiences and visits are arranged.
+          </p>
+        </div>
+
+        <Figure
+          name={impactCenter.image}
+          alt={impactCenter.alt}
+          width={1200}
+          height={675}
+          sizes="(max-width: 52rem) 100vw, 32rem"
+          eager
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="split split--reverse">
+        <Figure
+          name={pledge.image}
+          alt={pledge.alt}
+          width={1200}
+          height={900}
+          sizes="(max-width: 52rem) 100vw, 32rem"
+        />
+        <div>
+          <p class="eyebrow">Initiative</p>
+          <h2 class="section__title">{pledge.title}</h2>
+          <p class="lede">{pledge.body}</p>
+          <p>
+            The pledge is a personal commitment, not a purchase. It takes a minute, and it is the
+            simplest way for a visitor to leave Sri Lanka with less plastic behind them than they
+            arrived with.
+          </p>
+          <p style="margin-top:1.5rem">
+            <a class="button" href={pledge.href} rel="noopener noreferrer" target="_blank">
+              {pledge.cta}
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section__title">Volunteering while you travel</h2>
+      <p class="lede">
+        Visitors who want to do more than pledge can join campaigns and Impact Center activities
+        directly.
+      </p>
+      <p>
+        <a class="button" href="/volunteers/#international">International volunteering</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .note {
+    font-size: 0.88rem;
+    color: var(--ink-300);
+    margin-top: 0.75rem;
+  }
+</style>

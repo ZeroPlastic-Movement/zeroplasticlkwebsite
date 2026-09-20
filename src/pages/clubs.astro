@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { CLUB_TYPES, EXTERNAL } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+---
+
+<BaseLayout
+  title="ZeroPlastic Clubs"
+  description="ZeroPlastic Clubs run in universities, schools and communities across Sri Lanka. Start a club, or register a ZeroPlastic School Club."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Clubs', url: '/clubs/' },
+    ]),
+  ]}
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">ZeroPlastic Clubs</p>
+      <h1>The movement's permanent presence on the ground</h1>
+      <p class="lede">
+        Clubs are how ZeroPlastic stays in a place after the campaign ends. They run across
+        universities, schools and communities throughout Sri Lanka, led by the people who live
+        there.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section__title">Three kinds of club</h2>
+
+      <div class="tile-grid">
+        {
+          CLUB_TYPES.map((club) => (
+            <div class="tile">
+              <h3>{club.title}</h3>
+              <p>{club.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section__title">Start one</h2>
+      <p class="lede">
+        Both registrations are handled on our forms platform, which opens in a new tab.
+      </p>
+
+      <div class="tile-grid tile-grid--2">
+        <div class="tile">
+          <h3>Start a ZeroPlastic Club</h3>
+          <p>
+            For university and community groups who want to set up a ZeroPlastic club and run
+            campaigns, clean-ups and education work in their own area.
+          </p>
+          <p class="tile__cta">
+            <a class="button" href={EXTERNAL.clubForm} rel="noopener noreferrer" target="_blank">
+              Start a ZeroPlastic Club
+            </a>
+          </p>
+        </div>
+
+        <div class="tile">
+          <h3>Register a ZeroPlastic School Club</h3>
+          <p>
+            For schools introducing students to plastic reduction through hands-on projects,
+            education sessions and school-wide campaigns.
+          </p>
+          <p class="tile__cta">
+            <a class="button" href={EXTERNAL.schoolClubForm} rel="noopener noreferrer" target="_blank">
+              Register a School Club
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section__title">Not ready to lead a club?</h2>
+      <p class="lede">
+        You can volunteer with an existing club or campaign instead — locally or from abroad.
+      </p>
+      <p style="display:flex;gap:0.75rem;flex-wrap:wrap">
+        <a class="button" href="/volunteers/">Volunteer with ZeroPlastic</a>
+        <a class="button button--ghost" href="/our-work/">See our work</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

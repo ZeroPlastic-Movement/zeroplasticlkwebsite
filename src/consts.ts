@@ -46,33 +46,52 @@ export const SOCIAL = [
 
 export const NAV = [
   { label: 'About', href: '/about/' },
-  { label: 'The Problem', href: '/problem-statement/' },
-  { label: 'Projects', href: '/blog/' },
-  { label: 'Volunteer', href: '/volunteers/' },
-  { label: 'Contact', href: '/contact/' },
+  { label: 'Our Work', href: '/our-work/' },
+  { label: 'Clubs', href: '/clubs/' },
+  { label: 'Get Involved', href: '/volunteers/' },
+  { label: 'Sustainable Travel', href: '/sustainable-travel/' },
+  { label: 'Stories', href: '/blog/' },
 ] as const;
 
 /**
- * Headline impact figures, as published in the "What We Do" section of the
- * WordPress homepage. These supersede the older About-page numbers.
+ * Headline impact figures.
+ *
+ * These supersede the figures currently published on the WordPress homepage
+ * (11,000 change makers / 2 million educated / 100,000 mobilised). The
+ * difference is intentional and was supplied directly; see README for the
+ * outstanding reconciliation note.
  */
 export const STATS = [
-  { value: '11,000', label: 'Change makers', detail: 'Activists engaged under ZeroPlastic clubs across the region.' },
-  { value: '2 million', label: 'People educated', detail: 'Taught the 6Rs through ZeroPlastic club activities.' },
-  { value: '100,000', label: 'Volunteers mobilised', detail: 'Joined environmental education and clean-up drives.' },
-  { value: '1,000+', label: 'Clean-ups executed', detail: 'Organised and delivered across the country.' },
-  { value: '250 MT', label: 'Plastic cleared', detail: 'Removed from waterways, coastlines and public spaces.' },
-  { value: 'No. 1', label: 'Volunteer hours in Sri Lanka', detail: 'Highest recorded for 2023, recognised by UN Volunteers.' },
+  { value: '12,000+', label: 'Change makers', detail: 'Activists engaged through ZeroPlastic clubs across Sri Lanka.' },
+  { value: '5 million+', label: 'People educated', detail: 'Reached with plastic-reduction education and awareness.' },
+  { value: '300,000+', label: 'Volunteers mobilised', detail: 'Taking part in campaigns, clean-ups and education drives.' },
+  { value: '1,000+', label: 'Environmental actions', detail: 'Clean-up campaigns and environmental actions delivered.' },
 ] as const;
 
 /**
  * The movement's own positioning line, taken from the WordPress homepage.
  * Used as the hero headline.
  */
-export const POSITIONING = 'Zero plastic in nature. Zero microplastics in humans.';
+export const POSITIONING = 'Zero Plastic in Nature. Zero Microplastics in Humans.';
 
-/** Public plastic-pollution reporting tool run by the movement. */
-export const ALERT_URL = 'https://alert.zeroplastic.lk/';
+/**
+ * External platforms in the ZeroPlastic ecosystem.
+ *
+ * Each has its own dedicated site or form. This website explains the
+ * programme and then hands off; it never reproduces their functionality.
+ */
+export const EXTERNAL = {
+  alert: 'https://alert.zeroplastic.lk/',
+  impactCenter: 'https://impactcenter.zeroplastic.lk/',
+  volunteersAcademy: 'https://volunteersacademy.com/',
+  commitment: 'https://www.zeroplasticcommitment.org/',
+  schoolClubForm: 'https://forms.monday.com/forms/62b0b890c267e9ec619bf2a9ac155ac4?r=apse2',
+  clubForm: 'https://forms.monday.com/forms/5fb1d5240ca347a5e056018f45e117f8?r=apse2',
+  travellerPledge: 'https://forms.monday.com/forms/c351b9e6446530939747ada85a9fe335?r=apse2',
+} as const;
+
+/** Kept as a named alias: the reporting CTA appears in many places. */
+export const ALERT_URL = EXTERNAL.alert;
 
 export const MISSION =
   "Zero Plastic's mission is to create a behavioural change among Sri Lankan citizens to reduce plastic waste while building a demand for plastic substitutes produced by local entrepreneurs.";
@@ -169,3 +188,167 @@ export const HERO = {
 
 /** Posts shown per page on the blog index. */
 export const POSTS_PER_PAGE = 12;
+
+/* ------------------------------------------------------------------ */
+/* Advocacy & system change                                            */
+/* ------------------------------------------------------------------ */
+
+export const ADVOCACY = [
+  {
+    title: 'End single-use PET water bottles in government institutions',
+    body: 'Campaigning for Sri Lankan government institutions to eliminate single-use PET drinking-water bottles and move to refill and reuse systems.',
+    tag: 'Policy campaign',
+  },
+  {
+    title: 'Make Extended Producer Responsibility mandatory',
+    body: 'Advocating for mandatory Extended Producer Responsibility (EPR), so the companies that put plastic on the market carry the cost of recovering it.',
+    tag: 'Regulation',
+  },
+  {
+    title: 'Reduce single-use plastic',
+    body: 'Working with institutions, businesses and communities to design single-use plastic out of everyday operations rather than manage it as waste.',
+    tag: 'Behaviour change',
+  },
+  {
+    title: 'Promote sustainable alternatives',
+    body: 'Building demand for viable alternatives and supporting the local producers who make them, so replacing plastic is practical, not aspirational.',
+    tag: 'Market building',
+  },
+] as const;
+
+/* ------------------------------------------------------------------ */
+/* National and global roles                                           */
+/* ------------------------------------------------------------------ */
+
+export const MOVEMENT = [
+  {
+    title: 'World Cleanup Day',
+    body: 'ZeroPlastic organises World Cleanup Day activities in Sri Lanka, mobilising volunteers nationwide for the global day of action.',
+    meta: 'National organiser',
+  },
+  {
+    title: 'Spogomi World Cup',
+    body: 'Organising involvement in Sri Lanka for the Spogomi Cleanup World Cup, the competitive sport that turns litter collection into a team event.',
+    meta: 'Sri Lanka involvement',
+  },
+  {
+    title: 'ZeroPlastic Clubs',
+    body: 'A network of clubs across universities, schools and communities, giving the movement a permanent presence in Sri Lankan education.',
+    meta: 'Nationwide network',
+    href: '/clubs/',
+  },
+] as const;
+
+/* ------------------------------------------------------------------ */
+/* Clubs                                                               */
+/* ------------------------------------------------------------------ */
+
+export const CLUB_TYPES = [
+  {
+    title: 'University clubs',
+    body: 'Student-led clubs running campaigns, clean-ups and awareness programmes on campus and in surrounding communities. Clubs operate across Sri Lankan universities and higher-education institutions.',
+  },
+  {
+    title: 'School clubs',
+    body: 'ZeroPlastic clubs in schools, introducing students to plastic reduction through hands-on projects, education sessions and school-wide campaigns.',
+  },
+  {
+    title: 'Community clubs',
+    body: 'Neighbourhood and community groups taking on local plastic problems — from waterway clean-ups to running refill and reuse initiatives.',
+  },
+] as const;
+
+/* ------------------------------------------------------------------ */
+/* Volunteering                                                        */
+/* ------------------------------------------------------------------ */
+
+export const VOLUNTEER_LOCAL = [
+  'Environmental campaigns',
+  'Clean-ups',
+  'Awareness',
+  'Education',
+  'Advocacy',
+  'Research',
+  'Communication',
+  'University, school and community activities',
+] as const;
+
+export const VOLUNTEER_INTERNATIONAL = [
+  'Clean-up campaigns',
+  'Community engagement',
+  'Environmental education',
+  'Impact Center activities',
+  'Sustainable tourism initiatives',
+  'Content creation',
+  'Research',
+  'Youth engagement',
+] as const;
+
+/* ------------------------------------------------------------------ */
+/* Sustainable travel                                                  */
+/* ------------------------------------------------------------------ */
+
+export const TRAVEL = [
+  {
+    title: 'Impact Center by ZeroPlastic, Sigiriya',
+    body: "Sri Lanka's first plastic-alternative and traveller experience center in Sigiriya, connecting sustainable travel with Sri Lankan culture, craftsmanship and practical alternatives to plastic.",
+    points: [
+      'Sustainable local craftsmanship',
+      'Plastic alternatives',
+      'Sri Lankan culture',
+      'Environmental responsibility',
+      'Community impact',
+    ],
+    cta: 'Explore the Impact Center',
+    href: EXTERNAL.impactCenter,
+    image: 'impact-center',
+    alt: 'The Impact Center by ZeroPlastic in Sigiriya at dusk, an open timber pavilion lit from within and surrounded by forest.',
+  },
+  {
+    title: 'Travel Without Plastic',
+    body: 'A personal commitment travellers can make to cut the plastic they use while travelling in Sri Lanka — from refusing single-use bottles to choosing businesses that have done the same.',
+    points: [],
+    cta: "Take the Traveller's Pledge",
+    href: EXTERNAL.travellerPledge,
+    image: 'traveller-craft',
+    alt: 'International visitors making coconut-shell craft at a workbench during an Impact Center session.',
+  },
+] as const;
+
+/* ------------------------------------------------------------------ */
+/* Wider ecosystem                                                     */
+/* ------------------------------------------------------------------ */
+
+export const ECOSYSTEM = [
+  {
+    title: 'Volunteers Academy',
+    tagline: 'Developing the people behind the movement.',
+    body: 'The youth-development and volunteer-development arm of the ZeroPlastic ecosystem, training the volunteers who lead campaigns and clubs.',
+    cta: 'Visit Volunteers Academy',
+    href: EXTERNAL.volunteersAcademy,
+  },
+  {
+    title: 'ZeroPlastic Commitment Standard',
+    tagline: 'A standard for organisations cutting plastic.',
+    body: 'A dedicated platform where organisations commit to reducing plastic and have that commitment recognised against a published standard.',
+    cta: 'Explore the ZeroPlastic Commitment Standard',
+    href: EXTERNAL.commitment,
+  },
+  {
+    title: 'Impact Center by ZeroPlastic',
+    tagline: 'Sigiriya.',
+    body: "Sri Lanka's first plastic-alternative and traveller experience center, where visitors meet the craftspeople and alternatives replacing plastic.",
+    cta: 'Explore the Impact Center',
+    href: EXTERNAL.impactCenter,
+  },
+  {
+    title: 'Travel Without Plastic',
+    tagline: "A traveller's pledge.",
+    body: 'A commitment for visitors to Sri Lanka to reduce the plastic they use while they travel.',
+    cta: "Take the Traveller's Pledge",
+    href: EXTERNAL.travellerPledge,
+  },
+] as const;
+
+/** Responsive widths generated for the non-hero section photographs. */
+export const SECTION_IMAGE_WIDTHS = [480, 800, 1200] as const;
