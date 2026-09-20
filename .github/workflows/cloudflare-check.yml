@@ -1,0 +1,128 @@
+# TEMPORARY — Cloudflare credential verification.
+#
+# READ-ONLY BY DESIGN. This workflow only reads from the Cloudflare API:
+# it verifies the API token authenticates and lists existing Pages projects.
+#
+# It does NOT deploy, create a Pages project, touch DNS, touch custom domains,
+# touch DreamHost, or touch WordPress. It also makes no commits and needs no
+# repository contents, so it does not check the code out.
+#
+# Delete this file once the Cloudflare Pages project is connected.
+
+name: Cloudflare access check
+
+on:
+  workflow_dispatch:
+
+# No write access of any kind.
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-check
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify Cloudflare access (read-only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      # Keep Wrangler non-interactive and quiet.
+      CI: "true"
+      WRANGLER_SEND_METRICS: "false"
+
+    steps:
+      # GitHub redacts secrets automatically, but CLOUDFLARE_ACCOUNT_ID is a
+      # repository *variable*, not a secret, so register it for masking too.
+      # Everything after this — including Wrangler's own output — has the
+      # account ID replaced with *** in the logs.
+      - name: Mask account ID in all subsequent log output
+        run: |
+          if [ -n "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "::add-mask::${CLOUDFLARE_ACCOUNT_ID}"
+          fi
+
+      - name: Confirm credentials are present
+        run: |
+          missing=0
+
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
+            echo "::error::secrets.CLOUDFLARE_API_TOKEN is not set or is empty."
+            missing=1
+          else
+            echo "CLOUDFLARE_API_TOKEN : present (value never printed)"
+          fi
+
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "::error::vars.CLOUDFLARE_ACCOUNT_ID is not set or is empty."
+            missing=1
+          else
+            # Only the last 4 characters, purely to confirm the right account.
+            echo "CLOUDFLARE_ACCOUNT_ID: present (ends ...${CLOUDFLARE_ACCOUNT_ID: -4})"
+          fi
+
+          exit "${missing}"
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Installed globally on the throwaway runner, so nothing in the
+      # application's package.json or package-lock.json changes.
+      - name: Install Wrangler
+        run: |
+          npm install -g wrangler@latest
+          echo "Wrangler version: $(wrangler --version)"
+
+      - name: Verify authentication
+        run: |
+          set +e
+          output="$(wrangler whoami 2>&1)"
+          status=$?
+          set -e
+
+          echo "${output}"
+
+          if [ "${status}" -ne 0 ]; then
+            echo "::error::Cloudflare authentication failed. Check that CLOUDFLARE_API_TOKEN is valid and not expired."
+            exit "${status}"
+          fi
+
+          echo "Authentication succeeded."
+
+      - name: List existing Cloudflare Pages projects
+        id: list
+        run: |
+          set +e
+          output="$(wrangler pages project list 2>&1)"
+          status=$?
+          set -e
+
+          echo "${output}"
+
+          if [ "${status}" -ne 0 ]; then
+            echo "::error::Could not list Pages projects. The API token likely lacks the 'Cloudflare Pages' permission for this account."
+            exit "${status}"
+          fi
+
+          echo "Pages project listing succeeded."
+
+      - name: Write summary
+        if: always()
+        run: |
+          {
+            echo "### Cloudflare access check"
+            echo ""
+            if [ "${{ job.status }}" = "success" ]; then
+              echo "Result: **passed** — the token authenticates and can read Pages projects."
+            else
+              echo "Result: **failed** — see the step logs above."
+            fi
+            echo ""
+            echo "This workflow is read-only. No Cloudflare resource was created, changed or deleted."
+          } >> "${GITHUB_STEP_SUMMARY}"
