@@ -1,0 +1,12 @@
+# Cloudflare Pages redirect rules.
+#
+# Astro's `redirects` config emits meta-refresh HTML pages, which browsers
+# follow but search engines treat as soft redirects that pass link equity
+# poorly. These rules give the same routes a real HTTP 301 on Cloudflare Pages.
+#
+# The Astro-generated pages remain as a fallback for any other host.
+
+/about-5     /about/   301
+/about-5/    /about/   301
+/projects    /blog/    301
+/projects/   /blog/    301
