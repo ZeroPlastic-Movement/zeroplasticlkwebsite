@@ -122,13 +122,19 @@ and builds, so there are never two systems publishing the site.
 
 | Variable | Value |
 |---|---|
-| `SITE_URL` | The deployment's own URL. Leave **unset** to have the build use Cloudflare's own `CF_PAGES_URL`; set it explicitly to `https://www.zeroplastic.lk` at go-live. |
+| `SITE_URL` | **Always set this explicitly.** `https://zeroplasticlk.pages.dev` for staging; `https://www.zeroplastic.lk` at go-live. |
 | `BASE_PATH` | `/` |
 
 `SITE_URL` controls canonical URLs, the sitemap, RSS links and social card URLs.
 Resolution order is `SITE_URL` → `CF_PAGES_URL` (injected by Cloudflare) → the
-production domain. That means a pages.dev deployment is self-consistent without
-anyone hardcoding the generated hostname.
+production domain.
+
+Do not rely on the `CF_PAGES_URL` fallback. Cloudflare sets it to the
+*deployment-specific* hostname (`https://<hash>.zeroplasticlk.pages.dev`), not
+the stable project alias, so leaving `SITE_URL` unset makes every canonical and
+every sitemap entry point at a URL that changes on each deploy. This was
+observed on the first two staging deployments and fixed by setting `SITE_URL`
+explicitly in the Cloudflare project.
 
 ### Staging is not indexable
 
