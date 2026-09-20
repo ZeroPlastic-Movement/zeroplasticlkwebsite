@@ -1,44 +1,110 @@
 ---
 import PostCard from '../components/PostCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { GOALS, MISSION, PROBLEM_FACTS, SITE, STATS } from '../consts';
+import {
+  ALERT_URL,
+  HERO,
+  MISSION,
+  PILLARS,
+  POSITIONING,
+  PROBLEM_FACTS,
+  SITE,
+  STATS,
+} from '../consts';
 import { organizationSchema, websiteSchema } from '../lib/schema';
 import { getRecentPosts } from '../lib/wp';
 
-const posts = await getRecentPosts(6);
+const posts = await getRecentPosts(3);
+
+const srcset = (ext: string) =>
+  HERO.widths.map((w) => `${HERO.base}-${w}.${ext} ${w}w`).join(', ');
+
+// The three figures that carry the most weight in the hero strip.
+const heroStats = STATS.slice(0, 3);
 ---
 
 <BaseLayout
   title="ZeroPlastic Movement | Ending plastic pollution in Sri Lanka"
   description={SITE.description}
-  image={posts[0]?.image?.src}
+  image="/images/og-home.jpg"
   schema={[organizationSchema(), websiteSchema()]}
 >
   <section class="hero">
-    <div class="container">
-      <p class="eyebrow">Sri Lanka · Since 2020</p>
-      <!-- The single, descriptive H1 the live WordPress homepage is missing. -->
-      <h1>We say no to plastic.</h1>
-      <p class="lede hero__lede">{MISSION}</p>
-      <p class="hero__actions">
-        <a class="button" href="/volunteers/">Become a volunteer</a>
-        <a class="button button--ghost" href="/problem-statement/">Why it matters</a>
-      </p>
+    <picture class="hero__media">
+      <source type="image/avif" srcset={srcset('avif')} sizes="100vw" />
+      <source type="image/webp" srcset={srcset('webp')} sizes="100vw" />
+      <img
+        src={`${HERO.base}-1280.jpg`}
+        width={HERO.width}
+        height={HERO.height}
+        alt={HERO.alt}
+        loading="eager"
+        decoding="sync"
+        fetchpriority="high"
+      />
+    </picture>
+
+    <div class="container hero__inner">
+      <p class="hero__eyebrow">ZeroPlastic Movement · Sri Lanka</p>
+      <h1 class="hero__title">{POSITIONING}</h1>
+      <p class="hero__lede">{MISSION}</p>
+
+      <div class="hero__actions">
+        <a class="button button--lg" href="/volunteers/">Become a volunteer</a>
+        <a class="button button--lg button--outline" href={ALERT_URL}>
+          Report plastic pollution
+        </a>
+      </div>
+
+      <dl class="hero__stats">
+        {
+          heroStats.map((stat) => (
+            <div>
+              <dt>{stat.value}</dt>
+              <dd>{stat.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
     </div>
   </section>
 
-  <section class="section section--alt">
+  <section class="section">
     <div class="container">
-      <h2>The movement in numbers</h2>
+      <p class="eyebrow">What we do</p>
+      <h2 class="section__title">Four ways we cut plastic at the source</h2>
       <p class="lede">
-        What a volunteer network of more than eleven thousand people has achieved so far.
+        Awareness alone does not change behaviour. We work across the whole chain — from
+        education to certification, removal and the alternatives that replace plastic for good.
       </p>
-      <div class="grid grid--stats" style="margin-top:2rem">
+
+      <ol class="pillars">
+        {
+          PILLARS.map((pillar, index) => (
+            <li class="pillar">
+              <span class="pillar__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <p class="pillar__stage">{pillar.stage}</p>
+              <h3>{pillar.title}</h3>
+              <p class="pillar__body">{pillar.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <p class="eyebrow eyebrow--light">Our impact</p>
+      <h2 class="section__title section__title--light">What 11,000 volunteers have changed</h2>
+
+      <div class="impact">
         {
           STATS.map((stat) => (
-            <div class="stat">
-              <span class="stat__value">{stat.value}</span>
-              <span class="stat__label">{stat.label}</span>
+            <div class="impact__item">
+              <p class="impact__value">{stat.value}</p>
+              <p class="impact__label">{stat.label}</p>
+              <p class="impact__detail">{stat.detail}</p>
             </div>
           ))
         }
@@ -47,92 +113,306 @@ const posts = await getRecentPosts(6);
   </section>
 
   <section class="section">
-    <div class="container">
-      <h2>Three goals drive everything we do</h2>
-      <div class="grid grid--3" style="margin-top:2rem">
+    <div class="container problem">
+      <div>
+        <p class="eyebrow">The problem</p>
+        <h2 class="section__title">Sri Lanka is among the world's largest plastic polluters</h2>
+        <p class="lede">
+          An island of 65,610 km² produces 1.59 million tonnes of plastic waste a year, and much
+          of it reaches the ocean. The cost lands on the coastal communities and fisheries that
+          depend on it.
+        </p>
+        <p>
+          <a class="button button--ghost" href="/problem-statement/">Read the problem statement</a>
+        </p>
+      </div>
+
+      <ul class="facts">
         {
-          GOALS.map((goal, index) => (
-            <div class="goal">
-              <span class="goal__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-              <h3>{goal.title}</h3>
-              <p>{goal.body}</p>
-            </div>
+          PROBLEM_FACTS.map((fact) => (
+            <li>
+              <span class="facts__value">{fact.value}</span>
+              <span class="facts__unit">{fact.unit}</span>
+              <span class="facts__label">{fact.label}</span>
+            </li>
           ))
         }
-      </div>
+      </ul>
     </div>
   </section>
 
   <section class="section section--alt">
-    <div class="container">
-      <h2>Sri Lanka has a plastic problem</h2>
-      <div class="grid grid--3" style="margin-top:2rem">
-        {
-          PROBLEM_FACTS.map((fact) => (
-            <div class="stat">
-              <span class="stat__value">{fact.value}</span>
-              <span class="stat__label">
-                <strong>{fact.unit}</strong> — {fact.label}
-              </span>
-            </div>
-          ))
-        }
-      </div>
-      <p style="margin-top:2rem">
-        <a class="button button--ghost" href="/problem-statement/">Read the problem statement</a>
-      </p>
-    </div>
-  </section>
-
-  <section class="section">
     <div class="container">
       <div class="section__head">
         <div>
-          <h2>Latest projects</h2>
-          <p class="lede">Clean-ups, workshops and campaigns run by our volunteer clubs.</p>
+          <p class="eyebrow">Latest projects</p>
+          <h2 class="section__title">What our clubs did this month</h2>
         </div>
         <a class="button button--ghost" href="/blog/">All projects</a>
       </div>
 
-      <div class="grid grid--3" style="margin-top:2rem">
-        {posts.map((post, index) => <PostCard post={post} eager={index < 3} />)}
+      <div class="grid grid--3" style="margin-top:2.25rem">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cta-pair">
+      <div class="cta cta--primary">
+        <h2>Give your time</h2>
+        <p>
+          Join more than 11,000 volunteers running clean-ups, workshops and campaigns across the
+          island — on the ground or remotely.
+        </p>
+        <a class="button" href="/volunteers/">Become a volunteer</a>
+      </div>
+
+      <div class="cta cta--alert">
+        <h2>Seen plastic pollution?</h2>
+        <p>
+          Submit a violation and we notify the relevant authorities, so environmental action
+          happens faster.
+        </p>
+        <a class="button button--outline-dark" href={ALERT_URL}>Report an issue</a>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
+  /* ---------------------------------------------------------------- */
+  /* hero                                                              */
+  /* ---------------------------------------------------------------- */
+
   .hero {
-    padding-block: clamp(3rem, 8vw, 6rem);
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    min-height: min(82vh, 720px);
+    padding-block: clamp(3rem, 10vw, 5.5rem);
+    background: var(--ink-900);
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 58% 60%;
+  }
+
+  /* Scrim: dark at the left where the text sits, clearing to the right so the
+     volunteers stay visible. */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     background:
-      radial-gradient(60rem 30rem at 15% -10%, var(--green-50), transparent 60%),
-      var(--surface);
+      linear-gradient(105deg, rgb(10 22 12 / 88%) 0%, rgb(10 22 12 / 72%) 38%, rgb(10 22 12 / 24%) 72%, rgb(10 22 12 / 38%) 100%),
+      linear-gradient(to top, rgb(10 22 12 / 65%) 0%, transparent 45%);
   }
+
+  /* On narrow screens the angled gradient no longer covers the text column,
+     so switch to a stronger vertical scrim. */
+  @media (max-width: 56rem) {
+    .hero::after {
+      background:
+        linear-gradient(to bottom, rgb(10 22 12 / 82%) 0%, rgb(10 22 12 / 68%) 45%, rgb(10 22 12 / 78%) 100%);
+    }
+  }
+
+  .hero__inner {
+    position: relative;
+    max-width: 64rem;
+  }
+
+  .hero__eyebrow {
+    color: var(--green-400);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+  }
+
+  .hero__title {
+    color: #fff;
+    font-size: clamp(2.1rem, 1.1rem + 3.8vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    max-width: 18ch;
+    margin: 0 0 1.1rem;
+  }
+
   .hero__lede {
-    font-size: 1.22rem;
-    margin-bottom: 1.8rem;
+    color: rgb(255 255 255 / 84%);
+    font-size: clamp(1rem, 0.94rem + 0.4vw, 1.2rem);
+    max-width: 52ch;
+    margin: 0 0 2rem;
   }
+
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.85rem;
+    margin-bottom: 2.75rem;
+  }
+
+  .hero__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 5vw, 3.5rem);
+    margin: 0;
+    padding-top: 1.75rem;
+    border-top: 1px solid rgb(255 255 255 / 22%);
+  }
+  .hero__stats div {
+    min-width: 7rem;
+  }
+  .hero__stats dt {
+    font-size: clamp(1.35rem, 1rem + 1.4vw, 2rem);
+    font-weight: 750;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .hero__stats dd {
+    margin: 0.2rem 0 0;
+    font-size: 0.82rem;
+    color: rgb(255 255 255 / 70%);
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* sections                                                          */
+  /* ---------------------------------------------------------------- */
+
+  .section__title {
+    max-width: 22ch;
+    margin-bottom: 0.7rem;
+  }
+
+  .pillars {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .pillar {
+    background: var(--surface);
+    padding: 1.75rem 1.5rem;
+  }
+  .pillar__index {
+    font-size: 0.72rem;
+    font-weight: 750;
+    color: var(--green-500);
+    letter-spacing: 0.12em;
+  }
+  .pillar__stage {
+    margin: 0.7rem 0 0.15rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-300);
+    font-weight: 700;
+  }
+  .pillar h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  .pillar__body {
+    color: var(--ink-500);
+    font-size: 0.92rem;
     margin: 0;
   }
 
-  .goal__number {
-    display: block;
-    font-size: 0.85rem;
+  .section--dark {
+    background: var(--ink-900);
+  }
+  .eyebrow--light {
+    color: var(--green-400);
+  }
+  .section__title--light {
+    color: #fff;
+  }
+
+  .impact {
+    display: grid;
+    gap: 2rem 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    margin-top: 2.5rem;
+  }
+  .impact__value {
+    font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem);
     font-weight: 750;
-    color: var(--green-500);
-    letter-spacing: 0.1em;
-    margin-bottom: 0.4rem;
+    color: var(--green-400);
+    letter-spacing: -0.025em;
+    line-height: 1;
+    margin: 0 0 0.45rem;
   }
-  .goal h3 {
-    margin-bottom: 0.4rem;
+  .impact__label {
+    color: #fff;
+    font-weight: 650;
+    margin: 0 0 0.3rem;
   }
-  .goal p {
-    color: var(--ink-500);
+  .impact__detail {
+    color: rgb(255 255 255 / 62%);
+    font-size: 0.88rem;
     margin: 0;
+  }
+
+  .problem {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    align-items: start;
+  }
+  .facts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .facts li {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--green-500);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+  }
+  .facts__value {
+    display: block;
+    font-size: 1.45rem;
+    font-weight: 750;
+    color: var(--ink-900);
+    letter-spacing: -0.02em;
+  }
+  .facts__unit {
+    display: inline-block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--green-600);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+  .facts__label {
+    display: block;
+    color: var(--ink-500);
+    font-size: 0.9rem;
   }
 
   .section__head {
@@ -142,7 +422,34 @@ const posts = await getRecentPosts(6);
     gap: 1rem;
     flex-wrap: wrap;
   }
-  .section__head h2 {
-    margin-bottom: 0.25rem;
+
+  /* ---------------------------------------------------------------- */
+  /* closing calls to action                                           */
+  /* ---------------------------------------------------------------- */
+
+  .cta-pair {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  }
+  .cta {
+    border-radius: var(--radius);
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    border: 1px solid var(--border);
+  }
+  .cta h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .cta p {
+    color: var(--ink-500);
+    max-width: 42ch;
+  }
+  .cta--primary {
+    background: var(--green-50);
+    border-color: #d8e8bf;
+  }
+  .cta--alert {
+    background: var(--surface-alt);
   }
 </style>

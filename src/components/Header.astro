@@ -2,10 +2,11 @@
 /**
  * Site header.
  *
- * Pure CSS disclosure for the mobile menu — no JavaScript is shipped for
- * navigation, which is a large part of why this site loads as fast as it does.
+ * Uses the official ZeroPlastic Movement wordmark from the WordPress media
+ * library, unaltered. The mobile menu is a pure-CSS disclosure, so the header
+ * still ships no JavaScript.
  */
-import { NAV, SITE } from '../consts';
+import { ALERT_URL, NAV, SITE } from '../consts';
 
 const path = Astro.url.pathname;
 const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
@@ -13,13 +14,15 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="brand" href="/">
-      <span class="brand__mark" aria-hidden="true"></span>
-      <span class="brand__text">
-        <strong>ZeroPlastic</strong>
-        <span>Movement</span>
-      </span>
-      <span class="visually-hidden">{SITE.name} — home</span>
+    <a class="brand" href="/" aria-label={`${SITE.name} — home`}>
+      <img
+        src="/images/zeroplastic-logo.png"
+        width="300"
+        height="130"
+        alt={SITE.name}
+        decoding="sync"
+        fetchpriority="high"
+      />
     </a>
 
     <input type="checkbox" id="nav-toggle" class="nav-toggle" />
@@ -39,8 +42,9 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
             </li>
           ))
         }
-        <li class="nav__cta">
-          <a class="button" href="/volunteers/">Volunteer</a>
+        <li class="nav__actions">
+          <a class="link-report" href={ALERT_URL}>Report pollution</a>
+          <a class="button button--sm" href="/volunteers/">Volunteer</a>
         </li>
       </ul>
     </nav>
@@ -49,58 +53,39 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
 
 <style>
   .site-header {
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 30;
+    background: rgb(255 255 255 / 88%);
+    backdrop-filter: saturate(160%) blur(12px);
+    border-bottom: 1px solid var(--border);
   }
 
   .site-header__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    min-height: 4.25rem;
+    gap: 1.5rem;
+    min-height: 4.5rem;
     flex-wrap: wrap;
   }
 
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    text-decoration: none;
-    color: var(--ink-900);
-  }
-  .brand__mark {
-    width: 1.6rem;
-    height: 1.6rem;
-    border-radius: 50%;
-    background: var(--green-500);
-    box-shadow: inset 0 0 0 4px #fff, 0 0 0 1px var(--green-600);
     flex: none;
   }
-  .brand__text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.05;
-  }
-  .brand__text strong {
-    font-size: 1.05rem;
-    letter-spacing: -0.02em;
-  }
-  .brand__text span {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--ink-500);
+  /* The asset is 300x130; rendering at 132px keeps it crisp on retina. */
+  .brand img {
+    width: 132px;
+    height: auto;
   }
 
   .nav ul {
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 1.4rem;
+    gap: 1.6rem;
     margin: 0;
     padding: 0;
   }
@@ -108,18 +93,36 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
     text-decoration: none;
     color: var(--ink-700);
     font-weight: 550;
-    font-size: 0.95rem;
+    font-size: 0.94rem;
+    letter-spacing: -0.005em;
   }
-  .nav a:hover,
-  .nav a[aria-current='page'] {
+  .nav a:hover {
     color: var(--green-600);
   }
   .nav a[aria-current='page'] {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
+    color: var(--ink-900);
+    font-weight: 650;
   }
-  .nav__cta a {
-    color: #10240f;
+
+  .nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding-left: 0.6rem;
+    border-left: 1px solid var(--border);
+  }
+  .link-report {
+    white-space: nowrap;
+  }
+  .link-report::before {
+    content: '';
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #d9484b;
+    margin-right: 0.45rem;
+    vertical-align: 0.05em;
   }
 
   .nav-toggle,
@@ -127,13 +130,13 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
     display: none;
   }
 
-  @media (max-width: 52rem) {
+  @media (max-width: 56rem) {
     .nav-toggle__label {
       display: block;
       cursor: pointer;
       padding: 0.6rem;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
     }
     .nav-toggle__label span[aria-hidden] {
       display: block;
@@ -145,7 +148,7 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
     .nav {
       display: none;
       width: 100%;
-      padding-bottom: 1rem;
+      padding-bottom: 1.1rem;
     }
     .nav-toggle:checked ~ .nav {
       display: block;
@@ -153,7 +156,16 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
     .nav ul {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.9rem;
+      gap: 1rem;
+    }
+    .nav__actions {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      width: 100%;
     }
   }
 </style>

@@ -52,15 +52,27 @@ export const NAV = [
   { label: 'Contact', href: '/contact/' },
 ] as const;
 
-/** Headline impact figures, as published on the About page. */
+/**
+ * Headline impact figures, as published in the "What We Do" section of the
+ * WordPress homepage. These supersede the older About-page numbers.
+ */
 export const STATS = [
-  { value: '11,000+', label: 'Volunteers in the network' },
-  { value: '100,000+', label: 'People reached through education' },
-  { value: '1,000+', label: 'Clean-up events held' },
-  { value: '250+', label: 'Metric tons of plastic removed' },
-  { value: '120+', label: 'Plastic-alternative industries supported' },
-  { value: '350+', label: 'Alternative products on the marketplace' },
+  { value: '11,000', label: 'Change makers', detail: 'Activists engaged under ZeroPlastic clubs across the region.' },
+  { value: '2 million', label: 'People educated', detail: 'Taught the 6Rs through ZeroPlastic club activities.' },
+  { value: '100,000', label: 'Volunteers mobilised', detail: 'Joined environmental education and clean-up drives.' },
+  { value: '1,000+', label: 'Clean-ups executed', detail: 'Organised and delivered across the country.' },
+  { value: '250 MT', label: 'Plastic cleared', detail: 'Removed from waterways, coastlines and public spaces.' },
+  { value: 'No. 1', label: 'Volunteer hours in Sri Lanka', detail: 'Highest recorded for 2023, recognised by UN Volunteers.' },
 ] as const;
+
+/**
+ * The movement's own positioning line, taken from the WordPress homepage.
+ * Used as the hero headline.
+ */
+export const POSITIONING = 'Zero plastic in nature. Zero microplastics in humans.';
+
+/** Public plastic-pollution reporting tool run by the movement. */
+export const ALERT_URL = 'https://alert.zeroplastic.lk/';
 
 export const MISSION =
   "Zero Plastic's mission is to create a behavioural change among Sri Lankan citizens to reduce plastic waste while building a demand for plastic substitutes produced by local entrepreneurs.";
@@ -77,6 +89,32 @@ export const GOALS = [
   {
     title: 'Empower the entrepreneur network',
     body: 'Expand and support the local producers who make plastic substitutes, building real demand for what they create.',
+  },
+] as const;
+
+/**
+ * The four-pillar framework the movement publishes under "What We Do".
+ */
+export const PILLARS = [
+  {
+    stage: 'Prevention',
+    title: 'Awareness & education',
+    body: 'Raising awareness and educating communities to refuse and reduce plastic use, to cut pollution and promote sustainable practices.',
+  },
+  {
+    stage: 'Assessment',
+    title: 'ZeroPlastic Certification',
+    body: 'Certification in partnership with Control Union, recognising businesses committed to reducing plastic pollution.',
+  },
+  {
+    stage: 'Removal',
+    title: 'Environmental protection',
+    body: 'Community-driven clean-ups and plastic traps that capture waste in waterways before it reaches the ocean.',
+  },
+  {
+    stage: 'Reduction',
+    title: 'Empowering alternatives',
+    body: 'Backing the industries and innovations producing sustainable alternatives to plastic.',
   },
 ] as const;
 
@@ -115,6 +153,19 @@ export const VOLUNTEER_OPTIONS = [
     body: 'Contribute from anywhere by designing flyers, creating content, managing social media campaigns, planning projects or writing press releases.',
   },
 ] as const;
+
+/**
+ * Homepage hero photograph: ZeroPlastic volunteers clearing waste from the
+ * rocks at Mount Lavinia beach, from the movement's own media library. Cropped
+ * above the burned-in caption bar; otherwise unaltered.
+ */
+export const HERO = {
+  base: '/images/hero-cleanup',
+  widths: [640, 960, 1280, 1600],
+  alt: 'ZeroPlastic volunteers collecting plastic waste into bags among the rocks at Mount Lavinia beach, Sri Lanka.',
+  width: 2000,
+  height: 1236,
+} as const;
 
 /** Posts shown per page on the blog index. */
 export const POSTS_PER_PAGE = 12;

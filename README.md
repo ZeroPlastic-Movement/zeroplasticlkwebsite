@@ -158,8 +158,13 @@ Cloudflare and call it from WordPress on publish. That is not configured yet.
 
 ### How images are handled
 
-**No images are stored in this repository.** The only binary asset committed is
-`public/favicon.svg`; the tracked tree is about 330 KB in total.
+Two kinds of image are committed to `public/images/`: the **official ZeroPlastic
+wordmark** (`zeroplastic-logo.png`, 5.5 KB, taken unaltered from the WordPress
+media library) and the **homepage hero photograph**, pre-encoded to AVIF and
+WebP at 640/960/1280/1600 with a single JPEG fallback. Regenerate them with
+`scripts/build-images.mjs`.
+
+Everything else — every post image — stays remote.
 
 Featured images are referenced by absolute URL at build time, pointing at
 **`https://i0.wp.com/...`** — the Jetpack Photon CDN, which the WordPress install

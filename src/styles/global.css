@@ -197,6 +197,40 @@ main {
   color: var(--ink-900);
 }
 
+/* Sizes */
+.button--sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.88rem;
+}
+.button--lg {
+  padding: 0.85rem 1.7rem;
+  font-size: 1.02rem;
+}
+
+/* Outlined, for use on top of the hero photograph. */
+.button--outline {
+  background: rgb(255 255 255 / 10%);
+  border-color: rgb(255 255 255 / 55%);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+.button--outline:hover {
+  background: rgb(255 255 255 / 92%);
+  border-color: transparent;
+  color: var(--ink-900);
+}
+
+/* Outlined, for use on light backgrounds. */
+.button--outline-dark {
+  background: transparent;
+  border-color: var(--ink-900);
+  color: var(--ink-900);
+}
+.button--outline-dark:hover {
+  background: var(--ink-900);
+  color: #fff;
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
