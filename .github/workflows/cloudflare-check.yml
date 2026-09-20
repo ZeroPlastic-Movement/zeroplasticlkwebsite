@@ -112,6 +112,17 @@ jobs:
 
           echo "Pages project listing succeeded."
 
+      - name: List recent deployments (read-only)
+        run: |
+          set +e
+          output="$(npx wrangler pages deployment list --project-name=zeroplasticlk 2>&1)"
+          status=$?
+          set -e
+          echo "${output}"
+          if [ "${status}" -ne 0 ]; then
+            echo "::warning::Could not list deployments; the token may lack Pages read for deployments."
+          fi
+
       - name: Write summary
         if: always()
         run: |
