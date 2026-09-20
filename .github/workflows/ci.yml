@@ -1,0 +1,52 @@
+# Validation only.
+#
+# Deployment is handled by Cloudflare Pages via its Git integration, which builds
+# directly from this repository. This workflow deliberately does NOT deploy, so
+# there is only ever one system publishing the site.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Type-check and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Build
+        env:
+          # Mirrors the Cloudflare Pages configuration. Overridden there per
+          # environment; this value only affects the CI build's absolute URLs.
+          SITE_URL: https://www.zeroplastic.lk
+          BASE_PATH: /
+        run: npm run build
+
+      - name: Summarise output
+        run: |
+          echo "Pages generated: $(find dist -name '*.html' | wc -l)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Output size: $(du -sh dist | cut -f1)" >> "$GITHUB_STEP_SUMMARY"

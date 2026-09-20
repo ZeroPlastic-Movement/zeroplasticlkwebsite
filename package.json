@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "Fast, SEO-optimised static front end for zeroplastic.lk, built from the existing WordPress content via the REST API.",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -15,5 +18,9 @@
     "@astrojs/sitemap": "^3.6.0",
     "astro": "^7.3.3",
     "sharp": "^0.34.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
   }
 }

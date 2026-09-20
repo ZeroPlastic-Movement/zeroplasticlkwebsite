@@ -2,12 +2,18 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Both are overridable so the same build can target the production domain or a
-// GitHub Pages project subpath without code changes.
-//   SITE_URL=https://www.zeroplastic.lk  BASE_PATH=/
-//   SITE_URL=https://<org>.github.io     BASE_PATH=/zeroplasticlkwebsite
-const SITE_URL = process.env.SITE_URL ?? 'https://www.zeroplastic.lk';
-const BASE_PATH = process.env.BASE_PATH ?? '/';
+/**
+ * Absolute URLs (canonicals, sitemap, RSS, social cards) need to know where the
+ * site is being served from. Resolution order:
+ *
+ *   1. SITE_URL          — set this explicitly in Cloudflare Pages / CI.
+ *   2. CF_PAGES_URL      — injected automatically by Cloudflare Pages, so a
+ *                          pages.dev deployment is correct without anyone
+ *                          hardcoding the generated hostname.
+ *   3. the production domain, as a last resort for local builds.
+ */
+const SITE_URL = process.env.SITE_URL || process.env.CF_PAGES_URL || 'https://www.zeroplastic.lk';
+const BASE_PATH = process.env.BASE_PATH || '/';
 
 export default defineConfig({
   site: SITE_URL,
@@ -28,7 +34,11 @@ export default defineConfig({
   image: {
     // Featured images still live on the WordPress install; allow Astro to
     // reference them and let WordPress serve its pre-generated size variants.
-    remotePatterns: [{ protocol: 'https', hostname: 'www.zeroplastic.lk' }],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'www.zeroplastic.lk' },
+      // Jetpack Photon CDN, where WordPress actually serves uploads from.
+      { protocol: 'https', hostname: 'i0.wp.com' },
+    ],
   },
   compressHTML: true,
 

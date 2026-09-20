@@ -16,6 +16,12 @@ export const SITE = {
   lang: 'en',
   /** WordPress install that still acts as the CMS. */
   wpBase: 'https://www.zeroplastic.lk',
+  /**
+   * Media host. The WordPress install has Jetpack Site Accelerator enabled, so
+   * uploads are rewritten to the Photon CDN — that, not wpBase, is where the
+   * browser actually fetches images from.
+   */
+  mediaHost: 'https://i0.wp.com',
 } as const;
 
 export const CONTACT = {

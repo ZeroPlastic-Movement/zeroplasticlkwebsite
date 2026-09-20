@@ -23,6 +23,7 @@ export const getStaticPaths = (async () => {
     'volunteers',
     '404',
     'rss.xml',
+    'robots.txt',
   ]);
 
   const posts = (await getAllPosts()).filter((post) => !RESERVED.has(post.slug));

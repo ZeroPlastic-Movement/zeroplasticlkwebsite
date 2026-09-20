@@ -102,25 +102,80 @@ new posts live immediately.
 
 ## Deployment
 
-The build is a folder of static files — host it anywhere.
+Deployed by **Cloudflare Pages** using its Git integration, which builds directly
+from this repository on every push to `main`.
 
-The included workflow (`.github/workflows/deploy.yml`) publishes to GitHub Pages.
-Two environment variables control the output URLs:
+GitHub Actions does **not** deploy — `.github/workflows/ci.yml` only type-checks
+and builds, so there are never two systems publishing the site.
 
-```bash
-SITE_URL=https://www.zeroplastic.lk BASE_PATH=/ npm run build   # custom domain
-SITE_URL=https://<org>.github.io BASE_PATH=/zeroplasticlkwebsite npm run build
-```
+### Cloudflare Pages build settings
 
-To serve the real domain from this build, point `zeroplastic.lk` at the host and
-keep WordPress on a subdomain (for example `admin.zeroplastic.lk`) for the
-admin, forms and media library.
+| Setting | Value |
+|---|---|
+| Production branch | `main` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | `/` |
+| Node version | `22` (also pinned in `.nvmrc`) |
+
+### Environment variables
+
+| Variable | Value |
+|---|---|
+| `SITE_URL` | The deployment's own URL. Leave **unset** to have the build use Cloudflare's own `CF_PAGES_URL`; set it explicitly to `https://www.zeroplastic.lk` at go-live. |
+| `BASE_PATH` | `/` |
+
+`SITE_URL` controls canonical URLs, the sitemap, RSS links and social card URLs.
+Resolution order is `SITE_URL` → `CF_PAGES_URL` (injected by Cloudflare) → the
+production domain. That means a pages.dev deployment is self-consistent without
+anyone hardcoding the generated hostname.
+
+### Staging is not indexable
+
+`robots.txt` is generated at build time from the deployment host. Only
+`zeroplastic.lk` and `www.zeroplastic.lk` receive an indexable robots.txt; every
+other host — including any `*.pages.dev` URL — is served `Disallow: /`, so a
+staging deployment cannot compete with the live site in search results. This
+flips automatically once `SITE_URL` is set to the production domain.
+
+### Rebuilding when content changes
+
+Posts are fetched at build time, so a new WordPress post appears only after a
+rebuild. Once the Cloudflare project exists, create a **Deploy Hook** in
+Cloudflare and call it from WordPress on publish. That is not configured yet.
 
 ## Notes
 
 - **No web fonts.** The site uses the system font stack, so there is nothing to
   download before text can paint.
 - **No JavaScript.** Not a single script is shipped, including the mobile menu.
-- **Images** are still served from the WordPress media library, using the size
-  variants WordPress already generates. Compressing that library to WebP is the
-  largest remaining win — see the audit.
+
+### How images are handled
+
+**No images are stored in this repository.** The only binary asset committed is
+`public/favicon.svg`; the tracked tree is about 330 KB in total.
+
+Featured images are referenced by absolute URL at build time, pointing at
+**`https://i0.wp.com/...`** — the Jetpack Photon CDN, which the WordPress install
+already rewrites its uploads to. Each `<img>` carries a `srcset` assembled from
+the size variants WordPress generates, plus explicit `width`/`height` and lazy
+loading below the fold.
+
+Two consequences worth knowing:
+
+1. Cloudflare Pages serves only HTML and CSS. Image bandwidth stays on Jetpack's
+   CDN, which is free and already in use.
+2. The rendered site depends on `i0.wp.com` (and behind it the WordPress media
+   library) remaining available. If WordPress is ever decommissioned, images must
+   be exported into the repository or another CDN first.
+
+Compressing the WordPress media library to WebP remains the single largest
+outstanding performance win — see
+[`PERFORMANCE-SEO-AUDIT.md`](./PERFORMANCE-SEO-AUDIT.md).
+
+### Build-time dependency on WordPress
+
+The build calls `https://www.zeroplastic.lk/wp-json/wp/v2` and will fail if that
+API is unreachable. Locally there is a fallback cache in `.cache/wp`, but that
+directory is gitignored and therefore absent on a fresh Cloudflare build — so a
+Cloudflare deploy requires the WordPress REST API to be up at build time.
