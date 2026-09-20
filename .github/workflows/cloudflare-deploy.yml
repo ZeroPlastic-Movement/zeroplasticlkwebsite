@@ -1,0 +1,191 @@
+# Manual staging deployment to Cloudflare Pages.
+#
+# SCOPE: this workflow only ever touches the Pages project named below and its
+# *.pages.dev hostname. It does NOT configure a custom domain, does NOT touch
+# DNS records, and does NOT touch zeroplastic.lk, www.zeroplastic.lk, DreamHost
+# or WordPress in any way.
+#
+# Deployment is intentionally manual (workflow_dispatch only) until the staging
+# site has been verified. There is deliberately no `on: push` trigger.
+
+name: Deploy to Cloudflare Pages (staging)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and deploy to pages.dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      PAGES_PROJECT: zeroplasticlk
+      PRODUCTION_BRANCH: main
+      # The build runs here in GitHub Actions, not inside Cloudflare Pages, so
+      # CF_PAGES_URL is not available. SITE_URL must therefore be set explicitly
+      # or absolute URLs would fall back to the production domain.
+      SITE_URL: https://zeroplasticlk.pages.dev
+      BASE_PATH: /
+      CI: "true"
+      WRANGLER_SEND_METRICS: "false"
+
+    steps:
+      # CLOUDFLARE_ACCOUNT_ID is a repository variable, not a secret, so GitHub
+      # does not redact it automatically. Register it before anything can echo it.
+      - name: Mask account ID in all subsequent log output
+        run: |
+          if [ -n "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "::add-mask::${CLOUDFLARE_ACCOUNT_ID}"
+          fi
+
+      - name: Confirm credentials are present
+        run: |
+          missing=0
+          [ -z "${CLOUDFLARE_API_TOKEN}" ] && { echo "::error::secrets.CLOUDFLARE_API_TOKEN is empty."; missing=1; }
+          [ -z "${CLOUDFLARE_ACCOUNT_ID}" ] && { echo "::error::vars.CLOUDFLARE_ACCOUNT_ID is empty."; missing=1; }
+          exit "${missing}"
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      # Guard rail: the staging site must not be indexable, and absolute URLs
+      # must point at pages.dev rather than the production domain. Fail before
+      # publishing rather than after.
+      - name: Verify build output is staging-safe
+        run: |
+          fail=0
+
+          if [ ! -f dist/robots.txt ]; then
+            echo "::error::dist/robots.txt is missing."
+            fail=1
+          elif ! grep -q '^Disallow: /$' dist/robots.txt; then
+            echo "::error::dist/robots.txt is not set to Disallow. Refusing to publish an indexable staging site."
+            cat dist/robots.txt
+            fail=1
+          else
+            echo "robots.txt: Disallow: / (staging, not indexable) OK"
+          fi
+
+          if grep -q 'rel="canonical" href="https://zeroplasticlk.pages.dev/"' dist/index.html; then
+            echo "canonical: points at pages.dev OK"
+          else
+            echo "::error::Homepage canonical does not point at the staging URL."
+            grep -o 'rel="canonical" href="[^"]*"' dist/index.html || true
+            fail=1
+          fi
+
+          if grep -rq 'www\.zeroplastic\.lk/sitemap' dist/robots.txt; then
+            echo "::error::robots.txt references the production sitemap."
+            fail=1
+          fi
+
+          echo "HTML pages built: $(find dist -name '*.html' | wc -l)"
+          exit "${fail}"
+
+      - name: Install Wrangler
+        run: |
+          npm install -g wrangler@latest
+          echo "Wrangler version: $(wrangler --version)"
+
+      # Idempotent: creates the Pages project only if it does not already exist.
+      # Creating a project provisions <project>.pages.dev only — no custom
+      # domain and no DNS record is created.
+      - name: Ensure Pages project exists
+        id: project
+        run: |
+          set +e
+          listing="$(npx wrangler pages project list 2>&1)"
+          status=$?
+          set -e
+          echo "${listing}"
+
+          if [ "${status}" -ne 0 ]; then
+            echo "::error::Could not list Pages projects. Check the token's Cloudflare Pages permission."
+            exit "${status}"
+          fi
+
+          if printf '%s' "${listing}" | grep -qE "(^|[^A-Za-z0-9_-])${PAGES_PROJECT}([^A-Za-z0-9_-]|$)"; then
+            echo "Project '${PAGES_PROJECT}' already exists — reusing it."
+            echo "created=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "Project '${PAGES_PROJECT}' not found — creating it."
+            npx wrangler pages project create "${PAGES_PROJECT}" \
+              --production-branch="${PRODUCTION_BRANCH}"
+            echo "created=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Deploy dist/ to Cloudflare Pages
+        id: deploy
+        run: |
+          set +e
+          output="$(npx wrangler pages deploy dist \
+            --project-name="${PAGES_PROJECT}" \
+            --branch="${PRODUCTION_BRANCH}" 2>&1)"
+          status=$?
+          set -e
+
+          echo "${output}"
+
+          if [ "${status}" -ne 0 ]; then
+            echo "::error::Cloudflare Pages deployment failed."
+            exit "${status}"
+          fi
+
+          # Deployment-specific URL looks like https://<id>.<project>.pages.dev
+          deployment_url="$(printf '%s' "${output}" \
+            | grep -oE 'https://[a-z0-9-]+\.'"${PAGES_PROJECT}"'\.pages\.dev' \
+            | head -1)"
+          deployment_id="$(printf '%s' "${deployment_url}" \
+            | sed -E 's#https://([a-z0-9-]+)\..*#\1#')"
+
+          {
+            echo "deployment_url=${deployment_url}"
+            echo "deployment_id=${deployment_id}"
+            echo "alias_url=https://${PAGES_PROJECT}.pages.dev"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Cloudflare Pages staging deployment"
+            echo ""
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| Project | \`${PAGES_PROJECT}\` |"
+            echo "| Project created this run | \`${{ steps.project.outputs.created }}\` |"
+            echo "| Production branch | \`${PRODUCTION_BRANCH}\` |"
+            echo "| Commit | \`${GITHUB_SHA}\` |"
+            echo "| Staging URL | ${{ steps.deploy.outputs.alias_url }} |"
+            echo "| Deployment URL | ${{ steps.deploy.outputs.deployment_url }} |"
+            echo "| Deployment ID | \`${{ steps.deploy.outputs.deployment_id }}\` |"
+            echo "| HTML pages | $(find dist -name '*.html' 2>/dev/null | wc -l) |"
+            echo "| Result | ${{ job.status }} |"
+            echo ""
+            echo "No custom domain, DNS record, DreamHost or WordPress setting was modified."
+          } >> "${GITHUB_STEP_SUMMARY}"
