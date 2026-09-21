@@ -221,3 +221,45 @@ Within step 4, rollback is a single DNS change: put the `www` A record back to
 `64.90.54.244` and wait out the 300 second TTL. Nothing in WordPress has changed
 at that point, so there is nothing else to undo. This is why `WP_HOME` and
 `WP_SITEURL` stay untouched.
+
+---
+
+## Blocker: the Pages API token cannot write project settings
+
+Setting `WORDPRESS_BASE_URL` and `WORDPRESS_MEDIA_URL` on the Pages project
+from CI is not currently possible. The stored `CLOUDFLARE_API_TOKEN` can read
+the project and list deployments, but a `PATCH` to the project returns:
+
+```
+HTTP 403
+[{"code":10000,"message":"Authentication error"}]
+```
+
+This is the same permission gap that made the old Wrangler deploy workflow
+fail, and it is a property of the token, not of the request: the read-only
+steps in the same workflow succeed against the same project.
+
+The dry run confirmed exactly what the change would be, so the merge itself is
+not in doubt:
+
+| Variable | Before | After |
+| --- | --- | --- |
+| `BASE_PATH` | `/` | `/` |
+| `NODE_VERSION` | `22` | `22` |
+| `SITE_URL` | `https://zeroplasticlk.pages.dev` | unchanged |
+| `WORDPRESS_BASE_URL` | not set | `https://cms.zeroplastic.lk` |
+| `WORDPRESS_MEDIA_URL` | not set | `https://cms.zeroplastic.lk` |
+
+There are no encrypted variables on the project, so nothing would be lost.
+
+Either remedy unblocks it:
+
+1. **Set the two variables in the Cloudflare dashboard**, under the
+   `zeroplasticlk` project, Settings, Environment variables, Production. Leave
+   `SITE_URL` alone. Then redeploy.
+2. **Grant the API token `Cloudflare Pages: Edit`** on this account, then
+   re-run the "Cloudflare set CMS origin" workflow with `set`. It reads,
+   merges, writes and then reads back to prove nothing else changed.
+
+Until one of those happens, deployed builds keep reading WordPress from
+`www.zeroplastic.lk`, which still works today and is the safe default.

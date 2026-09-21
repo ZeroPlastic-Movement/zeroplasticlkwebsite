@@ -134,11 +134,39 @@ const landingBad = LANDING.filter((_, n) => landing[n].status !== 200);
 check('All 8 landing pages reachable (following redirects)', landingBad.length === 0,
   landingBad.length ? landingBad.join(', ') : '8/8 serve 200');
 
-console.log('\n  Cloudflare .html canonicalisation:');
-for (const p of LANDING.filter((p) => p.endsWith('.html'))) {
+// Frozen legacy URLs. Cloudflare Pages would canonicalise .html away with a
+// 308; functions/[[path]].js intercepts these paths so they answer 200
+// themselves. /impact-center-premium.html is a live Google Ads Final URL, so
+// a redirect here is a defect, not a cosmetic difference.
+const LEGACY_HTML = [
+  '/impact-center-premium.html',
+  '/craft-experiences-sigiriya.html',
+  '/zeroplastic-movement-sri-lanka.html',
+  '/es/craft-experiences-sigiriya.html',
+  '/fr/craft-experiences-sigiriya.html',
+  '/zh-cn/craft-experiences-sigiriya.html',
+  '/sigiriya-craft-village/index.html',
+  '/sigiriya-sri-lanka/index.html',
+];
+
+const legacyBad = [];
+console.log('\n  Legacy .html routes (must be 200, no Location):');
+for (const p of LEGACY_HTML) {
   const raw = await head(p);
-  const note = raw.status === 200 ? 'served directly' : `${raw.status} -> ${raw.location ?? ''}`;
-  console.log(`    ${p.padEnd(42)} ${note}`);
+  const loc = raw.location;
+  const ok = raw.status === 200 && !loc;
+  if (!ok) legacyBad.push(`${p} -> ${raw.status}${loc ? ` ${loc}` : ''}`);
+  console.log(`    ${p.padEnd(42)} ${raw.status}${loc ? `  Location: ${loc}` : '  [no Location]'}`);
+}
+check('Legacy .html URLs answer 200 with no redirect', legacyBad.length === 0, legacyBad.join('; '));
+
+// Query strings must reach the page untouched, since the Ads Final URL
+// carries a UTM suffix and Google's click ID.
+{
+  const q = '/impact-center-premium.html?utm_source=google&utm_medium=cpc&gclid=TEST123';
+  const r = await head(q);
+  check('Query strings survive on the Ads landing page', r.status === 200 && !r.location,
+    `${r.status}${r.location ? ` -> ${r.location}` : ', no redirect'}`);
 }
 
 const ads = await head('/impact-center-premium.html', { redirect: 'follow' });
