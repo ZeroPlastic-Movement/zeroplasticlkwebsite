@@ -6,17 +6,26 @@
  * almost none of this.
  */
 
-import { CONTACT, SITE, SOCIAL } from '../consts';
+import { CONTACT, FOUNDED, SITE, SOCIAL } from '../consts';
+
+/**
+ * Structured data must describe the host it is served from, otherwise staging
+ * emits a canonical of zeroplasticlk.pages.dev alongside JSON-LD identifiers
+ * pointing at the production domain. Astro exposes the configured `site`, so
+ * schema URLs follow the build rather than being hardcoded.
+ */
+const BASE = (import.meta.env.SITE ?? SITE.url).replace(/\/$/, '');
 
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'NGO',
-    '@id': `${SITE.url}/#organization`,
+    '@id': `${BASE}/#organization`,
     name: SITE.name,
     alternateName: SITE.shortName,
-    url: SITE.url,
+    url: BASE,
     description: SITE.description,
+    foundingDate: String(FOUNDED),
     email: CONTACT.email,
     telephone: CONTACT.phone,
     areaServed: { '@type': 'Country', name: 'Sri Lanka' },
@@ -34,12 +43,12 @@ export function websiteSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    '@id': `${SITE.url}/#website`,
-    url: SITE.url,
+    '@id': `${BASE}/#website`,
+    url: BASE,
     name: SITE.name,
     description: SITE.description,
     inLanguage: SITE.lang,
-    publisher: { '@id': `${SITE.url}/#organization` },
+    publisher: { '@id': `${BASE}/#organization` },
   };
 }
 
@@ -58,10 +67,10 @@ export function articleSchema(post: {
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.modified,
-    mainEntityOfPage: `${SITE.url}/${post.slug}/`,
+    mainEntityOfPage: `${BASE}/${post.slug}/`,
     ...(post.image ? { image: [post.image.src] } : {}),
-    author: { '@id': `${SITE.url}/#organization` },
-    publisher: { '@id': `${SITE.url}/#organization` },
+    author: { '@id': `${BASE}/#organization` },
+    publisher: { '@id': `${BASE}/#organization` },
     inLanguage: SITE.lang,
   };
 }
@@ -74,7 +83,7 @@ export function breadcrumbSchema(trail: { name: string; url: string }[]) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: new URL(item.url, SITE.url).href,
+      item: new URL(item.url, BASE).href,
     })),
   };
 }

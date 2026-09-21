@@ -56,10 +56,10 @@ export const NAV = [
 /**
  * Headline impact figures.
  *
- * These supersede the figures currently published on the WordPress homepage
- * (11,000 change makers / 2 million educated / 100,000 mobilised). The
- * difference is intentional and was supplied directly; see README for the
- * outstanding reconciliation note.
+ * These are the canonical movement-wide figures for this website. The older
+ * numbers still published on the WordPress site are superseded. Historical
+ * figures inside individual blog posts are left alone, because they describe
+ * the situation at the time each post was written.
  */
 export const STATS = [
   { value: '12,000+', label: 'Change makers', detail: 'Activists engaged through ZeroPlastic clubs across Sri Lanka.' },
@@ -72,6 +72,9 @@ export const STATS = [
  * The movement's own positioning line, taken from the WordPress homepage.
  * Used as the hero headline.
  */
+/** Year the movement was formally established. */
+export const FOUNDED = 2021;
+
 export const POSITIONING = 'Zero Plastic in Nature, Zero Microplastics in Us';
 
 /**

@@ -1,13 +1,12 @@
 ---
 import Figure from '../components/Figure.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { CONTACT, EXTERNAL, SITE } from '../consts';
+import { CONTACT, EXTERNAL } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
-// Volunteer registration still runs on the existing WordPress form, so every
-// submission continues to arrive in one place.
-const REGISTRATION_URL = `${SITE.wpBase}/volunteers/`;
-const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
+// A dedicated volunteer registration page is being built. Until it exists,
+// enquiries route through /contact/ rather than back to the old WordPress
+// front end, so nothing here depends on a page that is being retired.
 
 const LOCAL = [
   { title: 'Clean-ups', body: 'Coastal, waterway and public-space clean-up campaigns.' },
@@ -100,9 +99,12 @@ const INTERNATIONAL = [
       </div>
 
       <p class="actions">
-        <a class="button" href={REGISTRATION_URL}>Register as a volunteer</a>
-        <a class="button button--ghost" href={APP_URL}>Download the volunteer app</a>
+        <a class="button" href="/contact/">Contact us to volunteer</a>
         <a class="button button--ghost" href="/clubs/">Start a club instead</a>
+      </p>
+      <p class="registration-note">
+        A dedicated volunteer registration page is opening soon. Until then, send us a message
+        and the team will get you connected to a club or campaign.
       </p>
     </div>
   </section>
@@ -216,6 +218,12 @@ const INTERNATIONAL = [
   .subhead--light {
     color: rgb(255 255 255 / 55%);
     margin-top: 0;
+  }
+  .registration-note {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--ink-500);
+    max-width: 58ch;
   }
   .tile--compact {
     padding: 1.15rem 1.25rem;
