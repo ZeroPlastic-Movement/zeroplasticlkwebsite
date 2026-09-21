@@ -1,0 +1,36 @@
+wp-config.php change for the WordPress URL split
+================================================
+
+Add these two lines to wp-config.php. Place them ABOVE the line that reads:
+
+    /* That's all, stop editing! Happy publishing. */
+
+Anything added below that line is not guaranteed to run before WordPress
+resolves its URLs.
+
+--- begin -------------------------------------------------------------------
+
+/* ZeroPlastic cutover: the public site is served by Cloudflare Pages,
+   WordPress runs on its own hostname. Paired with the MU-plugin
+   wp-content/mu-plugins/zeroplastic-rest-origin.php, which moves the REST
+   API onto WP_SITEURL. Remove both together to roll back. */
+define( 'WP_HOME',    'https://www.zeroplastic.lk' );
+define( 'WP_SITEURL', 'https://cms.zeroplastic.lk' );
+
+--- end ---------------------------------------------------------------------
+
+Notes
+
+* These constants override the database at runtime. The `home` and `siteurl`
+  rows in wp_options are NOT written to, and both currently hold
+  https://www.zeroplastic.lk. That is what makes rollback a text edit.
+
+* While the constants exist, Settings > General shows both URL fields greyed
+  out. That is expected, not a fault.
+
+* Changing WP_SITEURL changes COOKIEHASH, which is md5(siteurl). Cookie names
+  change, so every logged-in user is signed out once. This happens again on
+  rollback. Warn editors before the window.
+
+* Take a copy of wp-config.php before editing:
+      cp wp-config.php wp-config.php.bak-before-url-split
