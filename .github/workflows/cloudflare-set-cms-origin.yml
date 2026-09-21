@@ -1,0 +1,164 @@
+# Point the Cloudflare Pages build at the CMS origin.
+#
+# Sets WORDPRESS_BASE_URL and WORDPRESS_MEDIA_URL on the Pages project so the
+# deployed build reads WordPress from cms.zeroplastic.lk instead of
+# www.zeroplastic.lk. SITE_URL is deliberately NOT touched: staging stays on
+# the pages.dev host.
+#
+# Scope of what this can change: only the two variables named below, only on
+# the zeroplasticlk Pages project. It reads the current configuration first,
+# merges, then writes back, and refuses to run if the project holds encrypted
+# variables it cannot safely round-trip. It does not touch DNS, custom
+# domains, DreamHost, WordPress or Google Ads.
+#
+# Manual trigger only. Delete once the cutover is finished.
+
+name: Cloudflare set CMS origin
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "set" to apply, anything else performs a dry run'
+        required: true
+        default: 'dry-run'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-set-cms-origin
+  cancel-in-progress: false
+
+jobs:
+  configure:
+    name: Set WordPress origin variables
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      PROJECT: zeroplasticlk
+      WP_ORIGIN: https://cms.zeroplastic.lk
+      APPLY: ${{ github.event.inputs.confirm }}
+
+    steps:
+      - name: Mask account ID
+        run: |
+          if [ -n "${CF_ACCOUNT_ID}" ]; then echo "::add-mask::${CF_ACCOUNT_ID}"; fi
+
+      - name: Check credentials are present
+        run: |
+          missing=0
+          [ -n "${CF_API_TOKEN}" ]  || { echo "::error::CLOUDFLARE_API_TOKEN missing"; missing=1; }
+          [ -n "${CF_ACCOUNT_ID}" ] || { echo "::error::CLOUDFLARE_ACCOUNT_ID missing"; missing=1; }
+          exit "${missing}"
+
+      - name: Read current project configuration
+        run: |
+          set -euo pipefail
+          curl -sS -o project.json -w '%{http_code}\n' \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT}" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" > status.txt
+          echo "HTTP $(cat status.txt)"
+          if ! jq -e '.success == true' project.json >/dev/null; then
+            echo "::error::Could not read the Pages project."
+            jq -c '.errors' project.json || true
+            exit 1
+          fi
+          echo "Current production variables (names and types only):"
+          jq -r '.result.deployment_configs.production.env_vars // {}
+                 | to_entries[] | "  \(.key)  [\(.value.type // "plain_text")]"' project.json
+
+      - name: Refuse if encrypted variables are present
+        run: |
+          set -euo pipefail
+          secrets=$(jq -r '[.result.deployment_configs.production.env_vars // {}
+                            | to_entries[] | select(.value.type == "secret_text") | .key] | join(", ")' project.json)
+          if [ -n "${secrets}" ]; then
+            echo "::error::Project holds encrypted variables (${secrets}). Their values are not readable, so a merge would blank them. Set the two variables in the dashboard instead."
+            exit 1
+          fi
+          echo "No encrypted variables; a read-merge-write is safe."
+
+      - name: Build the merged variable set
+        run: |
+          set -euo pipefail
+          jq --arg origin "${WP_ORIGIN}" '
+            (.result.deployment_configs.production.env_vars // {})
+            + {
+                WORDPRESS_BASE_URL:  { type: "plain_text", value: $origin },
+                WORDPRESS_MEDIA_URL: { type: "plain_text", value: $origin }
+              }
+            | { deployment_configs: { production: { env_vars: . } } }
+          ' project.json > patch.json
+          echo "Variables after merge:"
+          jq -r '.deployment_configs.production.env_vars | to_entries[] | "  \(.key) = \(.value.value)"' patch.json
+
+      - name: Apply
+        if: ${{ github.event.inputs.confirm == 'set' }}
+        run: |
+          set -euo pipefail
+          curl -sS -X PATCH -o patched.json -w 'HTTP %{http_code}\n' \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT}" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data @patch.json
+          if ! jq -e '.success == true' patched.json >/dev/null; then
+            echo "::error::PATCH failed. The API token most likely lacks Cloudflare Pages edit permission."
+            jq -c '.errors' patched.json || true
+            exit 1
+          fi
+          echo "Applied."
+
+      - name: Verify by reading the project back
+        if: ${{ github.event.inputs.confirm == 'set' }}
+        run: |
+          set -euo pipefail
+          curl -sS -o after.json \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${PROJECT}" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}"
+          echo "Production variables now:"
+          jq -r '.result.deployment_configs.production.env_vars // {}
+                 | to_entries[] | "  \(.key) = \(.value.value // "(encrypted)")"' after.json
+
+          fail=0
+          for name in WORDPRESS_BASE_URL WORDPRESS_MEDIA_URL; do
+            got=$(jq -r --arg n "$name" '.result.deployment_configs.production.env_vars[$n].value // ""' after.json)
+            if [ "$got" = "${WP_ORIGIN}" ]; then echo "OK   $name"; else echo "::error::$name is \"$got\", expected ${WP_ORIGIN}"; fail=1; fi
+          done
+
+          # The variables that were already there must have survived the merge.
+          before=$(jq -r '[.result.deployment_configs.production.env_vars // {} | keys[]] | sort | join(",")' project.json)
+          after=$(jq -r  '[.result.deployment_configs.production.env_vars // {} | keys[]] | sort | join(",")' after.json)
+          echo "Before: ${before}"
+          echo "After : ${after}"
+          for key in $(echo "${before}" | tr ',' ' '); do
+            echo "${after}" | tr ',' '\n' | grep -qx "${key}" || { echo "::error::${key} was lost by the merge"; fail=1; }
+          done
+
+          site_url=$(jq -r '.result.deployment_configs.production.env_vars.SITE_URL.value // ""' after.json)
+          echo "SITE_URL is still: ${site_url}"
+          case "${site_url}" in
+            *zeroplastic.lk) echo "::error::SITE_URL points at the production domain; it should still be the pages.dev staging host."; fail=1 ;;
+          esac
+
+          exit "${fail}"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Cloudflare CMS origin"
+            echo ""
+            if [ "${APPLY}" = "set" ]; then
+              echo "Mode: **apply**"
+            else
+              echo "Mode: **dry run** (re-run with \`set\` to apply)"
+            fi
+            echo ""
+            echo "Target: \`WORDPRESS_BASE_URL\` and \`WORDPRESS_MEDIA_URL\` = \`${WP_ORIGIN}\` on the \`${PROJECT}\` Pages project, production environment."
+            echo ""
+            echo "Not touched: SITE_URL, DNS, custom domains, DreamHost, WordPress, Google Ads."
+          } >> "${GITHUB_STEP_SUMMARY}"

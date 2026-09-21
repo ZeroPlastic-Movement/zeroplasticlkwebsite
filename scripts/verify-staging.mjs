@@ -76,7 +76,7 @@ const CORE = ['/', '/about/', '/blog/', '/contact/', '/our-work/', '/advocacy/',
   '/volunteers/', '/sustainable-travel/', '/advisory-board/', '/our-experts/',
   '/problem-statement/', '/privacy-policy/', '/terms-conditions/'];
 const core = await pool(CORE, (p) => head(p));
-const coreBad = CORE.filter((p, n) => core[n].status !== 200);
+const coreBad = CORE.filter((_, n) => core[n].status !== 200);
 check('Core pages return 200', coreBad.length === 0, coreBad.length ? coreBad.join(', ') : `${CORE.length} pages`);
 
 const home = await head('/');
@@ -112,7 +112,7 @@ for (const [label, paths] of [
 ]) {
   if (!paths.length) { check(label, false, 'no sample found'); continue; }
   const r = await pool(paths, (p) => head(encodeURI(p)));
-  const bad = paths.filter((p, n) => r[n].status !== 200);
+  const bad = paths.filter((_, n) => r[n].status !== 200);
   check(`${label} return 200`, bad.length === 0, bad.length ? bad.slice(0, 3).join(', ') : `${paths.length} sampled`);
 }
 
@@ -130,7 +130,7 @@ const LANDING = [
 ];
 
 const landing = await pool(LANDING, (p) => head(p, { redirect: 'follow' }));
-const landingBad = LANDING.filter((p, n) => landing[n].status !== 200);
+const landingBad = LANDING.filter((_, n) => landing[n].status !== 200);
 check('All 8 landing pages reachable (following redirects)', landingBad.length === 0,
   landingBad.length ? landingBad.join(', ') : '8/8 serve 200');
 
@@ -188,7 +188,7 @@ const assetPaths = [...new Set(
      .map((f) => '/' + relative(DIST, f).replace(/\\/g, '/')),
 )];
 const assets = await pool(assetPaths, (p) => head(p));
-const assetBad = assetPaths.filter((p, n) => assets[n].status !== 200);
+const assetBad = assetPaths.filter((_, n) => assets[n].status !== 200);
 check('Landing page assets all load', assetPaths.length > 0 && assetBad.length === 0,
   assetBad.length ? assetBad.slice(0, 3).join(', ') : `${assetPaths.length}/${assetPaths.length}`);
 
@@ -196,7 +196,7 @@ check('Landing page assets all load', assetPaths.length > 0 && assetBad.length =
 
 const linkList = [...internalPaths];
 const links = await pool(linkList, (p) => head(encodeURI(p), { redirect: 'follow' }));
-const brokenLinks = linkList.filter((p, n) => links[n].status !== 200);
+const brokenLinks = linkList.filter((_, n) => links[n].status !== 200);
 check('Zero broken internal links', brokenLinks.length === 0,
   brokenLinks.length ? `${brokenLinks.length} broken, e.g. ${brokenLinks.slice(0, 5).join(', ')}` : `${linkList.length} unique targets checked`);
 
