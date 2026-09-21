@@ -21,7 +21,7 @@ const { page } = Astro.props;
 const isFirstPage = page.currentPage === 1;
 const title = isFirstPage
   ? 'Projects & news'
-  : `Projects & news — page ${page.currentPage} of ${page.lastPage}`;
+  : `Projects & news, page ${page.currentPage} of ${page.lastPage}`;
 ---
 
 <BaseLayout
@@ -42,7 +42,7 @@ const title = isFirstPage
       <h1>What our volunteers are doing</h1>
       <p class="lede">
         Every clean-up, workshop and campaign run by ZeroPlastic clubs and communities across the
-        island — {page.total} projects and counting.
+        island. {page.total} projects and counting.
       </p>
     </div>
   </section>

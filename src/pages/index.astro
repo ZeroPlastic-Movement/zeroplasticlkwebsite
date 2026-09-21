@@ -4,21 +4,26 @@ import PostCard from '../components/PostCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
   ADVOCACY,
-  ALERT_URL,
   ECOSYSTEM,
-  EXTERNAL,
   HERO,
   MOVEMENT,
   PILLARS,
   POSITIONING,
+  POSTS_PER_PAGE,
   SITE,
   STATS,
   TRAVEL,
 } from '../consts';
 import { organizationSchema, websiteSchema } from '../lib/schema';
-import { getRecentPosts } from '../lib/wp';
+import { getAllPosts } from '../lib/wp';
 
-const posts = await getRecentPosts(3);
+const allPosts = await getAllPosts();
+const posts = allPosts.slice(0, 6);
+
+// The homepage previews the archive, so it links into the real static pages
+// rather than paginating itself. Nothing here is query-string driven.
+const totalPages = Math.max(1, Math.ceil(allPosts.length / POSTS_PER_PAGE));
+const previewPages = [1, 2, 3].filter((n) => n <= totalPages);
 
 const srcset = (ext: string) =>
   HERO.widths.map((w) => `${HERO.base}-${w}.${ext} ${w}w`).join(', ');
@@ -52,8 +57,8 @@ const [impactCenter, travelPledge] = TRAVEL;
       <p class="hero__eyebrow">ZeroPlastic Movement · Sri Lanka</p>
       <h1 class="hero__title">{POSITIONING}</h1>
       <p class="hero__lede">
-        One of Sri Lanka's largest youth environmental movements — cutting plastic at the source
-        through education, advocacy, clean-ups and the alternatives that replace plastic for good.
+        Sri Lanka's largest youth-led environmental movement, cutting single-use plastic at the
+        source through education, policy advocacy, clean-ups and sustainable alternatives.
       </p>
 
       <div class="hero__actions">
@@ -143,7 +148,7 @@ const [impactCenter, travelPledge] = TRAVEL;
           <h2 class="section__title">Clean-ups treat the symptom. Policy treats the cause.</h2>
           <p class="lede">
             ZeroPlastic is not only a clean-up organisation. We work on behavioural change, policy
-            advocacy and systemic solutions — because the plastic on a beach was a decision made
+            advocacy and systemic solutions, because the plastic on a beach was a decision made
             somewhere upstream.
           </p>
           <p>
@@ -248,7 +253,7 @@ const [impactCenter, travelPledge] = TRAVEL;
           <h3>Volunteer in Sri Lanka</h3>
           <p>
             Join campaigns, clean-ups, awareness and education work, advocacy, research and
-            communications — through a university, school or community club, or on your own.
+            communications, through a university, school or community club, or on your own.
           </p>
           <p class="tile__cta">
             <a class="button" href="/volunteers/">Volunteer locally</a>
@@ -258,8 +263,7 @@ const [impactCenter, travelPledge] = TRAVEL;
         <div class="tile">
           <h3>International volunteering</h3>
           <p>
-            Visit Sri Lanka, volunteer for the environment, and experience the country differently —
-            through clean-ups, community engagement, education and Impact Center activities.
+            Visit Sri Lanka, volunteer for the environment, and experience the country differently, through clean-ups, community engagement, education and Impact Center activities.
           </p>
           <p class="tile__cta">
             <a class="button button--ghost" href="/volunteers/#international">
@@ -271,20 +275,55 @@ const [impactCenter, travelPledge] = TRAVEL;
     </div>
   </section>
 
-  <!-- ========================= LATEST STORIES ======================== -->
+  <!-- ======================== FROM OUR NETWORK ======================= -->
   <section class="section">
     <div class="container">
       <div class="section__head">
         <div>
-          <p class="eyebrow">Latest stories</p>
-          <h2 class="section__title">What our clubs did this month</h2>
+          <p class="eyebrow">From our network</p>
+          <h2 class="section__title">What Our Clubs Did</h2>
         </div>
         <a class="button button--ghost" href="/blog/">All stories</a>
       </div>
 
+      <p class="lede" style="margin-top:0.5rem">
+        Projects, campaigns, clean-ups and community action led by ZeroPlastic clubs across Sri
+        Lanka.
+      </p>
+
       <div class="grid grid--3" style="margin-top:2.25rem">
         {posts.map((post) => <PostCard post={post} />)}
       </div>
+
+      <nav class="home-pager" aria-label="Story archive pages">
+        <span class="home-pager__label">Browse the archive</span>
+        <ul>
+          {
+            previewPages.map((n) => (
+              <li>
+                <a href={n === 1 ? '/blog/' : `/blog/${n}/`} aria-current={n === 1 ? 'page' : undefined}>
+                  {n}
+                </a>
+              </li>
+            ))
+          }
+          {totalPages > previewPages.length + 1 && <li class="home-pager__gap" aria-hidden="true">...</li>}
+          {
+            totalPages > previewPages.length && (
+              <li>
+                <a href={`/blog/${totalPages}/`}>{totalPages}</a>
+              </li>
+            )
+          }
+          {
+            totalPages > 1 && (
+              <li class="home-pager__next">
+                <a href="/blog/2/" rel="next">Next</a>
+              </li>
+            )
+          }
+        </ul>
+      </nav>
     </div>
   </section>
 
@@ -318,20 +357,27 @@ const [impactCenter, travelPledge] = TRAVEL;
     </div>
   </section>
 
-  <!-- ====================== REPORT PLASTIC POLLUTION ================= -->
+  <!-- ========================== PARTNER WITH US ====================== -->
   <section class="section">
     <div class="container">
-      <div class="cta-band">
-        <div>
-          <h2>Seen plastic pollution?</h2>
-          <p>
-            Submit the violation and we notify the relevant authorities, so environmental action
-            happens faster.
-          </p>
-        </div>
-        <a class="button button--lg" href={ALERT_URL} rel="noopener noreferrer" target="_blank">
-          Report Plastic Pollution
-        </a>
+      <div class="partner">
+        <p class="eyebrow">Partner with us</p>
+        <h2 class="section__title section__title--wide">
+          Ready to take action on plastic pollution with us?
+        </h2>
+        <p class="lede">
+          Whether you are a company, development organisation, financial institution, university,
+          school, public institution, travel business, international organisation or community
+          group, we would like to explore what we can achieve together. Tell us about your
+          organisation, your idea or the challenge you want to address. Our team will respond
+          within 24 hours.
+        </p>
+        <p class="partner__actions">
+          <a class="button button--lg" href="/contact/">Partner With ZeroPlastic</a>
+        </p>
+        <p class="partner__note">
+          Have a project, partnership or idea in mind? Start the conversation.
+        </p>
       </div>
     </div>
   </section>
@@ -480,6 +526,80 @@ const [impactCenter, travelPledge] = TRAVEL;
     color: var(--ink-500);
     font-size: 0.92rem;
     margin: 0;
+  }
+
+  /* ------------------------- homepage pager --------------------------- */
+  .home-pager {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .home-pager__label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-300);
+    font-weight: 700;
+  }
+  .home-pager ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+  }
+  .home-pager a {
+    display: inline-block;
+    min-width: 2.25rem;
+    text-align: center;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink-700);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .home-pager a:hover {
+    border-color: var(--green-500);
+    color: var(--green-600);
+  }
+  .home-pager a[aria-current='page'] {
+    background: var(--ink-900);
+    border-color: var(--ink-900);
+    color: #fff;
+  }
+  .home-pager__gap {
+    color: var(--ink-300);
+    padding-inline: 0.25rem;
+  }
+  .home-pager__next a {
+    border-color: var(--ink-900);
+    color: var(--ink-900);
+  }
+
+  /* --------------------------- partner block -------------------------- */
+  .partner {
+    background: var(--green-50);
+    border: 1px solid #d8e8bf;
+    border-radius: var(--radius);
+    padding: clamp(1.75rem, 5vw, 3rem);
+  }
+  .partner .lede {
+    max-width: 68ch;
+  }
+  .partner__actions {
+    margin: 1.75rem 0 0;
+  }
+  .partner__note {
+    margin: 0.9rem 0 0;
+    font-size: 0.92rem;
+    color: var(--ink-500);
   }
 
   /* --------------------------- travel cards --------------------------- */

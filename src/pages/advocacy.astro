@@ -1,7 +1,7 @@
 ---
 import Figure from '../components/Figure.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { ADVOCACY, ALERT_URL } from '../consts';
+import { ADVOCACY } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 ---
 
@@ -23,7 +23,7 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
       <h1>Clean-ups treat the symptom. Policy treats the cause.</h1>
       <p class="lede">
         ZeroPlastic is not only a clean-up organisation. Alongside the volunteers on the ground, we
-        work on behavioural change, policy advocacy and systemic solutions — because every piece of
+        work on behavioural change, policy advocacy and systemic solutions, because every piece of
         plastic on a Sri Lankan beach was a decision made somewhere upstream.
       </p>
     </div>
@@ -77,15 +77,14 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
     <div class="container">
       <div class="cta-band">
         <div>
-          <h2>Evidence helps the case</h2>
+          <h2>Work with us on policy</h2>
           <p>
-            Reports of plastic pollution build the record we take to institutions and regulators.
-            If you see a violation, tell us.
+            Institutions, businesses and organisations that want to cut single-use plastic in
+            their own operations are the fastest route to system change. Tell us what you are
+            trying to do.
           </p>
         </div>
-        <a class="button button--lg" href={ALERT_URL} rel="noopener noreferrer" target="_blank">
-          Report Plastic Pollution
-        </a>
+        <a class="button button--lg" href="/contact/">Partner With Us</a>
       </div>
     </div>
   </section>

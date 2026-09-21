@@ -6,7 +6,7 @@
  * library, unaltered. The mobile menu is a pure-CSS disclosure, so the header
  * still ships no JavaScript.
  */
-import { ALERT_URL, NAV, SITE } from '../consts';
+import { NAV, SITE } from '../consts';
 
 const path = Astro.url.pathname;
 const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
@@ -14,7 +14,7 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="brand" href="/" aria-label={`${SITE.name} — home`}>
+    <a class="brand" href="/" aria-label={`${SITE.name}, home`}>
       <img
         src="/images/zeroplastic-logo.png"
         width="300"
@@ -43,7 +43,7 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
           ))
         }
         <li class="nav__actions">
-          <a class="link-report" href={ALERT_URL}>Report Plastic Pollution</a>
+          <a class="link-partner" href="/contact/">Partner With Us</a>
           <a class="button button--sm" href="/volunteers/">Join ZeroPlastic</a>
         </li>
       </ul>
@@ -114,18 +114,9 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
     padding-left: 0.85rem;
     border-left: 1px solid var(--border);
   }
-  .link-report {
+  .link-partner {
     white-space: nowrap;
-  }
-  .link-report::before {
-    content: '';
-    display: inline-block;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: #d9484b;
-    margin-right: 0.45rem;
-    vertical-align: 0.05em;
+    font-weight: 600;
   }
 
   .nav-toggle,

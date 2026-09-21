@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { GOALS, MISSION, SITE, STATS } from '../consts';
+import { EXTERNAL, GOALS, MISSION, SITE, STATS } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 ---
 
@@ -18,7 +18,7 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
   <section class="section">
     <div class="container">
       <p class="eyebrow">About us</p>
-      <h1>A volunteer movement for a plastic-free Sri Lanka</h1>
+      <h1>Sri Lanka's largest youth-led environmental movement</h1>
       <p class="lede">{MISSION}</p>
     </div>
   </section>
@@ -61,10 +61,29 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
       <h2>How we work</h2>
       <p>
-        Every project is designed around the 3R methodology — reduce, reuse, recycle — and delivered
-        in partnership with institutions that can carry the change further. We have worked alongside
-        the Central Environmental Authority, the Colombo Municipal Council, the Media Center for
-        National Development, and private partners including Good Market and Earth Lanka.
+        ZeroPlastic works across sectors because plastic pollution cannot be solved by one
+        organisation alone. We collaborate with the Central Environmental Authority, our islandwide
+        university network, private-sector organisations, development partners, international
+        organisations, financial institutions, the travel industry and other institutions working
+        to reduce plastic use across Sri Lanka.
+      </p>
+      <p>
+        Our approach combines behaviour change, youth mobilisation, practical plastic alternatives,
+        institutional action and policy advocacy. By working through universities, schools,
+        communities, businesses and national partners, we aim to create changes that continue
+        beyond individual campaigns.
+      </p>
+
+      <h2>Helping businesses reduce single-use plastic</h2>
+      <p>
+        We also work with businesses that want to reduce single-use plastic in their operations.
+        Organisations can progress toward recognition through the ZeroPlastic Commitment Standard,
+        which carries independent third-party verification by Control Union.
+      </p>
+      <p>
+        <a class="button" href={EXTERNAL.commitment} rel="noopener noreferrer" target="_blank">
+          Explore the ZeroPlastic Commitment Standard
+        </a>
       </p>
     </div>
   </section>

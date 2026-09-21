@@ -1,14 +1,30 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { CONTACT, SITE, SOCIAL } from '../consts';
+import { CONTACT, EXTERNAL, SOCIAL } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
-const CONTACT_FORM_URL = `${SITE.wpBase}/contact/`;
+/**
+ * Partnership categories. Deliberately broad, because enquiries arrive from
+ * very different kinds of organisation and people should recognise themselves
+ * in at least one line.
+ */
+const CATEGORIES = [
+  { title: 'Corporate partnerships', body: 'Companies reducing single-use plastic in their own operations, products or supply chains.' },
+  { title: 'Development-sector collaboration', body: 'Programmes and projects working on waste, climate and coastal resilience.' },
+  { title: 'International organisations', body: 'Cross-border initiatives looking for a delivery partner in Sri Lanka.' },
+  { title: 'Universities and schools', body: 'Institutions setting up ZeroPlastic clubs, research collaborations or campus campaigns.' },
+  { title: 'Banks and financial institutions', body: 'Sustainability commitments, staff engagement and branch-level plastic reduction.' },
+  { title: 'Travel and tourism partners', body: 'Hotels, operators and destinations cutting plastic across the visitor experience.' },
+  { title: 'Environmental campaigns', body: 'Joint campaigns, clean-ups and public awareness work.' },
+  { title: 'Research and innovation', body: 'Studies, data partnerships and work on practical plastic alternatives.' },
+  { title: 'Community partnerships', body: 'Local groups and community organisations taking on plastic where they live.' },
+  { title: 'Media and communications', body: 'Coverage, storytelling and collaborations that reach a wider audience.' },
+];
 ---
 
 <BaseLayout
-  title="Contact ZeroPlastic Movement"
-  description="Get in touch with the ZeroPlastic Movement HQ in Athurugiriya, Sri Lanka — by email, phone, or through our social channels."
+  title="Partner with ZeroPlastic"
+  description="Work with Sri Lanka's largest youth-led environmental movement. Corporate, development-sector, university, travel, research and community partnerships to reduce single-use plastic."
   schema={[
     organizationSchema(),
     breadcrumbSchema([
@@ -17,32 +33,75 @@ const CONTACT_FORM_URL = `${SITE.wpBase}/contact/`;
     ]),
   ]}
 >
-  <section class="section">
+  <section class="page-hero">
     <div class="container">
-      <p class="eyebrow">Contact</p>
-      <h1>Get in touch</h1>
+      <p class="eyebrow">Partner with us</p>
+      <h1>Let's work together</h1>
       <p class="lede">
-        Whether you want to volunteer, partner with us, or ask about our work with plastic
-        alternatives, we would like to hear from you.
+        Plastic pollution needs collaboration across sectors. If your organisation wants to reduce
+        single-use plastic, support environmental action, work with our volunteer network, develop
+        a campaign or explore a partnership with ZeroPlastic, tell us what you have in mind.
       </p>
     </div>
   </section>
 
-  <section class="section section--alt">
+  <section class="section">
     <div class="container">
-      <div class="grid grid--3">
-        <div class="card" style="padding:1.5rem">
-          <h2>Email</h2>
+      <h2 class="section__title">Ways organisations work with us</h2>
+      <ul class="cats">
+        {
+          CATEGORIES.map((cat) => (
+            <li>
+              <h3>{cat.title}</h3>
+              <p>{cat.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="enquiry">
+    <div class="container">
+      <h2 class="section__title section__title--wide">
+        Tell us how you would like to work with ZeroPlastic
+      </h2>
+      <p class="lede">
+        Our team reviews partnership enquiries directly and responds within 24 hours.
+      </p>
+
+      <div class="form-wrap">
+        <iframe
+          src={EXTERNAL.contactFormEmbed}
+          title="ZeroPlastic partnership and contact enquiry form"
+          loading="lazy"
+        ></iframe>
+      </div>
+
+      <p class="form-fallback">
+        If the form does not load,
+        <a href={EXTERNAL.contactForm} rel="noopener noreferrer" target="_blank">
+          open it in a new tab
+        </a>
+        or email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section__title">Reach us directly</h2>
+      <div class="tile-grid">
+        <div class="tile">
+          <p class="tile__meta">Email</p>
           <p><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></p>
         </div>
-
-        <div class="card" style="padding:1.5rem">
-          <h2>Phone</h2>
+        <div class="tile">
+          <p class="tile__meta">Phone</p>
           <p><a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a></p>
         </div>
-
-        <div class="card" style="padding:1.5rem">
-          <h2>Address</h2>
+        <div class="tile">
+          <p class="tile__meta">Address</p>
           <address>
             {CONTACT.address.name}<br />
             {CONTACT.address.street}<br />
@@ -50,50 +109,91 @@ const CONTACT_FORM_URL = `${SITE.wpBase}/contact/`;
             {CONTACT.address.country}
           </address>
         </div>
+        <div class="tile">
+          <p class="tile__meta">Follow</p>
+          <ul class="social">
+            {
+              SOCIAL.map((item) => (
+                <li>
+                  <a href={item.url} rel="noopener noreferrer me" target="_blank">{item.name}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
-
-      <p style="margin-top:2rem">
-        <a class="button" href={CONTACT_FORM_URL}>Send us a message</a>
-      </p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <h2>Follow the movement</h2>
-      <ul class="social-list">
-        {
-          SOCIAL.map((item) => (
-            <li>
-              <a class="button button--ghost" href={item.url} rel="noopener noreferrer me" target="_blank">
-                {item.name}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .contact h2,
-  .card h2 {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--green-600);
+  .cats {
+    list-style: none;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
   }
+  .cats li {
+    background: var(--surface);
+    padding: 1.35rem 1.35rem 1.5rem;
+  }
+  .cats h3 {
+    font-size: 1rem;
+    margin-bottom: 0.35rem;
+  }
+  .cats p {
+    color: var(--ink-500);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  /*
+   * The enquiry form is the same Monday form the production WordPress contact
+   * page uses. It is lazy-loaded, so nothing is fetched until the visitor
+   * scrolls to it and the page itself still ships no JavaScript.
+   */
+  .form-wrap {
+    margin-top: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .form-wrap iframe {
+    display: block;
+    width: 100%;
+    height: 900px;
+    border: 0;
+  }
+  @media (max-width: 40rem) {
+    .form-wrap iframe {
+      height: 1050px;
+    }
+  }
+  .form-fallback {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--ink-500);
+  }
+
   address {
     font-style: normal;
     line-height: 1.7;
+    font-size: 0.93rem;
   }
-  .social-list {
+  .social {
     list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    padding: 0;
-    margin: 1.5rem 0 0;
+    font-size: 0.92rem;
   }
 </style>

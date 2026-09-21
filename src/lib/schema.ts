@@ -2,7 +2,7 @@
  * JSON-LD builders.
  *
  * Structured data is how search engines learn that ZeroPlastic is an NGO in
- * Sri Lanka and that each post is a dated article — the current site publishes
+ * Sri Lanka and that each post is a dated article, the current site publishes
  * almost none of this.
  */
 

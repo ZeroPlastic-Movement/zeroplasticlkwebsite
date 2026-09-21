@@ -1,8 +1,8 @@
 /**
  * Build-time WordPress content layer.
  *
- * The existing WordPress install stays the CMS — volunteers keep publishing
- * exactly as they do today — and this module pulls that content over the REST
+ * The existing WordPress install stays the CMS, volunteers keep publishing
+ * exactly as they do today, and this module pulls that content over the REST
  * API when the site is built, so visitors are served pre-rendered static HTML
  * instead of a live PHP render.
  *
@@ -118,6 +118,20 @@ export function decodeEntities(input: string): string {
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
 }
 
+/**
+ * House style: the site does not use em dashes in public-facing copy.
+ *
+ * A small number of WordPress posts are written with them, so they are
+ * normalised to commas here rather than edited in WordPress. Only the
+ * punctuation changes; the wording is untouched.
+ */
+export function houseStyle(input: string): string {
+  return input
+    .replace(/\s*\u2014\s*/g, ', ')
+    .replace(/\s+,/g, ',')
+    .replace(/,\s*,/g, ',');
+}
+
 export function stripTags(html: string): string {
   return decodeEntities(html.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim();
 }
@@ -176,14 +190,14 @@ function toPost(raw: any): WPPost {
   const media = embedded['wp:featuredmedia']?.[0];
   const terms: any[][] = embedded['wp:term'] ?? [];
 
-  const title = decodeEntities(raw.title?.rendered ?? '');
+  const title = houseStyle(decodeEntities(raw.title?.rendered ?? ''));
 
   return {
     id: raw.id,
     slug: decodeSlug(raw.slug),
     title,
-    excerpt: stripTags(raw.excerpt?.rendered ?? ''),
-    content: stripShortcodes(raw.content?.rendered ?? ''),
+    excerpt: houseStyle(stripTags(raw.excerpt?.rendered ?? '')),
+    content: houseStyle(stripShortcodes(raw.content?.rendered ?? '')),
     date: raw.date,
     modified: raw.modified ?? raw.date,
     categories: terms
@@ -226,7 +240,7 @@ export function getAllPosts(): Promise<WPPost[]> {
       const cached = await readCache<WPPost[]>(cacheKey);
       if (cached?.length) {
         console.warn(
-          `[wp] fetch failed (${(error as Error).message}) — falling back to ${cached.length} cached posts`,
+          `[wp] fetch failed (${(error as Error).message}), falling back to ${cached.length} cached posts`,
         );
         return cached;
       }

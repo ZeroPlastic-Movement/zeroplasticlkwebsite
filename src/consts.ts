@@ -9,7 +9,7 @@ export const SITE = {
   name: 'ZeroPlastic Movement',
   shortName: 'ZeroPlastic',
   url: 'https://www.zeroplastic.lk',
-  tagline: 'We say no to plastic',
+  tagline: 'We say no to single-use plastic',
   description:
     'A vibrant environmental organization dedicated to fostering a global transformation towards the reduction of plastic waste & promotion of sustainable alternatives.',
   locale: 'en_LK',
@@ -18,7 +18,7 @@ export const SITE = {
   wpBase: 'https://www.zeroplastic.lk',
   /**
    * Media host. The WordPress install has Jetpack Site Accelerator enabled, so
-   * uploads are rewritten to the Photon CDN — that, not wpBase, is where the
+   * uploads are rewritten to the Photon CDN, that, not wpBase, is where the
    * browser actually fetches images from.
    */
   mediaHost: 'https://i0.wp.com',
@@ -72,7 +72,7 @@ export const STATS = [
  * The movement's own positioning line, taken from the WordPress homepage.
  * Used as the hero headline.
  */
-export const POSITIONING = 'Zero Plastic in Nature. Zero Microplastics in Humans.';
+export const POSITIONING = 'Zero Plastic in Nature, Zero Microplastics in Us';
 
 /**
  * External platforms in the ZeroPlastic ecosystem.
@@ -81,17 +81,21 @@ export const POSITIONING = 'Zero Plastic in Nature. Zero Microplastics in Humans
  * programme and then hands off; it never reproduces their functionality.
  */
 export const EXTERNAL = {
-  alert: 'https://alert.zeroplastic.lk/',
   impactCenter: 'https://impactcenter.zeroplastic.lk/',
   volunteersAcademy: 'https://volunteersacademy.com/',
   commitment: 'https://www.zeroplasticcommitment.org/',
   schoolClubForm: 'https://forms.monday.com/forms/62b0b890c267e9ec619bf2a9ac155ac4?r=apse2',
   clubForm: 'https://forms.monday.com/forms/5fb1d5240ca347a5e056018f45e117f8?r=apse2',
   travellerPledge: 'https://forms.monday.com/forms/c351b9e6446530939747ada85a9fe335?r=apse2',
+  /**
+   * Partnership and contact enquiries. This is the same Monday form the
+   * production WordPress contact page already embeds, so submissions continue
+   * to land in one place. Recovered from the iframe on
+   * https://www.zeroplastic.lk/contact/
+   */
+  contactFormEmbed: 'https://forms.monday.com/forms/embed/9b3e25c3f1f917465270bfb91b1bf634?r=apse2',
+  contactForm: 'https://forms.monday.com/forms/9b3e25c3f1f917465270bfb91b1bf634?r=apse2',
 } as const;
-
-/** Kept as a named alias: the reporting CTA appears in many places. */
-export const ALERT_URL = EXTERNAL.alert;
 
 export const MISSION =
   "Zero Plastic's mission is to create a behavioural change among Sri Lankan citizens to reduce plastic waste while building a demand for plastic substitutes produced by local entrepreneurs.";
@@ -227,9 +231,9 @@ export const MOVEMENT = [
     meta: 'National organiser',
   },
   {
-    title: 'Spogomi World Cup',
-    body: 'Organising involvement in Sri Lanka for the Spogomi Cleanup World Cup, the competitive sport that turns litter collection into a team event.',
-    meta: 'Sri Lanka involvement',
+    title: 'SPOGOMI World Cup',
+    body: 'ZeroPlastic Movement is the authorised Sri Lanka organiser for the SPOGOMI World Cup, bringing the global sport of competitive litter collection to Sri Lanka.',
+    meta: 'Sri Lanka Authorised Organiser',
   },
   {
     title: 'ZeroPlastic Clubs',
@@ -254,7 +258,7 @@ export const CLUB_TYPES = [
   },
   {
     title: 'Community clubs',
-    body: 'Neighbourhood and community groups taking on local plastic problems — from waterway clean-ups to running refill and reuse initiatives.',
+    body: 'Neighbourhood and community groups taking on local plastic problems, from waterway clean-ups to running refill and reuse initiatives.',
   },
 ] as const;
 
@@ -306,7 +310,7 @@ export const TRAVEL = [
   },
   {
     title: 'Travel Without Plastic',
-    body: 'A personal commitment travellers can make to cut the plastic they use while travelling in Sri Lanka — from refusing single-use bottles to choosing businesses that have done the same.',
+    body: 'A personal commitment travellers can make to cut the plastic they use while travelling in Sri Lanka, from refusing single-use bottles to choosing businesses that have done the same.',
     points: [],
     cta: "Take the Traveller's Pledge",
     href: EXTERNAL.travellerPledge,
