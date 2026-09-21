@@ -162,8 +162,19 @@ check('Ads page keeps its conversion webhook', adsBody.includes('hook.eu2.make.c
   if (!imgs.length) {
     check('Post images load from the configured origin', false, `no remote images found on ${probe}`);
   } else {
-    const res = await pool(imgs, (u) => head(u, { redirect: 'follow' }));
-    const bad = imgs.filter((_, n) => res[n].status !== 200);
+    // Sequential with a retry, deliberately. The WordPress origin is shared
+    // hosting and throttles bursts, so a parallel fetch here right after the
+    // link sweep reports failures that are not real.
+    const bad = [];
+    for (const u of imgs) {
+      let r = await head(u, { redirect: 'follow' });
+      if (r.status !== 200) {
+        await new Promise((res) => setTimeout(res, 2000));
+        r = await head(u, { redirect: 'follow' });
+      }
+      if (r.status !== 200) bad.push(`${u} (${r.status})`);
+      await new Promise((res) => setTimeout(res, 500));
+    }
     const hosts = [...new Set(imgs.map((u) => new URL(u).hostname))].join(', ');
     check('Post images load from the configured origin', bad.length === 0,
       bad.length ? `${bad.length} failed: ${bad[0]}` : `${imgs.length} images from ${hosts}`);
