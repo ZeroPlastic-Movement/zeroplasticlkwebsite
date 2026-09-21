@@ -191,9 +191,16 @@ check('Zero broken internal links', brokenLinks.length === 0,
 
 /* ---- 6. infrastructure --------------------------------------------------- */
 
-for (const [p, want] of [['/sitemap-index.xml', 200], ['/rss.xml', 200], ['/robots.txt', 200], ['/404.html', 404]]) {
+for (const [p, want] of [['/sitemap-index.xml', 200], ['/rss.xml', 200], ['/robots.txt', 200]]) {
   const r = await head(p);
   check(`${p} returns ${want}`, r.status === want, r.status !== want ? `got ${r.status}` : '');
+}
+
+// Probe an unrouted path rather than /404.html: Cloudflare Pages canonicalises
+// .html away, so /404.html is a 308 to /404, which legitimately serves 200.
+{
+  const r = await head('/definitely-not-a-real-page-zp404/', { redirect: 'follow' });
+  check('Unknown paths return 404', r.status === 404, `got ${r.status}`);
 }
 
 for (const [from, to] of [['/about-5', '/about/'], ['/projects', '/blog/']]) {
