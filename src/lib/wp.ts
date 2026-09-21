@@ -10,15 +10,33 @@
  * transient API outage cannot break a deploy.
  */
 
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
 import { SITE } from '../consts';
+import { buildMediaManifest, rewriteMediaUrl, rewriteMediaUrls, setMediaManifest } from './media';
 
 const API = `${SITE.wpBase}/wp-json/wp/v2`;
-const CACHE_DIR = join(process.cwd(), '.cache', 'wp');
 const PER_PAGE = 100;
 const MAX_RETRIES = 3;
+
+/**
+ * Raw API responses, which do not depend on where media is served from.
+ */
+const RAW_CACHE_DIR = join(process.cwd(), '.cache', 'wp');
+
+/**
+ * Normalised content, which has media URLs already rewritten into it.
+ *
+ * Scoped by the configured origins so that flipping WORDPRESS_MEDIA_URL cannot
+ * be silently undone by a stale cache: if the API is unreachable straight after
+ * the switch, the build fails loudly instead of serving the old host's URLs.
+ */
+const DERIVED_CACHE_DIR = join(
+  RAW_CACHE_DIR,
+  createHash('sha1').update(`${SITE.wpBase}|${SITE.wpMediaBase}`).digest('hex').slice(0, 12),
+);
 
 export interface WPImage {
   src: string;
@@ -45,16 +63,16 @@ export interface WPPost {
 /* fetching                                                            */
 /* ------------------------------------------------------------------ */
 
-async function readCache<T>(key: string): Promise<T | null> {
+async function readCache<T>(key: string, dir = DERIVED_CACHE_DIR): Promise<T | null> {
   try {
-    return JSON.parse(await readFile(join(CACHE_DIR, `${key}.json`), 'utf8')) as T;
+    return JSON.parse(await readFile(join(dir, `${key}.json`), 'utf8')) as T;
   } catch {
     return null;
   }
 }
 
-async function writeCache(key: string, value: unknown): Promise<void> {
-  const file = join(CACHE_DIR, `${key}.json`);
+async function writeCache(key: string, value: unknown, dir = DERIVED_CACHE_DIR): Promise<void> {
+  const file = join(dir, `${key}.json`);
   await mkdir(dirname(file), { recursive: true });
   await writeFile(file, JSON.stringify(value), 'utf8');
 }
@@ -159,8 +177,8 @@ function toImage(media: any, fallbackAlt: string): WPImage | null {
     .join(', ');
 
   return {
-    src: preferred?.source_url ?? media.source_url,
-    srcset: srcset || undefined,
+    src: rewriteMediaUrl(preferred?.source_url ?? media.source_url),
+    srcset: srcset ? rewriteMediaUrls(srcset) : undefined,
     width: preferred?.width,
     height: preferred?.height,
     alt: decodeEntities(media.alt_text || fallbackAlt),
@@ -196,8 +214,8 @@ function toPost(raw: any): WPPost {
     id: raw.id,
     slug: decodeSlug(raw.slug),
     title,
-    excerpt: houseStyle(stripTags(raw.excerpt?.rendered ?? '')),
-    content: houseStyle(stripShortcodes(raw.content?.rendered ?? '')),
+    excerpt: rewriteMediaUrls(houseStyle(stripTags(raw.excerpt?.rendered ?? ''))),
+    content: rewriteMediaUrls(houseStyle(stripShortcodes(raw.content?.rendered ?? ''))),
     date: raw.date,
     modified: raw.modified ?? raw.date,
     categories: terms
@@ -213,6 +231,46 @@ function toPost(raw: any): WPPost {
 /* public API                                                          */
 /* ------------------------------------------------------------------ */
 
+let manifestPromise: Promise<void> | null = null;
+
+/**
+ * Load the media size manifest, once per build.
+ *
+ * Tells the media rewriter which resized variants WordPress actually generated,
+ * so a Photon `?fit=300,225` URL can be resolved to a real file instead of
+ * falling back to the full-size original. Fetch failures are not fatal: without
+ * the manifest every image still resolves, just to its original file.
+ */
+function ensureMediaManifest(): Promise<void> {
+  manifestPromise ??= (async () => {
+    const cacheKey = 'media';
+
+    try {
+      const raw = await fetchAll('media', {
+        _fields: 'media_details',
+        orderby: 'id',
+        order: 'asc',
+      });
+      await writeCache(cacheKey, raw, RAW_CACHE_DIR);
+      setMediaManifest(buildMediaManifest(raw));
+      console.log(`[wp] media manifest: ${raw.length} items from ${API}`);
+    } catch (error) {
+      const cached = await readCache<any[]>(cacheKey, RAW_CACHE_DIR);
+      if (cached?.length) {
+        setMediaManifest(buildMediaManifest(cached));
+        console.warn(`[wp] media manifest fetch failed, using ${cached.length} cached items`);
+        return;
+      }
+      console.warn(
+        `[wp] media manifest unavailable (${(error as Error).message}); ` +
+          'images will resolve to full-size originals',
+      );
+    }
+  })();
+
+  return manifestPromise;
+}
+
 let postsPromise: Promise<WPPost[]> | null = null;
 
 /**
@@ -225,6 +283,8 @@ export function getAllPosts(): Promise<WPPost[]> {
     const cacheKey = 'posts';
 
     try {
+      await ensureMediaManifest();
+
       const raw = await fetchAll('posts', {
         _embed: 'wp:featuredmedia,wp:term',
         orderby: 'date',
@@ -273,6 +333,8 @@ export async function getPageBySlug(slug: string): Promise<WPPage | null> {
   const cacheKey = `page-${slug}`;
 
   try {
+    await ensureMediaManifest();
+
     const { body } = await fetchJSON(
       `${API}/pages?slug=${encodeURIComponent(slug)}&_fields=slug,title,content`,
     );
@@ -282,7 +344,7 @@ export async function getPageBySlug(slug: string): Promise<WPPage | null> {
     const page: WPPage = {
       slug: raw.slug,
       title: houseStyle(decodeEntities(raw.title?.rendered ?? '')),
-      content: houseStyle(stripShortcodes(raw.content?.rendered ?? '')),
+      content: rewriteMediaUrls(houseStyle(stripShortcodes(raw.content?.rendered ?? ''))),
     };
     await writeCache(cacheKey, page);
     return page;

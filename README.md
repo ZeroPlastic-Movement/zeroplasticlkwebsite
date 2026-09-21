@@ -124,6 +124,27 @@ and builds, so there are never two systems publishing the site.
 |---|---|
 | `SITE_URL` | **Always set this explicitly.** `https://zeroplasticlk.pages.dev` for staging; `https://www.zeroplastic.lk` at go-live. |
 | `BASE_PATH` | `/` |
+| `WORDPRESS_BASE_URL` | Origin serving `/wp-json/wp/v2`. Unset means `https://www.zeroplastic.lk`. Set to `https://cms.zeroplastic.lk` once that host is confirmed. |
+| `WORDPRESS_MEDIA_URL` | Origin serving `/wp-content/uploads`. Unset means the same as `WORDPRESS_BASE_URL`. |
+
+### The WordPress origin
+
+`www.zeroplastic.lk` is being handed to Cloudflare Pages, so the CMS has to move
+to its own hostname. Both variables above default to the current production host,
+which means checking this code in does not by itself change what a build fetches
+or what image URLs it emits. Flip them only once `cms.zeroplastic.lk` serves
+WordPress over HTTPS.
+
+They can be set independently, which is what the transition needs: during
+verification you can keep reading the API from `www` while already emitting
+`cms` image URLs, by setting `WORDPRESS_MEDIA_URL` alone.
+
+Media URLs are rewritten at build time by `src/lib/media.ts`. Jetpack Photon
+(`i*.wp.com`) is dropped entirely: it is a proxy rather than a store, it returns
+404 once the origin path is gone, and it only proxies hostnames Jetpack
+recognises, so it cannot follow the CMS to a new host. Photon's on-the-fly
+resizing is replaced by resolving each requested width against the size variants
+WordPress actually generated, read from the media library at build time.
 
 `SITE_URL` controls canonical URLs, the sitemap, RSS links and social card URLs.
 Resolution order is `SITE_URL` → `CF_PAGES_URL` (injected by Cloudflare) → the

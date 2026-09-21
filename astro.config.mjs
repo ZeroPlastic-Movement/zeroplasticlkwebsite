@@ -15,6 +15,37 @@ import sitemap from '@astrojs/sitemap';
 const SITE_URL = process.env.SITE_URL || process.env.CF_PAGES_URL || 'https://www.zeroplastic.lk';
 const BASE_PATH = process.env.BASE_PATH || '/';
 
+/**
+ * WordPress origin, mirrored from src/consts.ts.
+ *
+ * Only needed here so Astro's image service will accept remote URLs from the
+ * CMS host. Keep the default in step with WP_ORIGIN_FALLBACK in src/consts.ts.
+ */
+const WP_HOSTS = [
+  process.env.WORDPRESS_MEDIA_URL,
+  process.env.WORDPRESS_BASE_URL,
+  'https://www.zeroplastic.lk',
+]
+  .flatMap((value) => (value ? [new URL(value).hostname] : []));
+
+/**
+ * Static landing pages that live in public/ rather than as Astro routes.
+ *
+ * They are plain HTML deployed straight into the old web root, so the sitemap
+ * integration cannot discover them. /impact-center-premium.html is the Final
+ * URL of a live Google Ads campaign, so it matters that it is listed.
+ */
+const STATIC_LANDING_PAGES = [
+  '/impact-center-premium.html',
+  '/craft-experiences-sigiriya.html',
+  '/zeroplastic-movement-sri-lanka.html',
+  '/es/craft-experiences-sigiriya.html',
+  '/fr/craft-experiences-sigiriya.html',
+  '/zh-cn/craft-experiences-sigiriya.html',
+  '/sigiriya-craft-village/',
+  '/sigiriya-sri-lanka/',
+];
+
 export default defineConfig({
   site: SITE_URL,
   base: BASE_PATH,
@@ -25,6 +56,7 @@ export default defineConfig({
       filter: (page) => !page.includes('/404'),
       changefreq: 'weekly',
       lastmod: new Date(),
+      customPages: STATIC_LANDING_PAGES.map((path) => new URL(path, SITE_URL).href),
     }),
   ],
   build: {
@@ -34,11 +66,12 @@ export default defineConfig({
   image: {
     // Featured images still live on the WordPress install; allow Astro to
     // reference them and let WordPress serve its pre-generated size variants.
-    remotePatterns: [
-      { protocol: 'https', hostname: 'www.zeroplastic.lk' },
-      // Jetpack Photon CDN, where WordPress actually serves uploads from.
-      { protocol: 'https', hostname: 'i0.wp.com' },
-    ],
+    // Photon (i*.wp.com) is deliberately absent: media is rewritten to the
+    // WordPress origin at build time, see src/lib/media.ts.
+    remotePatterns: [...new Set(WP_HOSTS)].map((hostname) => ({
+      protocol: 'https',
+      hostname,
+    })),
   },
   compressHTML: true,
 

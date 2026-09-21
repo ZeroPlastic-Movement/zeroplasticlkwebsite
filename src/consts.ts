@@ -5,6 +5,61 @@
  * static front end carries the same messaging, figures and contact details.
  */
 
+/**
+ * WordPress origin, read from the environment rather than hardcoded.
+ *
+ * The CMS is moving off www.zeroplastic.lk, because that hostname is being
+ * handed to Cloudflare Pages. Both the REST API (/wp-json/wp/v2) and the
+ * uploads directory (/wp-content/uploads) are served by the WordPress host, so
+ * the build needs to know where that host is.
+ *
+ *   WORDPRESS_BASE_URL   origin serving /wp-json/wp/v2
+ *   WORDPRESS_MEDIA_URL  origin serving /wp-content/uploads (defaults to the base)
+ *
+ * The default deliberately stays on the current production host. Nothing moves
+ * until cms.zeroplastic.lk is confirmed reachable and the variable is set, so
+ * checking this code in cannot by itself change what a build fetches.
+ */
+const WP_ORIGIN_FALLBACK = 'https://www.zeroplastic.lk';
+
+function resolveOrigin(value: string | undefined, fallback: string): string {
+  const raw = (value ?? '').trim();
+  if (!raw) return fallback;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    throw new Error(
+      `Invalid WordPress origin ${JSON.stringify(raw)}. Expected an absolute URL such as https://cms.zeroplastic.lk`,
+    );
+  }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    throw new Error(`WordPress origin ${JSON.stringify(raw)} must be http or https.`);
+  }
+  return parsed.origin;
+}
+
+const WP_BASE = resolveOrigin(process.env.WORDPRESS_BASE_URL, WP_ORIGIN_FALLBACK);
+const WP_MEDIA = resolveOrigin(process.env.WORDPRESS_MEDIA_URL, WP_BASE);
+
+/**
+ * Hostnames that historically served WordPress media and must be rewritten to
+ * the configured origin at build time.
+ *
+ * i*.wp.com are Jetpack Photon. Photon is a proxy, not a store: it refetches
+ * from the origin on a cache miss and 404s when the origin path is gone. It
+ * also only proxies hosts Jetpack recognises, so it cannot be relied on once
+ * the CMS moves. Media is therefore pointed straight at the WordPress origin.
+ */
+export const LEGACY_MEDIA_HOSTS = [
+  'www.zeroplastic.lk',
+  'zeroplastic.lk',
+  'i0.wp.com',
+  'i1.wp.com',
+  'i2.wp.com',
+] as const;
+
 export const SITE = {
   name: 'ZeroPlastic Movement',
   shortName: 'ZeroPlastic',
@@ -14,14 +69,10 @@ export const SITE = {
     "Sri Lanka's largest youth-led environmental movement, working to cut single-use plastic through education, advocacy, clean-ups and sustainable alternatives.",
   locale: 'en_LK',
   lang: 'en',
-  /** WordPress install that still acts as the CMS. */
-  wpBase: 'https://www.zeroplastic.lk',
-  /**
-   * Media host. The WordPress install has Jetpack Site Accelerator enabled, so
-   * uploads are rewritten to the Photon CDN, that, not wpBase, is where the
-   * browser actually fetches images from.
-   */
-  mediaHost: 'https://i0.wp.com',
+  /** WordPress install that still acts as the CMS. Override with WORDPRESS_BASE_URL. */
+  wpBase: WP_BASE,
+  /** Origin serving /wp-content/uploads. Override with WORDPRESS_MEDIA_URL. */
+  wpMediaBase: WP_MEDIA,
 } as const;
 
 export const CONTACT = {

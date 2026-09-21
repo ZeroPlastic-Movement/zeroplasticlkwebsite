@@ -26,11 +26,10 @@ const props = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Featured images are served from the Jetpack Photon CDN, not from the
-         WordPress origin. Warming that connection early removes a round trip
-         from the largest contentful paint. -->
-    <link rel="preconnect" href={SITE.mediaHost} crossorigin />
-    <link rel="dns-prefetch" href={SITE.mediaHost} />
+    <!-- WordPress media is served from the CMS origin. Warming that connection
+         early removes a round trip from the largest contentful paint. -->
+    <link rel="preconnect" href={SITE.wpMediaBase} crossorigin />
+    <link rel="dns-prefetch" href={SITE.wpMediaBase} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={`${SITE.name} Projects`} href="/rss.xml" />
