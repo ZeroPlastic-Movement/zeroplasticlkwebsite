@@ -17,7 +17,7 @@ const [heroSrc, logoSrc] = process.argv.slice(2);
 
 if (!heroSrc || !logoSrc) {
   console.error(
-    'usage: node scripts/build-images.mjs <hero-original> <logo-original> [impact-center] [traveller-craft] [advocacy-sculpture]',
+    'usage: node scripts/build-images.mjs <hero-original> <logo-original> [impact-center] [traveller-craft] [advocacy-action]',
   );
   process.exit(1);
 }
@@ -52,13 +52,14 @@ record(`${OUT}/og-home.jpg`);
  * Section photographs. Sources come from the Impact Center media library:
  *   impact-center      Impact Center building at dusk
  *   traveller-craft    visitors making coconut-shell craft
- *   advocacy-sculpture elephant sculpture built from recovered plastic
+ *   advocacy-action    coastal clean-up crew with a Make EPR Mandatory banner
  * Pass them as additional arguments, in that order, to regenerate.
  */
 const SECTION_WIDTHS = [480, 800, 1200];
 const sections = process.argv.slice(4);
-const sectionNames = ['impact-center', 'traveller-craft', 'advocacy-sculpture'];
-const sectionRatios = [16 / 9, 4 / 3, 4 / 3];
+const sectionNames = ['impact-center', 'traveller-craft', 'advocacy-action'];
+// advocacy-action keeps its native panoramic ratio.
+const sectionRatios = [16 / 9, 4 / 3, 2000 / 1013];
 
 for (let i = 0; i < sections.length && i < sectionNames.length; i++) {
   const meta = await sharp(sections[i]).metadata();
