@@ -318,3 +318,37 @@ own suffix and a Google click ID.
 The rest of the site is unaffected: `public/_routes.json` scopes the Function to
 these eight paths only, and a full sweep of 740 unique internal link targets
 found nothing broken.
+
+## Pages environment variables are build-time, not request-time
+
+Setting `WORDPRESS_BASE_URL` and `WORDPRESS_MEDIA_URL` on the Pages project
+does not change deployments that already exist. Astro reads them during
+`astro build` and bakes the resulting URLs into the static output, so a
+deployment built before the variables were saved keeps serving the old origin
+no matter what the project settings say afterwards.
+
+Observed directly: deployment `2744a98b` of `3906a54` was built before the
+variables were saved. The project now reports them correctly, but that
+deployment's pages still carry `www.zeroplastic.lk/wp-content` and zero
+`cms.zeroplastic.lk` references.
+
+**A fresh build is required after changing either variable.** Any of these
+does it: push a commit, use "Retry deployment" in the Cloudflare dashboard, or
+trigger the deploy hook.
+
+## Note: the account ID is printed once in workflow logs
+
+Both Cloudflare workflows call `::add-mask::` on `CLOUDFLARE_ACCOUNT_ID`, which
+masks it for the rest of the job. It does not mask the very first step's own
+environment block, which GitHub prints before the mask is registered, so the
+account ID appears in clear text once per run.
+
+A Cloudflare account ID is an identifier rather than a credential (it is
+visible in every dashboard URL and is useless without the API token), so this
+is low severity. It is still more exposure than intended.
+
+The clean fix is to store it as a **repository secret** rather than a
+repository variable: GitHub masks secrets in environment blocks automatically,
+including the first step. Changing that is a settings change, so it has not
+been done here. Existing workflow run logs can be deleted from the Actions tab
+if the exposure matters.
