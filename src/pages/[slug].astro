@@ -24,6 +24,11 @@ export const getStaticPaths = (async () => {
     '404',
     'rss.xml',
     'robots.txt',
+    'privacy-policy',
+    'terms-conditions',
+    'advisory-board',
+    'our-experts',
+    'our-work',
   ]);
 
   const posts = (await getAllPosts()).filter((post) => !RESERVED.has(post.slug));

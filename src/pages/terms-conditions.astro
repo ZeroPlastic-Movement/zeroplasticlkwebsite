@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+import { getPageBySlug, stripTags } from '../lib/wp';
+
+/**
+ * Legal text is pulled from WordPress at build time so it stays editable
+ * there. This site does not author or alter legal wording.
+ */
+const page = await getPageBySlug('terms-conditions');
+const description = page
+  ? `${stripTags(page.content).slice(0, 130)}`
+  : 'Terms and conditions for the ZeroPlastic Movement website.';
+---
+
+<BaseLayout
+  title="Terms and conditions"
+  description={description}
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Terms & Conditions', url: '/terms-conditions/' },
+    ]),
+  ]}
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Legal</p>
+      <h1>Terms and conditions</h1>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      {page ? <div class="prose legal" set:html={page.content} /> : <p>This page is currently unavailable.</p>}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal {
+    max-width: 68ch;
+  }
+  .legal :global(h1) {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+  }
+  .legal :global(h2) {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+  }
+  .legal :global(h3) {
+    font-size: 1.05rem;
+  }
+  .legal :global(p),
+  .legal :global(li) {
+    font-size: 0.95rem;
+    color: var(--ink-700);
+  }
+</style>

@@ -257,6 +257,45 @@ export async function getRecentPosts(limit: number): Promise<WPPost[]> {
   return (await getAllPosts()).slice(0, limit);
 }
 
+export interface WPPage {
+  slug: string;
+  title: string;
+  content: string;
+}
+
+/**
+ * A single WordPress page by slug.
+ *
+ * Used for the legal pages, so their text stays editable in WordPress and this
+ * site never becomes the place where legal wording is authored.
+ */
+export async function getPageBySlug(slug: string): Promise<WPPage | null> {
+  const cacheKey = `page-${slug}`;
+
+  try {
+    const { body } = await fetchJSON(
+      `${API}/pages?slug=${encodeURIComponent(slug)}&_fields=slug,title,content`,
+    );
+    const raw = Array.isArray(body) ? body[0] : null;
+    if (!raw) return null;
+
+    const page: WPPage = {
+      slug: raw.slug,
+      title: houseStyle(decodeEntities(raw.title?.rendered ?? '')),
+      content: houseStyle(stripShortcodes(raw.content?.rendered ?? '')),
+    };
+    await writeCache(cacheKey, page);
+    return page;
+  } catch (error) {
+    const cached = await readCache<WPPage>(cacheKey);
+    if (cached) {
+      console.warn(`[wp] page "${slug}" fetch failed, using cache`);
+      return cached;
+    }
+    throw new Error(`Unable to fetch WordPress page "${slug}": ${(error as Error).message}`);
+  }
+}
+
 /** Distinct category names across all posts, most used first. */
 export async function getCategories(): Promise<string[]> {
   const counts = new Map<string, number>();

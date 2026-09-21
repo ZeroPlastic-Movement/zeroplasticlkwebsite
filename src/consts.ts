@@ -11,7 +11,7 @@ export const SITE = {
   url: 'https://www.zeroplastic.lk',
   tagline: 'We say no to single-use plastic',
   description:
-    'A vibrant environmental organization dedicated to fostering a global transformation towards the reduction of plastic waste & promotion of sustainable alternatives.',
+    "Sri Lanka's largest youth-led environmental movement, working to cut single-use plastic through education, advocacy, clean-ups and sustainable alternatives.",
   locale: 'en_LK',
   lang: 'en',
   /** WordPress install that still acts as the CMS. */
