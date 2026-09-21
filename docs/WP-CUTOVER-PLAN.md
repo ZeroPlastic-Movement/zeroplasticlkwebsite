@@ -164,3 +164,120 @@ no rush and no outage either way.
 DreamHost stays active. No `www` CNAME. No apex change. No Google Ads change.
 No `book.zeroplastic.lk` or `pos.zeroplastic.lk` change. DNS cutover is a
 separate, later decision.
+
+---
+
+# Post-change verification (WordPress split applied)
+
+Verified after the constants and MU-plugin went live. The public site is still
+on DreamHost; no DNS was changed.
+
+## Automated result
+
+`node scripts/verify-wp-cutover.mjs` reports **SPLIT APPLIED** and all checks pass:
+
+| Check | Result |
+| --- | --- |
+| `cms/wp-login.php` | 200 |
+| `cms/wp-admin/` | 302 to **`cms`** login, no longer to the public host |
+| `cms/wp-json/wp/v2/posts` | 200 |
+| `cms/wp-admin/admin-ajax.php` | heartbeat returns valid JSON |
+| REST `_links.self` | `cms.zeroplastic.lk` |
+| Application Passwords authorize | `cms.zeroplastic.lk` |
+| `home_url()` | `www.zeroplastic.lk` |
+| Post permalinks | `www.zeroplastic.lk` |
+| RSS | `www.zeroplastic.lk` |
+
+Media on `cms` serves originals and generated sizes (200, `image/jpeg`), and the
+newest upload now records `source_url` on `cms`, confirming `WP_CONTENT_URL`
+follows siteurl as predicted.
+
+CORS is a non-issue: the editor runs on `cms` and calls `cms`, so REST is
+same-origin. WordPress echoes the request Origin with
+`Access-Control-Allow-Credentials: true` when asked cross-origin anyway.
+
+Plugin surface is intact: 43 REST namespaces, 789 routes, valid JSON. Yoast,
+Site Kit, Elementor, WPForms, Redirection, Eventin and the MCP adapter all
+respond. No PHP notices, warnings or fatals in any response body.
+
+## Regression found and fixed: Photon URLs returned
+
+The first post-split build put **24,594 Jetpack Photon URLs back into the
+output**, after months of builds at zero.
+
+Cause: Jetpack builds Photon URLs from whatever `siteurl` currently is. Before
+the split it emitted `i0.wp.com/www.zeroplastic.lk/...`; afterwards
+`i0.wp.com/cms.zeroplastic.lk/...`. The rewriter in `src/lib/media.ts` matched
+the host nested inside a Photon URL against a fixed list that knew `www` and the
+apex but not `cms`, so every Photon URL passed through untouched.
+
+Fix: derive that set from the configured origins rather than hardcoding it, so
+it follows the CMS wherever it goes. Unit-tested against both the `cms` and the
+legacy `www` Photon shapes, a direct `cms` URL, a Photon URL wrapping a foreign
+host (left alone) and an unrelated external URL (left alone).
+
+After the fix, a full build is clean again:
+
+```
+www/wp-json = 0   www/wp-content = 0   i0.wp.com = 0   cms/wp-content = 37,877
+preflight: 15/15
+```
+
+This is exactly what the preflight exists to catch, and it would have shipped
+broken image URLs into production had the build not been re-run after the
+WordPress change.
+
+## Build against the split CMS
+
+| Measure | Result |
+| --- | --- |
+| Result | success, 727 pages |
+| Duration | 4m 14s (faster than the 8m 47s pre-split run) |
+| Posts | 658, from `cms.zeroplastic.lk/wp-json/wp/v2` |
+| Media manifest | 2,633 items |
+| Retries, 4xx, 5xx, cache fallbacks | 0 |
+
+REST pagination from `cms` reports `x-wp-total: 658`, `x-wp-totalpages: 7`.
+
+## The cms root redirect, traced (not changed)
+
+Behaviour depends on the WP-Optimize page cache, which is why it can look
+inconsistent:
+
+| Request | Result |
+| --- | --- |
+| `cms/` served from cache | **200**, full page, `wpo-cache-status: cached`, `canonical` points at `www` |
+| `cms/?cachebust=...` (PHP runs) | **301** to `www`, `x-redirect-by: WordPress` |
+| `cms/a-plastic-free-kitchen/?cachebust=...` | **200**, no redirect |
+
+So the canonical redirect fires on the front page but not on individual posts,
+and cached responses skip it entirely. Backend paths never redirect:
+`wp-login.php`, `wp-json`, `admin-ajax.php` and `wp-content/uploads` are all
+direct 200 or the expected auth 302 on `cms`.
+
+Not a functional problem, so it has been left alone as instructed. Worth
+knowing, though: `cms` currently serves a browsable copy of the site and
+`cms/robots.txt` allows crawling, because that file is physically shared with
+`www`. The mitigations already in place are that every page carries a canonical
+pointing at `www`, and the Yoast sitemap on `cms` lists `www` URLs, so crawlers
+following it land on the public site.
+
+If you want that closed later, the right mechanism is an `X-Robots-Tag: noindex`
+sent only when the request host is `cms`, not a robots.txt edit, since robots.txt
+is shared with the public site.
+
+## Deploy Hook
+
+Not verified, and not verifiable from here. No deploy-hook MU-plugin was ever
+installed (only `zeroplastic-rest-origin.php` was added), mu-plugins cannot be
+listed remotely, and every Cloudflare deployment on record was triggered by a
+git commit rather than a hook.
+
+Treat this as an open item rather than a pass. Two ten-second checks:
+
+1. Cloudflare dashboard, Pages project, Settings, Builds and deployments, Deploy
+   hooks: is one defined?
+2. On the server: `ls wp-content/mu-plugins/`.
+
+It matters after DNS cutover. Until a hook exists, publishing in WordPress does
+not update the public site; only a git push or a manual redeploy does.

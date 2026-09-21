@@ -37,7 +37,21 @@ interface Variant {
 /** Keyed by the upload-relative path, e.g. "2025/10/photo.jpeg". */
 export type MediaManifest = Map<string, { width: number; variants: Variant[] }>;
 
-const LEGACY_HOSTS = new Set<string>(LEGACY_MEDIA_HOSTS);
+/**
+ * Hostnames that can appear as a WordPress media origin.
+ *
+ * The configured origins are included alongside the historical ones because
+ * Jetpack builds its Photon URLs from whatever `siteurl` currently is. Moving
+ * WordPress to cms.zeroplastic.lk changed the host nested inside every Photon
+ * URL from www to cms, so a fixed list silently stopped matching and 24,594
+ * Photon URLs survived into a build. Deriving the set from configuration keeps
+ * that from happening again if the CMS ever moves.
+ */
+const LEGACY_HOSTS = new Set<string>([
+  ...LEGACY_MEDIA_HOSTS,
+  new URL(SITE.wpBase).hostname,
+  new URL(SITE.wpMediaBase).hostname,
+]);
 const PHOTON_HOSTS = new Set(['i0.wp.com', 'i1.wp.com', 'i2.wp.com']);
 
 let manifest: MediaManifest = new Map();
