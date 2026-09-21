@@ -263,3 +263,58 @@ Either remedy unblocks it:
 
 Until one of those happens, deployed builds keep reading WordPress from
 `www.zeroplastic.lk`, which still works today and is the safe default.
+
+## CMS origin stability, measured
+
+A full production-style build was run against `cms.zeroplastic.lk` for both the
+REST API and media, to check the throttling seen in earlier testing.
+
+| Measure | Result |
+| --- | --- |
+| Build result | success, 727 pages |
+| Duration | 8m 47s (vs about 5m against `www`) |
+| Posts fetched | 658, from `cms.zeroplastic.lk/wp-json/wp/v2` |
+| Media manifest | 2,633 items, fetched successfully |
+| WordPress API requests | about 36 (27 media pages, 7 post pages, 2 legal pages) |
+| Retries | 0 |
+| Rate limiting (429) | 0 |
+| Server errors (5xx) | 0 |
+| Cache fallbacks | 0 |
+| Preflight on the output | 15/15 |
+
+No optimisation applied, per instruction: the build completes reliably. The
+extra three minutes is the CMS host answering more slowly than `www` did, not
+retries.
+
+Production availability was sampled every 10 seconds throughout the build:
+60 of 60 samples returned 200 from `https://www.zeroplastic.lk/`. Two isolated
+connection timeouts were seen against DreamHost earlier in the session, before
+and outside this window, so they look like ordinary shared-hosting blips rather
+than an effect of build load. Worth keeping an eye on, not worth acting on yet.
+
+## Legacy .html routes, verified on the deployed build
+
+Measured against the Cloudflare deployment, redirects not followed:
+
+| URL | Status | Location |
+| --- | --- | --- |
+| `/impact-center-premium.html` | 200 | none |
+| `/craft-experiences-sigiriya.html` | 200 | none |
+| `/zeroplastic-movement-sri-lanka.html` | 200 | none |
+| `/es/craft-experiences-sigiriya.html` | 200 | none |
+| `/fr/craft-experiences-sigiriya.html` | 200 | none |
+| `/zh-cn/craft-experiences-sigiriya.html` | 200 | none |
+| `/sigiriya-craft-village/index.html` | 200 | none |
+| `/sigiriya-sri-lanka/index.html` | 200 | none |
+
+All eight are byte-identical to their repository copies, and
+`/impact-center-premium.html` is byte-identical to the copy DreamHost is serving
+right now (SHA256 `28160cc84f3eb0c8...`, 64,100 bytes). Google tag
+`AW-17612444693` and the Make.com conversion webhook are present and unchanged.
+
+Query strings pass through untouched with no redirect, including the campaign's
+own suffix and a Google click ID.
+
+The rest of the site is unaffected: `public/_routes.json` scopes the Function to
+these eight paths only, and a full sweep of 740 unique internal link targets
+found nothing broken.
