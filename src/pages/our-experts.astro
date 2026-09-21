@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Portrait from '../components/Portrait.astro';
+import { EXPERTS } from '../data/people';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+---
+
+<BaseLayout
+  title="Our Experts"
+  description="Specialist consultants supporting the ZeroPlastic Movement with technical and subject expertise in public affairs, communications and sustainable finance."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'About', url: '/about/' },
+      { name: 'Our Experts', url: '/our-experts/' },
+    ]),
+  ]}
+>
+  <section class="page-hero page-hero--experts">
+    <div class="container">
+      <p class="eyebrow">Expertise</p>
+      <h1>Our Experts</h1>
+      <p class="lede">
+        Specialist consultants who support the movement with technical and subject expertise.
+        Where the Advisory Board sets direction, this group works on the practical disciplines
+        that campaigns and partnerships depend on.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="experts">
+        {
+          EXPERTS.map((person) => (
+            <article class="expert">
+              <header class="expert__head">
+                <Portrait slug={person.slug} name={person.name} widths={person.widths} />
+                <div>
+                  <h2>{person.name}</h2>
+                  <p class="expert__role">{person.role}</p>
+                </div>
+              </header>
+              <div class="expert__bio">
+                {person.bio.map((para) => <p>{para}</p>)}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Bring your expertise to the movement</h2>
+          <p>
+            We work with specialists across research, communications, finance, policy and
+            sustainability. If your field overlaps with ours, we would like to hear from you.
+          </p>
+        </div>
+        <a class="button button--lg" href="/contact/">Partner With Us</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Distinguished from the Advisory Board page: a two-column card grid with a
+     leading accent rule, rather than full-width governance rows. */
+  .page-hero--experts {
+    background:
+      radial-gradient(48rem 24rem at 88% -25%, var(--green-50), transparent 62%),
+      var(--surface);
+  }
+
+  .experts {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  }
+  .expert {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green-500);
+    border-radius: var(--radius);
+    padding: clamp(1.4rem, 3vw, 2rem);
+  }
+  .expert__head {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    margin-bottom: 1.25rem;
+  }
+  .expert__head h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.2rem;
+  }
+  .expert__role {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    font-weight: 700;
+    color: var(--green-600);
+    margin: 0;
+  }
+  .expert__bio p {
+    color: var(--ink-500);
+    font-size: 0.93rem;
+  }
+  .expert__bio p:last-child {
+    margin-bottom: 0;
+  }
+</style>

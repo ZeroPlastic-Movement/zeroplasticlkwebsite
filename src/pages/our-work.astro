@@ -1,12 +1,63 @@
 ---
+import Figure from '../components/Figure.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { ADVOCACY, MOVEMENT, PILLARS } from '../consts';
+import { EXTERNAL } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+
+/**
+ * The four pillars, expanded. Each describes what the stage means, what
+ * ZeroPlastic does within it, and how it reduces plastic. Activities listed
+ * are ones the movement runs; nothing here is aspirational.
+ */
+const PILLAR_DETAIL = [
+  {
+    stage: 'Prevention',
+    title: 'Awareness and education',
+    means: 'Stopping plastic from being used in the first place, which is the only intervention that costs nothing to clean up later.',
+    does: 'We run awareness and education programmes through university, school and community clubs, reaching people where they study, work and live.',
+    examples: ['Campus and school awareness campaigns', 'Community education sessions', 'Public campaigns around national and global environmental days'],
+    contributes: 'Every item refused is an item that never needs collecting, sorting or disposing of.',
+  },
+  {
+    stage: 'Assessment',
+    title: 'ZeroPlastic Commitment Standard',
+    means: 'Measuring what an organisation actually uses, so reduction can be verified rather than claimed.',
+    does: 'We support organisations working towards recognition under the ZeroPlastic Commitment Standard, which carries independent third-party verification by Control Union.',
+    examples: ['Organisational plastic assessments', 'Progression through defined commitment levels', 'Independent verification of results'],
+    contributes: 'Verified baselines turn corporate intent into measurable reduction.',
+  },
+  {
+    stage: 'Removal',
+    title: 'Environmental protection',
+    means: 'Recovering the plastic already in the environment before it breaks down into microplastics.',
+    does: 'We organise volunteer-led clean-up campaigns across coastlines, waterways and public spaces, and deploy traps that capture waste in waterways before it reaches the ocean.',
+    examples: ['Coastal and beach clean-ups', 'Waterway and canal clean-ups', 'Clean-up campaigns with universities, schools and partners'],
+    contributes: 'Removal protects marine life now and stops larger items fragmenting into microplastics.',
+  },
+  {
+    stage: 'Reduction',
+    title: 'Empowering alternatives',
+    means: 'Making the non-plastic option available, affordable and normal, so refusing plastic is practical.',
+    does: 'We support the industries and innovators producing sustainable alternatives, and build demand for what they make.',
+    examples: ['Supporting local producers of plastic alternatives', 'Promoting reusable and refill systems', 'Connecting alternatives to businesses and consumers'],
+    contributes: 'Alternatives close the gap between wanting to avoid plastic and being able to.',
+  },
+];
+
+const CONNECTS = [
+  { title: 'Education', body: 'Awareness and education programmes delivered through the club network.', href: '/clubs/' },
+  { title: 'Clubs', body: 'University, school and community clubs that carry campaigns locally.', href: '/clubs/' },
+  { title: 'Clean-ups', body: 'Volunteer-led removal across coastlines, waterways and public spaces.', href: '/volunteers/' },
+  { title: 'Advocacy', body: 'Policy work on mandatory EPR and single-use plastic reduction.', href: '/advocacy/' },
+  { title: 'Plastic alternatives', body: 'Building demand for the producers replacing single-use plastic.', href: '/sustainable-travel/' },
+  { title: 'ZeroPlastic Commitment', body: 'A verified standard for organisations reducing plastic.', href: EXTERNAL.commitment, external: true },
+];
 ---
 
 <BaseLayout
   title="Our work"
-  description="How ZeroPlastic cuts plastic at the source in Sri Lanka: prevention, assessment, removal and reduction, backed by policy advocacy and a nationwide club network."
+  description="The ZeroPlastic model explained: prevention, assessment, removal and reduction, connected through education, clubs, clean-ups, advocacy and sustainable alternatives."
+  image="/images/our-work-action-800.jpg"
   schema={[
     organizationSchema(),
     breadcrumbSchema([
@@ -20,24 +71,47 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
       <p class="eyebrow">Our work</p>
       <h1>Four stages, one goal: plastic that never reaches nature</h1>
       <p class="lede">
-        ZeroPlastic works across the whole chain: stopping plastic before it is used, recognising
-        the organisations that cut it, removing what has already escaped, and building the
-        alternatives that replace it.
+        ZeroPlastic works across the whole chain. We stop plastic before it is used, help
+        organisations measure and verify what they cut, remove what has already escaped, and build
+        the alternatives that replace it.
       </p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <h2 class="section__title">What we do</h2>
       <ol class="pillars">
         {
-          PILLARS.map((pillar, index) => (
+          PILLAR_DETAIL.map((p, i) => (
             <li class="pillar">
-              <span class="pillar__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-              <p class="pillar__stage">{pillar.stage}</p>
-              <h3>{pillar.title}</h3>
-              <p class="pillar__body">{pillar.body}</p>
+              <div class="pillar__head">
+                <span class="pillar__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <div>
+                  <p class="pillar__stage">{p.stage}</p>
+                  <h2>{p.title}</h2>
+                </div>
+              </div>
+
+              <div class="pillar__grid">
+                <div>
+                  <h3>What it means</h3>
+                  <p>{p.means}</p>
+                </div>
+                <div>
+                  <h3>What we do</h3>
+                  <p>{p.does}</p>
+                </div>
+                <div>
+                  <h3>Activities</h3>
+                  <ul class="ticks ticks--stack">
+                    {p.examples.map((e) => <li>{e}</li>)}
+                  </ul>
+                </div>
+              </div>
+
+              <p class="pillar__contrib">
+                <strong>How it reduces plastic.</strong> {p.contributes}
+              </p>
             </li>
           ))
         }
@@ -47,66 +121,145 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
   <section class="section section--alt">
     <div class="container">
-      <p class="eyebrow">Advocacy &amp; system change</p>
-      <h2 class="section__title">The part that outlasts a campaign</h2>
-      <p class="lede">
-        A clean beach stays clean only if something upstream changes. These are the policy and
-        market shifts we are working towards.
-      </p>
-
-      <div class="tile-grid">
-        {
-          ADVOCACY.map((item) => (
-            <div class="tile">
-              <p class="tile__meta">{item.tag}</p>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </div>
-          ))
-        }
-      </div>
-
-      <p style="margin-top:2rem">
-        <a class="button" href="/advocacy/">Read more on advocacy</a>
-      </p>
-    </div>
-  </section>
-
-  <section class="section section--dark">
-    <div class="container">
-      <p class="eyebrow eyebrow--light">Our movement</p>
-      <h2 class="section__title section__title--wide">Where the work happens</h2>
-
-      <div class="tile-grid">
-        {
-          MOVEMENT.map((item) => (
-            <div class="tile">
-              <p class="tile__meta">{item.meta}</p>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-              {'href' in item && item.href && (
-                <p class="tile__cta">
-                  <a class="ext-link" href={item.href}>Explore ZeroPlastic Clubs</a>
-                </p>
-              )}
-            </div>
-          ))
-        }
+      <div class="split split--reverse">
+        <Figure
+          name="our-work-action"
+          alt="ZeroPlastic volunteers walking along a beach with collection sacks during a clean-up campaign."
+          width={2000}
+          height={1333}
+          sizes="(max-width: 52rem) 100vw, 30rem"
+        />
+        <div class="narrative">
+          <p class="eyebrow">How it fits together</p>
+          <h2 class="section__title">The four stages are not separate programmes</h2>
+          <p>
+            A clean-up recruits volunteers. Those volunteers form a club. The club runs education
+            sessions, and the students in them ask their university to cut single-use plastic.
+            That request becomes an institutional commitment, and the commitment creates demand
+            for an alternative supplier.
+          </p>
+          <p>
+            Each stage feeds the next, which is why we run all four rather than specialising in
+            one.
+          </p>
+        </div>
       </div>
     </div>
   </section>
+
   <section class="section">
+    <div class="container">
+      <p class="eyebrow">Where the work shows up</p>
+      <h2 class="section__title">Programmes across the movement</h2>
+      <div class="tile-grid">
+        {
+          CONNECTS.map((c) => (
+            <div class="tile">
+              <h3>{c.title}</h3>
+              <p>{c.body}</p>
+              <p class="tile__cta">
+                {c.external ? (
+                  <a class="ext-link" href={c.href} rel="noopener noreferrer" target="_blank">Learn more</a>
+                ) : (
+                  <a class="ext-link" href={c.href}>Learn more</a>
+                )}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
     <div class="container">
       <div class="cta-band">
         <div>
-          <h2>Work with us</h2>
+          <h2>Policy is the part that lasts</h2>
           <p>
-            Organisations that want to cut single-use plastic, run a campaign or support the
-            volunteer network can start the conversation here.
+            Behaviour change and clean-ups matter, but the decisions that put plastic on the
+            market are made upstream. That is where our advocacy work sits.
           </p>
         </div>
-        <a class="button button--lg" href="/contact/">Partner With Us</a>
+        <a class="button button--lg" href="/advocacy/">Explore our advocacy work</a>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .pillars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .pillar {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: clamp(1.4rem, 3.5vw, 2.25rem);
+    background: var(--surface);
+  }
+  .pillar__head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .pillar__num {
+    font-size: 0.8rem;
+    font-weight: 750;
+    color: var(--green-500);
+    letter-spacing: 0.12em;
+  }
+  .pillar__stage {
+    margin: 0 0 0.1rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-300);
+    font-weight: 700;
+  }
+  .pillar__head h2 {
+    font-size: 1.35rem;
+    margin: 0;
+  }
+  .pillar__grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .pillar__grid h3 {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--green-600);
+    margin-bottom: 0.5rem;
+  }
+  .pillar__grid p {
+    color: var(--ink-500);
+    font-size: 0.93rem;
+    margin: 0;
+  }
+  .ticks--stack {
+    grid-template-columns: 1fr;
+    margin-top: 0;
+    gap: 0.4rem;
+  }
+  .pillar__contrib {
+    margin: 1.5rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.93rem;
+    color: var(--ink-500);
+  }
+  .pillar__contrib strong {
+    color: var(--ink-900);
+  }
+  .narrative {
+    max-width: 58ch;
+  }
+</style>

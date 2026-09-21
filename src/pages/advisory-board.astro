@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Portrait from '../components/Portrait.astro';
+import { ADVISORY_BOARD } from '../data/people';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+---
+
+<BaseLayout
+  title="Advisory Board"
+  description="The ZeroPlastic Movement Advisory Board brings governance and strategic guidance from environment, diplomacy, sustainability, finance and technology leadership in Sri Lanka and internationally."
+  schema={[
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'About', url: '/about/' },
+      { name: 'Advisory Board', url: '/advisory-board/' },
+    ]),
+  ]}
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Governance</p>
+      <h1>Advisory Board</h1>
+      <p class="lede">
+        Our Advisory Board provides strategic direction and governance to the movement, drawing on
+        senior experience in environmental policy, diplomacy, corporate sustainability, finance and
+        technology.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <ol class="board">
+        {
+          ADVISORY_BOARD.map((person) => (
+            <li class="board__item">
+              <Portrait slug={person.slug} name={person.name} widths={person.widths} />
+              <div class="board__body">
+                <h2>{person.name}</h2>
+                <p class="board__role">{person.role}</p>
+                {person.bio.map((para) => <p>{para}</p>)}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Technical and subject expertise</h2>
+          <p>
+            Alongside the board, a group of specialist consultants advises the movement on
+            communications, sustainable finance and related fields.
+          </p>
+        </div>
+        <a class="button button--lg" href="/our-experts/">Meet our experts</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .board {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .board__item {
+    display: flex;
+    gap: clamp(1.1rem, 3vw, 2rem);
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+  .board__body {
+    min-width: 0;
+  }
+  .board__body h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.15rem;
+  }
+  .board__role {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    font-weight: 700;
+    color: var(--green-600);
+    margin-bottom: 0.9rem;
+  }
+  .board__body p:not(.board__role) {
+    color: var(--ink-500);
+    font-size: 0.94rem;
+    max-width: 68ch;
+  }
+  .board__body p:last-child {
+    margin-bottom: 0;
+  }
+  @media (max-width: 34rem) {
+    .board__item {
+      flex-direction: column;
+    }
+  }
+</style>

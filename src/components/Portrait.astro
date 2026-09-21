@@ -1,0 +1,53 @@
+---
+/**
+ * Square profile photograph.
+ *
+ * Widths come from the person record because several source portraits are
+ * small and are never upscaled; each person only advertises the sizes that
+ * actually exist.
+ */
+interface Props {
+  slug: string;
+  name: string;
+  widths: number[];
+}
+
+const { slug, name, widths } = Astro.props;
+const largest = widths[widths.length - 1];
+const srcset = (ext: string) =>
+  widths.map((w) => `/images/people/${slug}-${w}.${ext} ${w}w`).join(', ');
+---
+
+<picture class="portrait">
+  <source type="image/avif" srcset={srcset('avif')} sizes="(max-width: 40rem) 5rem, 7rem" />
+  <source type="image/webp" srcset={srcset('webp')} sizes="(max-width: 40rem) 5rem, 7rem" />
+  <img
+    src={`/images/people/${slug}-${largest}.jpg`}
+    width={largest}
+    height={largest}
+    alt={`Portrait of ${name}`}
+    loading="lazy"
+    decoding="async"
+  />
+</picture>
+
+<style>
+  .portrait {
+    display: block;
+    flex: none;
+  }
+  .portrait img {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+  }
+  @media (max-width: 40rem) {
+    .portrait img {
+      width: 5rem;
+      height: 5rem;
+    }
+  }
+</style>

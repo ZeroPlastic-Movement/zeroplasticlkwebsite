@@ -1,18 +1,42 @@
 ---
 import Figure from '../components/Figure.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { CONTACT, EXTERNAL, SITE, VOLUNTEER_INTERNATIONAL, VOLUNTEER_LOCAL } from '../consts';
+import { CONTACT, EXTERNAL, SITE } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
 // Volunteer registration still runs on the existing WordPress form, so every
 // submission continues to arrive in one place.
 const REGISTRATION_URL = `${SITE.wpBase}/volunteers/`;
 const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
+
+const LOCAL = [
+  { title: 'Clean-ups', body: 'Coastal, waterway and public-space clean-up campaigns.' },
+  { title: 'Education', body: 'Delivering sessions in schools, universities and communities.' },
+  { title: 'Awareness', body: 'Public campaigns that change everyday habits around plastic.' },
+  { title: 'Advocacy', body: 'Supporting the case for EPR and single-use plastic reduction.' },
+  { title: 'Research', body: 'Data collection, studies and evidence that strengthen campaigns.' },
+  { title: 'Communication', body: 'Design, content, social media and press work.' },
+  { title: 'Clubs', body: 'Running or joining a university, school or community club.' },
+  { title: 'Campaigns', body: 'National campaigns and global days of action.' },
+  { title: 'Events', body: 'Planning and delivering the logistics behind it all.' },
+];
+
+const INTERNATIONAL = [
+  'Environmental campaigns',
+  'Clean-ups',
+  'Youth engagement',
+  'Community work',
+  'Sustainable tourism',
+  'Impact Center activities',
+  'Research',
+  'Communications',
+];
 ---
 
 <BaseLayout
   title="Volunteer with ZeroPlastic"
-  description="Volunteer with ZeroPlastic in Sri Lanka: clean-ups, education, advocacy, research and communications, or join from abroad and volunteer for the environment while you travel."
+  description="Volunteer with Sri Lanka's largest youth-led environmental movement. Join clean-ups, education, advocacy, research and communications locally, or volunteer for the environment while visiting Sri Lanka."
+  image="/images/volunteers-local-800.jpg"
   schema={[
     organizationSchema(),
     breadcrumbSchema([
@@ -24,10 +48,10 @@ const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
   <section class="page-hero">
     <div class="container">
       <p class="eyebrow">Get involved</p>
-      <h1>Give your time to a plastic-free Sri Lanka</h1>
+      <h1>Volunteers are the movement</h1>
       <p class="lede">
-        Volunteers are the movement. Whether you are in Colombo, Kandy or arriving on a flight next
-        month, there is a way to contribute.
+        Whether you live in Sri Lanka or are arriving on a flight next month, there is a way to
+        contribute. Choose the path that fits.
       </p>
       <p class="hero-actions">
         <a class="button" href="#local">Volunteer in Sri Lanka</a>
@@ -39,33 +63,40 @@ const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
   <!-- ===================== LOCAL ===================== -->
   <section class="section" id="local">
     <div class="container">
-      <p class="eyebrow">Pathway one</p>
-      <h2 class="section__title">Volunteer in Sri Lanka</h2>
-      <p class="lede">
-        For people living in Sri Lanka who want to work on plastic pollution, through a
-        university, school or community club, or independently.
-      </p>
+      <div class="split">
+        <div class="narrative">
+          <p class="eyebrow">Pathway one</p>
+          <h2 class="section__title">Volunteer in Sri Lanka</h2>
+          <p>
+            For people living in Sri Lanka who want to work on plastic pollution, through a
+            university, school or community club, or independently.
+          </p>
+          <p>
+            Not everyone can join a clean-up on a Saturday morning, and the movement does not
+            depend on it. Design, writing, research and campaign planning all happen remotely,
+            and all of it is needed.
+          </p>
+        </div>
+
+        <Figure
+          name="volunteers-local"
+          alt="ZeroPlastic volunteers walking along a Sri Lankan beach carrying bags of collected waste."
+          width={2000}
+          height={1333}
+          sizes="(max-width: 52rem) 100vw, 30rem"
+        />
+      </div>
 
       <h3 class="subhead">Where you can contribute</h3>
-      <ul class="ticks">
-        {VOLUNTEER_LOCAL.map((item) => <li>{item}</li>)}
-      </ul>
-
-      <div class="tile-grid tile-grid--2">
-        <div class="tile">
-          <h3>On the ground</h3>
-          <p>
-            Clean-up drives, awareness sessions, community events and project logistics, run with a
-            club or a campaign near you.
-          </p>
-        </div>
-        <div class="tile">
-          <h3>Remotely</h3>
-          <p>
-            Design, content, social media campaigns, project planning, press releases and research,
-            contributed from anywhere in the country.
-          </p>
-        </div>
+      <div class="tile-grid">
+        {
+          LOCAL.map((item) => (
+            <div class="tile tile--compact">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+          ))
+        }
       </div>
 
       <p class="actions">
@@ -79,17 +110,22 @@ const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
   <!-- ================== INTERNATIONAL ================== -->
   <section class="section section--dark" id="international">
     <div class="container">
-      <div class="split">
+      <p class="eyebrow eyebrow--light">Pathway two</p>
+      <h2 class="section__title section__title--wide">
+        Visit Sri Lanka. Volunteer for the environment. Experience the country differently.
+      </h2>
+      <p class="lede">
+        Thousands of travellers come to Sri Lanka every year for the coast, the hills and the
+        heritage. A smaller number leave having worked alongside the communities protecting them.
+        This is for that smaller number.
+      </p>
+
+      <div class="split" style="margin-top:2.5rem">
         <div>
-          <p class="eyebrow eyebrow--light">Pathway two</p>
-          <h2 class="section__title section__title--wide">
-            Visit Sri Lanka. Volunteer for the environment. Experience the country differently.
-          </h2>
-          <p class="lede">
-            Every year thousands of travellers come to Sri Lanka for the coast, the hills and the
-            heritage. A smaller number leave having worked alongside the communities protecting
-            them. This is for that smaller number.
-          </p>
+          <h3 class="subhead subhead--light">Where international volunteers contribute</h3>
+          <ul class="ticks">
+            {INTERNATIONAL.map((item) => <li>{item}</li>)}
+          </ul>
         </div>
 
         <Figure
@@ -97,32 +133,25 @@ const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
           alt="International visitors making coconut-shell craft at a workbench during an Impact Center session."
           width={1200}
           height={900}
-          sizes="(max-width: 52rem) 100vw, 30rem"
+          sizes="(max-width: 52rem) 100vw, 28rem"
         />
       </div>
-
-      <h3 class="subhead subhead--light">Where international volunteers contribute</h3>
-      <ul class="ticks">
-        {VOLUNTEER_INTERNATIONAL.map((item) => <li>{item}</li>)}
-      </ul>
 
       <div class="enquiry">
         <h3>Arranging a placement</h3>
         <p>
-          Placements are arranged individually, so that what you work on matches the time you have
-          and the skills you bring. Write to us with your dates and interests and we will tell you
-          what is running while you are here.
+          Placements are arranged individually, so that what you work on matches the time you
+          have and the skills you bring. Tell us your dates and interests and we will explain what
+          is running while you are here.
         </p>
         <p class="actions">
-          <a class="button" href={`mailto:${CONTACT.email}?subject=International%20volunteering`}>
-            Email {CONTACT.email}
-          </a>
+          <a class="button" href="/contact/">Contact us about volunteering</a>
           <a class="button button--outline" href="/sustainable-travel/">Sustainable travel</a>
         </p>
         <p class="note">
-          We have not published programme fees, visa guidance or accommodation arrangements on this
-          page, because those depend on the placement and on your own circumstances. Ask us and we
-          will answer directly.
+          We do not publish programme fees, visa guidance, accommodation or meal arrangements on
+          this page, because those depend on the placement and on your own circumstances. Ask us
+          and we will answer directly.
         </p>
       </div>
     </div>
@@ -131,26 +160,34 @@ const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
   <!-- ==================== ACADEMY ==================== -->
   <section class="section section--alt">
     <div class="container">
-      <div class="tile-grid tile-grid--2">
-        <div class="tile">
-          <h3>Volunteers Academy</h3>
+      <div class="split">
+        <div class="narrative">
+          <p class="eyebrow">Volunteers Academy</p>
+          <h2 class="section__title">Developing the people behind the movement</h2>
           <p>
-            The youth-development and volunteer-development arm of the ZeroPlastic ecosystem,
-            training the volunteers who go on to lead campaigns and clubs. It runs on its own
-            platform.
+            Volunteers Academy is the youth and volunteer development arm connected to the
+            ZeroPlastic ecosystem. It trains the volunteers who go on to lead campaigns, run clubs
+            and organise events.
           </p>
-          <p class="tile__cta">
-            <a class="ext-link" href={EXTERNAL.volunteersAcademy} rel="noopener noreferrer" target="_blank">
+          <p>
+            It runs on its own platform, with its own programmes and intake.
+          </p>
+          <p>
+            <a class="button" href={EXTERNAL.volunteersAcademy} rel="noopener noreferrer" target="_blank">
               Visit Volunteers Academy
             </a>
           </p>
         </div>
+
         <div class="tile">
           <h3>Questions first?</h3>
           <p>
             Email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> or call
-            <a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a> and someone from the team will
-            help.
+            <a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a> and someone from the team
+            will help.
+          </p>
+          <p class="tile__cta">
+            <a class="ext-link" href="/contact/">Go to contact</a>
           </p>
         </div>
       </div>
@@ -166,18 +203,32 @@ const APP_URL = `${SITE.wpBase}/download-volunteer-app/`;
     gap: 0.75rem;
     margin-top: 1.5rem;
   }
+  .narrative {
+    max-width: 56ch;
+  }
   .subhead {
-    margin-top: 2.5rem;
-    font-size: 0.78rem;
+    margin-top: 2.75rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--ink-300);
   }
   .subhead--light {
     color: rgb(255 255 255 / 55%);
+    margin-top: 0;
+  }
+  .tile--compact {
+    padding: 1.15rem 1.25rem;
+  }
+  .tile--compact h3 {
+    font-size: 1rem;
+  }
+  .tile--compact p {
+    font-size: 0.89rem;
+    margin: 0;
   }
   .enquiry {
-    margin-top: 2.5rem;
+    margin-top: 2.75rem;
     border: 1px solid rgb(255 255 255 / 16%);
     border-radius: var(--radius);
     padding: clamp(1.5rem, 4vw, 2.25rem);

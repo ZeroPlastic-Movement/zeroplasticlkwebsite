@@ -199,24 +199,29 @@ export const POSTS_PER_PAGE = 12;
 
 export const ADVOCACY = [
   {
+    title: 'Make Extended Producer Responsibility mandatory',
+    body: 'Advocating for mandatory Extended Producer Responsibility, so the companies that place plastic on the market carry the cost and the duty of recovering it.',
+    tag: 'Regulation',
+  },
+  {
     title: 'End single-use PET water bottles in government institutions',
     body: 'Campaigning for Sri Lankan government institutions to eliminate single-use PET drinking-water bottles and move to refill and reuse systems.',
     tag: 'Policy campaign',
   },
   {
-    title: 'Make Extended Producer Responsibility mandatory',
-    body: 'Advocating for mandatory Extended Producer Responsibility (EPR), so the companies that put plastic on the market carry the cost of recovering it.',
-    tag: 'Regulation',
+    title: 'Cut single-use plastic in institutional operations',
+    body: 'Working with institutions and businesses to design single-use plastic out of everyday operations, rather than managing it as waste after the fact.',
+    tag: 'Institutional action',
   },
   {
-    title: 'Reduce single-use plastic',
-    body: 'Working with institutions, businesses and communities to design single-use plastic out of everyday operations rather than manage it as waste.',
-    tag: 'Behaviour change',
-  },
-  {
-    title: 'Promote sustainable alternatives',
-    body: 'Building demand for viable alternatives and supporting the local producers who make them, so replacing plastic is practical, not aspirational.',
+    title: 'Promote reusable systems and alternatives',
+    body: 'Making refill and reuse practical, and building demand for the local producers whose alternatives replace single-use plastic.',
     tag: 'Market building',
+  },
+  {
+    title: 'Shift institutional behaviour',
+    body: 'Changing procurement habits, event practice and everyday defaults inside organisations, so reduction outlasts any single campaign.',
+    tag: 'Behaviour change',
   },
 ] as const;
 

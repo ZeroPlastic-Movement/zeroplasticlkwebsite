@@ -6,8 +6,9 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 ---
 
 <BaseLayout
-  title="Advocacy & system change"
-  description="ZeroPlastic campaigns to end single-use PET water bottles in Sri Lankan government institutions, to make Extended Producer Responsibility mandatory, and to build the market for sustainable alternatives."
+  title="Advocacy and system change"
+  description="ZeroPlastic campaigns for mandatory Extended Producer Responsibility, an end to single-use PET water bottles in Sri Lankan government institutions, and reusable systems that replace single-use plastic."
+  image="/images/advocacy-action-800.jpg"
   schema={[
     organizationSchema(),
     breadcrumbSchema([
@@ -19,11 +20,11 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 >
   <section class="page-hero">
     <div class="container">
-      <p class="eyebrow">Advocacy &amp; system change</p>
+      <p class="eyebrow">Advocacy and system change</p>
       <h1>Clean-ups treat the symptom. Policy treats the cause.</h1>
       <p class="lede">
-        ZeroPlastic is not only a clean-up organisation. Alongside the volunteers on the ground, we
-        work on behavioural change, policy advocacy and systemic solutions, because every piece of
+        ZeroPlastic is not only a clean-up organisation. Alongside the volunteers on the ground we
+        work on behaviour change, policy advocacy and systemic solutions, because every piece of
         plastic on a Sri Lankan beach was a decision made somewhere upstream.
       </p>
     </div>
@@ -38,17 +39,20 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
           width={2000}
           height={1013}
           sizes="(max-width: 52rem) 100vw, 32rem"
+          eager
         />
-        <div>
+        <div class="narrative">
           <h2 class="section__title">Three levers, used together</h2>
           <p>
             Behaviour change gets people to refuse plastic. Policy makes refusing it the default.
-            Market building makes the alternative available at the moment someone reaches for it.
-            Pull any one of those out and the other two stall.
+            Market building puts the alternative within reach at the moment someone needs it.
+            Remove any one of the three and the other two stall.
           </p>
           <p>
-            That is why our advocacy runs in parallel with the club network and the clean-ups
-            rather than instead of them.
+            That is why our advocacy runs alongside the club network and the clean-ups rather
+            than instead of them. The volunteers who fill sacks on a Saturday are the same people
+            asking their university, employer or ministry to stop buying the thing they just
+            collected.
           </p>
         </div>
       </div>
@@ -58,6 +62,10 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
   <section class="section section--alt">
     <div class="container">
       <h2 class="section__title">What we are campaigning for</h2>
+      <p class="lede">
+        These are positions we are actively advocating. None of them describes law already in
+        force.
+      </p>
 
       <div class="tile-grid">
         {
@@ -75,13 +83,41 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
   <section class="section">
     <div class="container">
+      <div class="split">
+        <div class="narrative">
+          <p class="eyebrow">Campaigning in public</p>
+          <h2 class="section__title">Pressure that institutions can see</h2>
+          <p>
+            Advocacy is not only submissions and meetings. Public campaigns make the case visible,
+            bring partners and their teams into the argument, and give institutions a reason to
+            move.
+          </p>
+          <p>
+            Campaigns such as PEN BIN Love, which targets the plastic pollution caused by
+            disposable pens, show how a specific, everyday product can become the entry point for
+            a much wider conversation about single-use plastic.
+          </p>
+        </div>
+
+        <Figure
+          name="advocacy-campaign"
+          alt="Campaigners walking with placards reading Stop Pen Pollution and PenBin Love during a ZeroPlastic awareness march."
+          width={2000}
+          height={1335}
+          sizes="(max-width: 52rem) 100vw, 30rem"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
       <div class="cta-band">
         <div>
           <h2>Work with us on policy</h2>
           <p>
-            Institutions, businesses and organisations that want to cut single-use plastic in
-            their own operations are the fastest route to system change. Tell us what you are
-            trying to do.
+            Institutions, businesses and organisations cutting single-use plastic in their own
+            operations are the fastest route to system change. Tell us what you are trying to do.
           </p>
         </div>
         <a class="button button--lg" href="/contact/">Partner With Us</a>
@@ -89,3 +125,9 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .narrative {
+    max-width: 58ch;
+  }
+</style>

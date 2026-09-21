@@ -1,12 +1,14 @@
 ---
+import Figure from '../components/Figure.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { EXTERNAL, GOALS, MISSION, SITE, STATS } from '../consts';
+import { EXTERNAL, GOALS, MISSION, STATS } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 ---
 
 <BaseLayout
-  title="About the ZeroPlastic Movement"
-  description="ZeroPlastic is a Sri Lankan environmental movement of 11,000+ volunteers working to cut plastic waste, grow demand for local alternatives and restore the island's coasts and waterways."
+  title="About ZeroPlastic"
+  description="ZeroPlastic is Sri Lanka's largest youth-led environmental movement, reducing single-use plastic through behaviour change, youth mobilisation, advocacy, sustainable alternatives and institutional partnerships."
+  image="/images/about-movement-800.jpg"
   schema={[
     organizationSchema(),
     breadcrumbSchema([
@@ -15,95 +17,244 @@ import { breadcrumbSchema, organizationSchema } from '../lib/schema';
     ]),
   ]}
 >
-  <section class="section">
+  <section class="page-hero">
     <div class="container">
-      <p class="eyebrow">About us</p>
+      <p class="eyebrow">About ZeroPlastic</p>
       <h1>Sri Lanka's largest youth-led environmental movement</h1>
-      <p class="lede">{MISSION}</p>
+      <p class="lede">
+        We work to reduce single-use plastic through behaviour change, youth mobilisation,
+        advocacy, sustainable alternatives and institutional partnerships.
+      </p>
     </div>
   </section>
 
-  <section class="section section--alt">
+  <!-- ===================== IMPACT ===================== -->
+  <section class="section section--dark">
     <div class="container">
-      <div class="grid grid--stats">
+      <p class="eyebrow eyebrow--light">The movement in numbers</p>
+      <dl class="impact">
         {
           STATS.map((stat) => (
-            <div class="stat">
-              <span class="stat__value">{stat.value}</span>
-              <span class="stat__label">{stat.label}</span>
+            <div>
+              <dt>{stat.value}</dt>
+              <dd>{stat.label}</dd>
             </div>
           ))
         }
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===================== OUR STORY ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="split">
+        <div class="narrative">
+          <p class="eyebrow">Our story</p>
+          <h2 class="section__title">It started on university campuses</h2>
+          <p>
+            ZeroPlastic grew out of campaigns run with state universities in Sri Lanka. Students
+            who were tired of watching plastic accumulate on their coastlines and in their
+            waterways began organising clean-ups, awareness sessions and campus campaigns.
+          </p>
+          <p>
+            That campus base is still what makes the movement work. Clubs took root in
+            universities, then in schools and communities, and the network grew into a national
+            one. Today the same structure carries campaigns from Colombo to Jaffna without needing
+            a head office in every district.
+          </p>
+          <p>{MISSION}</p>
+        </div>
+
+        <Figure
+          name="about-movement"
+          alt="ZeroPlastic volunteers in branded shirts carrying collection sacks along a beach during a coastal clean-up."
+          width={2000}
+          height={1333}
+          sizes="(max-width: 52rem) 100vw, 32rem"
+        />
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="container prose">
-      <h2>What we have built</h2>
-      <p>
-        Supported by a network of more than 12,000 change makers, the ZeroPlastic Movement has
-        reached over 5 million people with plastic-reduction education, mobilised more than 300,000
-        volunteers, and delivered over 1,000 environmental actions and clean-up campaigns.
-      </p>
-      <p>
-        The movement has also empowered and supported over 120 industries focused on plastic
-        alternatives and featured over 350 products on its marketplace. Innovative initiatives
-        include the creation and deployment of canal and river strainers that stop waste before it
-        reaches the ocean, and the ZeroPlastic App, which makes volunteering accessible to young
-        people and communities across the island.
-      </p>
-      <p>
-        Our club network spans state universities and campuses nationwide and continues to grow, with
-        new ZeroPlastic clubs forming each year. That network is what turns national campaigns into
-        local action.
-      </p>
-
-      <h2>How we work</h2>
-      <p>
-        ZeroPlastic works across sectors because plastic pollution cannot be solved by one
-        organisation alone. We collaborate with the Central Environmental Authority, our islandwide
-        university network, private-sector organisations, development partners, international
-        organisations, financial institutions, the travel industry and other institutions working
-        to reduce plastic use across Sri Lanka.
-      </p>
-      <p>
-        Our approach combines behaviour change, youth mobilisation, practical plastic alternatives,
-        institutional action and policy advocacy. By working through universities, schools,
-        communities, businesses and national partners, we aim to create changes that continue
-        beyond individual campaigns.
-      </p>
-
-      <h2>Helping businesses reduce single-use plastic</h2>
-      <p>
-        We also work with businesses that want to reduce single-use plastic in their operations.
-        Organisations can progress toward recognition through the ZeroPlastic Commitment Standard,
-        which carries independent third-party verification by Control Union.
-      </p>
-      <p>
-        <a class="button" href={EXTERNAL.commitment} rel="noopener noreferrer" target="_blank">
-          Explore the ZeroPlastic Commitment Standard
-        </a>
-      </p>
+  <!-- ===================== HOW WE WORK ===================== -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="narrative">
+        <p class="eyebrow">How we work</p>
+        <h2 class="section__title">No single organisation solves plastic pollution</h2>
+        <p>
+          ZeroPlastic works across sectors because plastic pollution cannot be solved by one
+          organisation alone. We collaborate with the Central Environmental Authority, our
+          islandwide university network, private-sector organisations, development partners,
+          international organisations, financial institutions, the travel industry and other
+          institutions working to reduce plastic use across Sri Lanka.
+        </p>
+        <p>
+          Our approach combines behaviour change, youth mobilisation, practical plastic
+          alternatives, institutional action and policy advocacy. By working through universities,
+          schools, communities, businesses and national partners, we aim to create changes that
+          continue beyond individual campaigns.
+        </p>
+      </div>
     </div>
   </section>
 
-  <section class="section section--alt">
+  <!-- ===================== OUR APPROACH ===================== -->
+  <section class="section">
     <div class="container">
-      <h2>Our three goals</h2>
-      <div class="grid grid--3" style="margin-top:2rem">
+      <p class="eyebrow">Our approach</p>
+      <h2 class="section__title">Three goals hold the work together</h2>
+      <div class="tile-grid">
         {
-          GOALS.map((goal) => (
-            <div>
+          GOALS.map((goal, i) => (
+            <div class="tile">
+              <p class="tile__meta">{String(i + 1).padStart(2, '0')}</p>
               <h3>{goal.title}</h3>
-              <p style="color:var(--ink-500)">{goal.body}</p>
+              <p>{goal.body}</p>
             </div>
           ))
         }
       </div>
       <p style="margin-top:2rem">
-        <a class="button" href="/volunteers/">Join {SITE.shortName}</a>
+        <a class="button button--ghost" href="/our-work/">See the full ZeroPlastic model</a>
       </p>
     </div>
   </section>
+
+  <!-- ===================== OUR NETWORK ===================== -->
+  <section class="section section--alt">
+    <div class="container">
+      <p class="eyebrow">Our network</p>
+      <h2 class="section__title">Where the movement reaches</h2>
+      <div class="tile-grid">
+        <div class="tile">
+          <h3>Universities</h3>
+          <p>
+            An islandwide university network gives ZeroPlastic a permanent presence in Sri Lankan
+            higher education, with student-led clubs running their own campaigns.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Schools and communities</h3>
+          <p>
+            School clubs introduce plastic reduction early, and community clubs take on the local
+            problems that national campaigns cannot reach.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>National and global roles</h3>
+          <p>
+            ZeroPlastic organises World Cleanup Day activities in Sri Lanka and is the authorised
+            Sri Lanka organiser for the SPOGOMI World Cup.
+          </p>
+        </div>
+      </div>
+      <p style="margin-top:2rem">
+        <a class="button button--ghost" href="/clubs/">Explore ZeroPlastic Clubs</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============== WORKING ACROSS SECTORS / ZPC ============== -->
+  <section class="section">
+    <div class="container">
+      <div class="narrative">
+        <p class="eyebrow">Working across sectors</p>
+        <h2 class="section__title">Helping businesses reduce single-use plastic</h2>
+        <p>
+          We work with businesses that want to reduce single-use plastic in their operations.
+          Organisations can progress toward recognition through the ZeroPlastic Commitment
+          Standard, which carries independent third-party verification by Control Union.
+        </p>
+        <p>
+          The standard gives companies something more useful than a pledge: a defined level to
+          work towards, and an external check that the work was actually done.
+        </p>
+        <p>
+          <a class="button" href={EXTERNAL.commitment} rel="noopener noreferrer" target="_blank">
+            Explore the ZeroPlastic Commitment Standard
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LEADERSHIP ===================== -->
+  <section class="section section--alt">
+    <div class="container">
+      <p class="eyebrow">Leadership</p>
+      <h2 class="section__title">Who guides the movement</h2>
+      <div class="tile-grid tile-grid--2">
+        <div class="tile">
+          <h3>Advisory Board</h3>
+          <p>
+            Strategic direction and governance, drawing on senior experience in environmental
+            policy, diplomacy, corporate sustainability, finance and technology.
+          </p>
+          <p class="tile__cta">
+            <a class="button button--ghost" href="/advisory-board/">Meet the Advisory Board</a>
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Our Experts</h3>
+          <p>
+            Specialist consultants supporting the movement with technical and subject expertise
+            across public affairs, communications and sustainable finance.
+          </p>
+          <p class="tile__cta">
+            <a class="button button--ghost" href="/our-experts/">Meet our experts</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CLOSING CTA ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Work with ZeroPlastic</h2>
+          <p>
+            We collaborate with companies, institutions, universities and community organisations
+            that want to cut single-use plastic. Tell us what you are trying to do.
+          </p>
+        </div>
+        <a class="button button--lg" href="/contact/">Partner With ZeroPlastic</a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .narrative {
+    max-width: 62ch;
+  }
+  .narrative p {
+    color: var(--ink-700);
+    font-size: 1.02rem;
+  }
+  .section--alt .narrative p {
+    color: var(--ink-700);
+  }
+
+  .impact {
+    display: grid;
+    gap: 1.75rem 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    margin: 2rem 0 0;
+  }
+  .impact dt {
+    font-size: clamp(1.8rem, 1.2rem + 2.2vw, 2.7rem);
+    font-weight: 750;
+    color: var(--green-400);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .impact dd {
+    margin: 0.4rem 0 0;
+    color: rgb(255 255 255 / 72%);
+    font-size: 0.92rem;
+  }
+</style>
