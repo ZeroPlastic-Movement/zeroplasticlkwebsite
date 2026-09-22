@@ -1,6 +1,7 @@
 {
   "version": 1,
   "include": [
+    "/api/*",
     "/impact-center-premium.html",
     "/craft-experiences-sigiriya.html",
     "/zeroplastic-movement-sri-lanka.html",

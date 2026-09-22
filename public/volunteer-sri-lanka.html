@@ -461,7 +461,14 @@ a:hover{color:var(--forest-900)}
 
 .sent{display:none;text-align:center;padding:1rem 0}
 .sent.is-on{display:block}
-.sent h3{font-family:var(--serif);font-size:1.5rem;margin-bottom:.5rem}
+.sent h3{font-family:var(--serif);font-size:1.7rem;margin-bottom:.6rem}
+.sent p{max-width:52ch;margin-inline:auto}
+.sent-ref{
+  margin-top:1.4rem;padding:.8rem 1.2rem;display:inline-block;
+  background:var(--ivory-200);border:1px solid var(--sand-300);border-radius:var(--radius);
+  font-size:.95rem;color:var(--ink-600);
+}
+.sent-ref b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);letter-spacing:.02em}
 
 /* ---------------- faq ---------------- */
 
@@ -1181,13 +1188,12 @@ body.has-sticky{padding-bottom:4.75rem}
       </div>
 
       <div class="sent" id="sentMsg">
-        <p class="eyebrow">Application received</p>
-        <h3>Thank you. We have your application.</h3>
+        <h3>Application Received</h3>
         <p>
-          Someone from the ZeroPlastic team will review it against current project needs and reply
-          by email or WhatsApp. If your dates are close, mention that when we get in touch and we
-          will prioritise it.
+          Thank you for applying to volunteer with ZeroPlastic in Sri Lanka. Our team will review
+          your preferred programme, travel dates and skills, then contact you by email or WhatsApp.
         </p>
+        <p class="sent-ref">Reference: <b id="sentRef"></b></p>
       </div>
     </div>
   </div>
@@ -1363,25 +1369,11 @@ body.has-sticky{padding-bottom:4.75rem}
    * CONFIGURATION
    *
    * FORM_ENDPOINT
-   *   The URL this application form POSTs to. Every other ZeroPlastic
-   *   landing page posts a FormData body to its own Make.com webhook, for
-   *   example https://hook.eu2.make.com/<hook-id>.
-   *
-   *   It is intentionally EMPTY. No volunteer webhook exists yet and this
-   *   page will not invent one. While it is empty the form validates
-   *   normally, then tells the applicant plainly that online submission is
-   *   not connected and offers a working email and WhatsApp route instead.
-   *   Nothing is sent anywhere and no success message is shown.
-   *
-   *   To activate live submission:
-   *     1. Create a Make.com scenario with a "Custom webhook" trigger.
-   *     2. Paste its URL below.
-   *     3. Map the posted fields in Make (names are the `name` attributes
-   *        on the form, plus utm_source, utm_medium, utm_campaign,
-   *        utm_term, utm_content, gclid, wbraid, gbraid, page_url,
-   *        referrer, seconds_on_page, form_source and hp_check).
-   *     4. In the scenario, DROP any submission where hp_check is not
-   *        empty or seconds_on_page is below about 4. Those are bots.
+   *   Same-origin server endpoint, implemented as a Cloudflare Pages
+   *   Function in functions/api/volunteer-application.js. The browser never
+   *   sees the Make.com webhook URL: the Function holds it as an encrypted
+   *   Pages secret (VOLUNTEER_FORM_WEBHOOK_URL) and forwards server side
+   *   after validating. Nothing here should ever be changed to a Make URL.
    *
    * ADS_CONVERSION
    *   Google Ads conversion action for a submitted volunteer application,
@@ -1390,8 +1382,22 @@ body.has-sticky{padding-bottom:4.75rem}
    *   copied from Google Ads > Conversions > (your volunteer conversion) >
    *   Tag setup. Left empty, no conversion is sent and nothing breaks.
    * ================================================================ */
-  var FORM_ENDPOINT  = '';
+  var FORM_ENDPOINT  = '/api/volunteer-application';
   var ADS_CONVERSION = '';
+
+  /**
+   * One reference per page load.
+   *
+   * Reusing it across a double-click or a browser retry is the point: the
+   * server and the Make scenario both key their duplicate protection on it,
+   * so a second attempt cannot produce a second pair of emails. The server
+   * re-checks the shape and issues its own if this one is missing or odd.
+   */
+  var SUBMISSION_ID = (function () {
+    var stamp = Date.now().toString(36).toUpperCase();
+    var rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+    return 'ZPV-' + stamp + '-' + rand;
+  })();
 
   /* ---------------- analytics helper ----------------
    * One thin wrapper so every event goes out the same way, through the
@@ -1582,6 +1588,7 @@ body.has-sticky{padding-bottom:4.75rem}
     document.getElementById('mailtoFallback').href = buildMailto();
     offlineBox.classList.add('is-on');
     offlineBox.scrollIntoView({ block:'center', behavior: reduce ? 'auto' : 'smooth' });
+    inFlight = false;
     submitBtn.disabled = false;
     submitBtn.textContent = 'Submit My Volunteer Application';
   }
@@ -1594,48 +1601,72 @@ body.has-sticky{padding-bottom:4.75rem}
     }catch(e){ /* ignore */ }
   }
 
-  function showSent(){
+  // Only the programme and duration choices are reported, both picked from
+  // fixed lists. No name, email, number, dates or free text ever goes to
+  // analytics, and neither does the submission reference.
+  function showSent(reference){
     track('volunteer_application_submitted', {
       programme: programme.value,
       duration: document.getElementById('duration').value
     });
     reportConversion();
+    document.getElementById('sentRef').textContent = reference;
     document.getElementById('formLive').style.display = 'none';
     document.getElementById('sentMsg').classList.add('is-on');
     document.getElementById('sentMsg').scrollIntoView({ block:'center', behavior: reduce ? 'auto' : 'smooth' });
   }
+
+  /** Collect the form into a plain object the endpoint understands. */
+  function payload(){
+    var out = { submission_id: SUBMISSION_ID };
+    Array.prototype.forEach.call(form.elements, function(el){
+      if (!el.name) return;
+      out[el.name] = (el.type === 'checkbox') ? (el.checked ? 'true' : 'false') : el.value;
+    });
+    return out;
+  }
+
+  var inFlight = false;
 
   form.addEventListener('submit', function(ev){
     ev.preventDefault();
     errBox.classList.remove('is-on');
     offlineBox.classList.remove('is-on');
 
+    if (inFlight) return;
     if (!validate(true)) return;
 
-    // Silently drop bots: the honeypot is filled, or the form came back
-    // impossibly fast. Show the normal confirmation so a bot learns nothing.
     var elapsed = Math.round((Date.now() - opened) / 1000);
-    if (form.hp_check.value !== '' || elapsed < 3){
-      document.getElementById('formLive').style.display = 'none';
-      document.getElementById('sentMsg').classList.add('is-on');
-      return;
-    }
     document.getElementById('secondsOnPage').value = String(elapsed);
 
-    // No endpoint configured: say so honestly rather than faking success.
-    if (!FORM_ENDPOINT){
-      showOffline();
-      return;
-    }
-
+    inFlight = true;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sending';
 
-    // FormData with no custom headers keeps this a "simple" request, so the
-    // browser sends it without a CORS preflight the webhook would have to answer.
-    fetch(FORM_ENDPOINT, { method:'POST', body:new FormData(form) })
-      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); showSent(); })
+    var body = payload();
+
+    fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+      .then(function(r){
+        return r.json().catch(function(){ return null; }).then(function(json){
+          return { status: r.status, json: json };
+        });
+      })
+      .then(function(res){
+        if (res.json && res.json.ok === true && res.json.submission_id){
+          showSent(res.json.submission_id);
+          return;
+        }
+        // The endpoint exists but is not wired to Make yet. Say so plainly
+        // rather than claiming the application was received.
+        if (res.status === 503){ showOffline(); return; }
+        throw new Error('rejected');
+      })
       .catch(function(){
+        inFlight = false;
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit My Volunteer Application';
         errBox.classList.add('is-on');
