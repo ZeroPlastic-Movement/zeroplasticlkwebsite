@@ -293,6 +293,9 @@ a:hover{color:var(--forest-900)}
 
 .cards{display:grid;gap:1.5rem;grid-template-columns:1fr;margin-top:2.75rem}
 @media (min-width:52rem){.cards{grid-template-columns:repeat(3,1fr)}}
+/* Two-up variant, for the four location cards. The three-column default
+   would leave the fourth card stranded on a row of its own. */
+@media (min-width:52rem){.cards--2{grid-template-columns:repeat(2,1fr)}}
 
 .card{
   background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);
@@ -861,6 +864,103 @@ body.has-sticky{padding-bottom:4.75rem}
           and artisan communities are active during your dates.
         </p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= LOCATIONS =========================== -->
+<section class="sec" id="locations">
+  <div class="wrap">
+    <p class="eyebrow">Volunteer across Sri Lanka</p>
+    <h2>Where can you volunteer in Sri Lanka?</h2>
+    <p class="lede">
+      Your placement does not have to look the same as another volunteer's. Depending on your
+      dates, skills and the projects currently running, opportunities may be based in Sigiriya,
+      Colombo, local communities or environmental projects elsewhere in Sri Lanka.
+    </p>
+
+    <div class="cards cards--2">
+
+      <article class="card rise">
+        <div class="card-body">
+          <h3>Volunteer in Sigiriya</h3>
+          <p>
+            The ZeroPlastic Impact Center near Sigiriya can be your volunteer base. Depending on
+            current needs, you may support environmental education, visitor engagement, responsible
+            tourism activities, communications, digital content and community projects connected to
+            the Center.
+          </p>
+          <p>
+            Placements may also combine time at the Impact Center with approved artisan or community
+            projects in the surrounding area.
+          </p>
+        </div>
+      </article>
+
+      <article class="card rise">
+        <div class="card-body">
+          <h3>Volunteer in Colombo</h3>
+          <p>
+            When suitable projects are active, volunteers may contribute to ZeroPlastic initiatives
+            in and around Colombo, including environmental campaigns, community awareness,
+            university activities, communications, project documentation and other movement
+            programmes.
+          </p>
+          <p>
+            Availability depends on the projects running during your travel dates.
+          </p>
+        </div>
+      </article>
+
+      <article class="card rise">
+        <div class="card-body">
+          <h3>Volunteer with local communities and villages</h3>
+          <p>
+            Some placements involve working alongside artisan families and community-based projects.
+          </p>
+          <p>
+            Depending on your skills, you may help with photography, storytelling, product
+            presentation, packaging, English communication, marketing, digital promotion, research
+            or practical business support.
+          </p>
+          <p>
+            These placements take place only where there is a genuine need, with community or
+            artisan consent, and they are designed to support local people rather than replace local
+            employment.
+          </p>
+        </div>
+      </article>
+
+      <article class="card rise">
+        <div class="card-body">
+          <h3>Volunteer in environmental projects</h3>
+          <p>
+            ZeroPlastic runs environmental activities across Sri Lanka.
+          </p>
+          <p>
+            Depending on current projects, volunteers may contribute to plastic cleanups,
+            environmental awareness, plastic-reduction campaigns, university initiatives, community
+            engagement, research, project documentation and impact reporting.
+          </p>
+          <p>
+            Projects, dates and locations vary, so individual activities cannot be guaranteed before
+            your placement is reviewed.
+          </p>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="panel rise" style="margin-top:2rem">
+      <h3>Not sure where to volunteer?</h3>
+      <p>
+        Tell us your travel dates, skills and the kind of contribution you want to make. We will
+        review what is running during your visit and recommend the locations and projects that best
+        match your interests and experience.
+      </p>
+      <p style="margin-bottom:0">
+        <a class="btn btn--primary" href="#apply" data-cta="locations">Apply to Volunteer</a>
+      </p>
     </div>
   </div>
 </section>
