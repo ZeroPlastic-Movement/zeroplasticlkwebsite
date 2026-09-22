@@ -4,9 +4,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { CONTACT, EXTERNAL } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
-// A dedicated volunteer registration page is being built. Until it exists,
-// enquiries route through /contact/ rather than back to the old WordPress
-// front end, so nothing here depends on a page that is being retired.
+// International volunteer applications are handled by the dedicated landing
+// page at /volunteer-sri-lanka, which carries the full programme detail and
+// the application form. Local enquiries still route through /contact/.
 
 const LOCAL = [
   { title: 'Clean-ups', body: 'Coastal, waterway and public-space clean-up campaigns.' },
@@ -103,8 +103,9 @@ const INTERNATIONAL = [
         <a class="button button--ghost" href="/clubs/">Start a club instead</a>
       </p>
       <p class="registration-note">
-        A dedicated volunteer registration page is opening soon. Until then, send us a message
-        and the team will get you connected to a club or campaign.
+        Visiting Sri Lanka rather than living here? The
+        <a href="/volunteer-sri-lanka">international volunteer programme</a> has its own
+        application form, programme detail and fee explanation.
       </p>
     </div>
   </section>
@@ -147,13 +148,13 @@ const INTERNATIONAL = [
           is running while you are here.
         </p>
         <p class="actions">
-          <a class="button" href="/contact/">Contact us about volunteering</a>
+          <a class="button" href="/volunteer-sri-lanka">Apply to volunteer</a>
           <a class="button button--outline" href="/sustainable-travel/">Sustainable travel</a>
         </p>
         <p class="note">
-          We do not publish programme fees, visa guidance, accommodation or meal arrangements on
-          this page, because those depend on the placement and on your own circumstances. Ask us
-          and we will answer directly.
+          International placements run as a structured programme with a programme fee. Fees vary
+          according to the selected project, duration and level of support required, and you
+          receive the applicable fee and a full cost breakdown before confirming a placement.
         </p>
       </div>
     </div>

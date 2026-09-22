@@ -36,6 +36,9 @@ const WP_HOSTS = [
  * URL of a live Google Ads campaign, so it matters that it is listed.
  */
 const STATIC_LANDING_PAGES = [
+  // Listed without the .html suffix because that is the canonical URL this
+  // page declares, and the one Cloudflare Pages serves at HTTP 200.
+  '/volunteer-sri-lanka',
   '/impact-center-premium.html',
   '/craft-experiences-sigiriya.html',
   '/zeroplastic-movement-sri-lanka.html',

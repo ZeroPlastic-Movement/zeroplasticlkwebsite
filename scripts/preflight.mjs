@@ -143,6 +143,10 @@ function resolves(p) {
   if (distPaths.has(clean)) return true;
   if (distPaths.has(clean.replace(/\/$/, '') + '/index.html')) return true;
   if (distPaths.has(clean + '/index.html')) return true;
+  // Cloudflare Pages serves foo.html at the extensionless /foo and 308s
+  // /foo.html to it, so a link to the clean URL is not broken. This is how
+  // /volunteer-sri-lanka resolves to volunteer-sri-lanka.html.
+  if (distPaths.has(clean + '.html')) return true;
   return false;
 }
 
