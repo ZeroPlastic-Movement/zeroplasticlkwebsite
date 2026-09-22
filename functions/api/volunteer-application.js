@@ -119,8 +119,13 @@ function validate(body) {
     work_or_study_area: field(body.work_or_study_area, 120),
     email: field(body.email, 160),
     whatsapp: field(body.whatsapp, 40),
-    expected_arrival_date: field(body.expected_arrival_date, 10),
-    expected_departure_date: field(body.expected_departure_date, 10),
+    // The form's date inputs are named expected_arrival and expected_departure,
+    // while the Make scenario reads expected_arrival_date and
+    // expected_departure_date. Bridging the two names here keeps both sides as
+    // they are. Reading the outbound names from the request, as this did
+    // before, silently dropped every travel date.
+    expected_arrival_date: field(body.expected_arrival, 10),
+    expected_departure_date: field(body.expected_departure, 10),
     preferred_programme: field(body.preferred_programme, 80),
     preferred_duration: field(body.preferred_duration, 60),
     people_travelling: field(body.people_travelling, 4),
@@ -134,6 +139,12 @@ function validate(body) {
     utm_term: field(body.utm_term, 160),
     utm_content: field(body.utm_content, 160),
     gclid: field(body.gclid, 200),
+    // wbraid and gbraid are the click identifiers Google uses where gclid is
+    // unavailable, mainly iOS and web-to-app journeys. The page already
+    // captures all three; dropping two of them here lost that attribution.
+    wbraid: field(body.wbraid, 200),
+    gbraid: field(body.gbraid, 200),
+    referrer: field(body.referrer, 500),
     page_url: field(body.page_url, 500),
   };
 
@@ -238,7 +249,11 @@ export async function onRequestPost(context) {
   }
 
   data.submitted_at = new Date().toISOString();
+  // Both are fixed here and never read from the request. The page posts its own
+  // form_source, but trusting it would let any caller label an application as
+  // coming from a different form and route it somewhere it does not belong.
   data.source = 'volunteer-sri-lanka';
+  data.form_source = 'volunteer-sri-lanka';
 
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), UPSTREAM_TIMEOUT_MS);
