@@ -1483,7 +1483,7 @@ body.has-sticky{padding-bottom:4.75rem}
    *   Tag setup. Left empty, no conversion is sent and nothing breaks.
    * ================================================================ */
   var FORM_ENDPOINT  = '/api/volunteer-application';
-  var ADS_CONVERSION = '';
+  var ADS_CONVERSION = 'AW-17612444693/mv4xCOnitIEdEJWoos5B';
 
   /**
    * One reference per page load.
@@ -1695,6 +1695,14 @@ body.has-sticky{padding-bottom:4.75rem}
 
   function reportConversion(){
     if (!ADS_CONVERSION) return;
+    // A honeypot hit or a form filled faster than a person can read it is
+    // answered with a plausible success, so a bot learns nothing from the
+    // response. Nothing is stored and no notification is sent for those, so a
+    // success screen on its own is not proof of an application. The same two
+    // gates are re-applied here, otherwise spam would report a Google Ads
+    // conversion and skew the campaign it optimises.
+    if (document.getElementById('hp_check').value !== '') return;
+    if (Number(document.getElementById('secondsOnPage').value || '0') < 3) return;
     try{
       if (typeof gtag !== 'function') return;
       gtag('event', 'conversion', { send_to: ADS_CONVERSION });
