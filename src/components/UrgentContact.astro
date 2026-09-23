@@ -5,11 +5,13 @@
  * Someone who has just submitted a form and still needs an answer should not
  * have to navigate to /contact/ to find a number.
  *
- * This number is deliberately not CONTACT.phone. consts.ts carries the general
- * office line, which the shared footer and /contact/ continue to publish
- * unchanged, so both numbers appear on these pages and the card has to say
- * plainly which is which. Only the email is shared, because both are
- * info@zeroplastic.lk.
+ * This is the same line consts.ts already publishes through the footer and
+ * /contact/: CONTACT.phoneHref is +94716901094, identical digits. Only the
+ * grouping shown differs, because the brief for these pages asks for
+ * +94 71 690 1094. The link and the WhatsApp number are therefore derived from
+ * the constant rather than duplicated, so the two cannot drift apart. What is
+ * urgent here is the route, not a separate number, and the copy says nothing
+ * to suggest otherwise.
  */
 import { CONTACT } from '../consts';
 
@@ -19,9 +21,9 @@ interface Props {
 
 const { heading } = Astro.props;
 
-const PHONE_DISPLAY = '+94 77 690 1094';
-const PHONE_HREF = '+94776901094';
-const WHATSAPP = 'https://wa.me/94776901094';
+/** Grouping requested for these pages. Same digits as CONTACT.phone. */
+const PHONE_DISPLAY = '+94 71 690 1094';
+const WHATSAPP = `https://wa.me/${CONTACT.phoneHref.replace(/\D/g, '')}`;
 ---
 
 <div class="direct">
@@ -30,11 +32,11 @@ const WHATSAPP = 'https://wa.me/94776901094';
 
   <p class="direct__line">
     Call or WhatsApp:
-    <a href={`tel:${PHONE_HREF}`}>{PHONE_DISPLAY}</a>
+    <a href={`tel:${CONTACT.phoneHref}`}>{PHONE_DISPLAY}</a>
   </p>
 
   <p class="direct__actions">
-    <a class="button button--ghost" href={`tel:${PHONE_HREF}`}>Call now</a>
+    <a class="button button--ghost" href={`tel:${CONTACT.phoneHref}`}>Call now</a>
     <a class="button" href={WHATSAPP} rel="noopener noreferrer" target="_blank">
       Open WhatsApp
     </a>
@@ -43,17 +45,12 @@ const WHATSAPP = 'https://wa.me/94776901094';
   <p class="direct__email">
     Email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
   </p>
-
-  <p class="direct__note">
-    This is our direct response line. The number in the footer is the
-    ZeroPlastic Movement general office contact.
-  </p>
 </div>
 
 <style>
   /* The blue is the same water accent as the hero, used here only as a left
-     rule so the card reads as the urgent route rather than as one more
-     section. Everything else stays on the site's own card treatment. */
+     rule so the card reads as the fastest way to reach a person rather than as
+     one more section. Everything else stays on the site's own card treatment. */
   .direct {
     background: var(--surface-alt);
     border: 1px solid var(--border);
@@ -110,13 +107,5 @@ const WHATSAPP = 'https://wa.me/94776901094';
   /* A long address must never push the card wider than the page. */
   .direct__email a {
     overflow-wrap: anywhere;
-  }
-
-  .direct__note {
-    margin: 0.9rem 0 0;
-    font-size: 0.82rem;
-    line-height: 1.6;
-    color: var(--ink-500);
-    max-width: 46ch;
   }
 </style>
