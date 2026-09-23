@@ -1,0 +1,160 @@
+---
+/**
+ * Confirmation-page hero.
+ *
+ * The thank-you pages are the only place on the site with a water treatment:
+ * they confirm an action rather than sell one, so the page earns a calmer
+ * surface than the green washes used on /contact/ or /volunteers/. Everything
+ * structural stays on the existing system, and the blue appears only as a
+ * background gradient and a stream silhouette behind the text. Type, eyebrow,
+ * buttons and links all keep the brand green, so the page still reads as
+ * zeroplastic.lk rather than as a second visual identity.
+ *
+ * The wave is inline SVG with four paths and no external request. Its drift
+ * returns to its starting position at 100%, so the global
+ * prefers-reduced-motion rule, which collapses every animation to 0.01ms,
+ * freezes it exactly where it began instead of mid-travel.
+ */
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede: string;
+  /** Optional short line under the lede, given more emphasis than body copy. */
+  note?: string;
+}
+
+const { eyebrow, title, lede, note } = Astro.props;
+---
+
+<section class="stream-hero">
+  <div class="container stream-hero__inner">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1>{title}</h1>
+    <p class="lede">{lede}</p>
+    {note && <p class="stream-hero__note">{note}</p>}
+  </div>
+
+  <div class="stream" aria-hidden="true">
+    <svg viewBox="0 0 1440 220" preserveAspectRatio="none" focusable="false">
+      <path
+        class="stream__fill stream__fill--back"
+        d="M0,116 C240,58 480,178 720,128 S1200,58 1440,108 L1440,220 L0,220 Z"
+      ></path>
+      <path
+        class="stream__fill stream__fill--mid"
+        d="M0,150 C260,100 520,200 780,154 S1220,104 1440,148 L1440,220 L0,220 Z"
+      ></path>
+      <path
+        class="stream__fill stream__fill--front"
+        d="M0,182 C300,142 600,214 900,180 S1260,150 1440,186 L1440,220 L0,220 Z"
+      ></path>
+      <path
+        class="stream__line"
+        d="M0,104 C240,46 480,166 720,116 S1200,46 1440,96"
+        fill="none"
+      ></path>
+    </svg>
+  </div>
+</section>
+
+<style>
+  /* Scoped to this component, so no other page pays for these rules. */
+  .stream-hero {
+    /* Water blues, chosen to sit beside the brand green rather than compete
+       with it. Local to this component: they are not site-wide tokens. */
+    --stream-900: #123f57;
+    --stream-500: #2f7fa3;
+    --stream-200: #b9dcea;
+    --stream-50: #eef6fa;
+
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(58rem 28rem at 8% -22%, var(--stream-50), transparent 62%),
+      radial-gradient(46rem 24rem at 94% -12%, #f1f8fb, transparent 64%),
+      var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding-block: clamp(2.75rem, 6vw, 4.25rem) clamp(5.5rem, 11vw, 8rem);
+  }
+
+  .stream-hero__inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .stream-hero h1 {
+    max-width: 18ch;
+  }
+  .stream-hero .lede {
+    margin-bottom: 0;
+  }
+  .stream-hero__note {
+    margin: 1.1rem 0 0;
+    max-width: 48ch;
+    color: var(--stream-900);
+    font-weight: 600;
+  }
+
+  /* The stream sits behind the text and bleeds off both edges. */
+  .stream {
+    position: absolute;
+    inset: auto 0 -1px;
+    height: clamp(5rem, 11vw, 8.5rem);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .stream svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .stream__fill--back {
+    fill: var(--stream-200);
+    opacity: 0.38;
+  }
+  .stream__fill--mid {
+    fill: var(--stream-500);
+    opacity: 0.16;
+  }
+  .stream__fill--front {
+    fill: var(--stream-50);
+  }
+  .stream__line {
+    stroke: var(--stream-500);
+    stroke-width: 1.5;
+    opacity: 0.3;
+  }
+
+  /* Slow enough to be felt rather than watched. Each track returns to its
+     starting offset, so freezing the animation loses nothing. */
+  .stream__fill--back {
+    animation: drift-a 26s ease-in-out infinite;
+  }
+  .stream__fill--mid {
+    animation: drift-b 34s ease-in-out infinite;
+  }
+  .stream__line {
+    animation: drift-a 30s ease-in-out infinite;
+  }
+
+  @keyframes drift-a {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(-1.2%, 5px, 0);
+    }
+  }
+  @keyframes drift-b {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(1.4%, -4px, 0);
+    }
+  }
+</style>

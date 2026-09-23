@@ -1,0 +1,80 @@
+---
+/**
+ * Direct contact strip for the confirmation pages.
+ *
+ * Someone who has just submitted a form and still needs an answer should not
+ * have to navigate to /contact/ to find a number, so both thank-you pages
+ * carry the same three routes to a human.
+ *
+ * The number here is the response line given for form submissions, and it is
+ * deliberately not CONTACT.phone: consts.ts carries the HQ switchboard
+ * (+94 716 901 094), which the footer and /contact/ continue to publish. Only
+ * the email is shared, because both are info@zeroplastic.lk.
+ */
+import { CONTACT } from '../consts';
+
+interface Props {
+  heading: string;
+}
+
+const { heading } = Astro.props;
+
+const PHONE_DISPLAY = '+94 77 690 1094';
+const PHONE_HREF = '+94776901094';
+const WHATSAPP = 'https://wa.me/94776901094';
+---
+
+<div class="direct">
+  <h2 class="direct__heading">{heading}</h2>
+
+  <p class="direct__actions">
+    <a class="button button--ghost" href={`tel:${PHONE_HREF}`}>
+      Call {PHONE_DISPLAY}
+    </a>
+    <a class="button" href={WHATSAPP} rel="noopener noreferrer" target="_blank">
+      Message on WhatsApp
+    </a>
+  </p>
+
+  <p class="direct__email">
+    Or email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+  </p>
+</div>
+
+<style>
+  .direct {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .direct__heading {
+    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.5rem);
+    margin-bottom: 1.1rem;
+  }
+
+  .direct__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  /* Below the smallest common phone width the two buttons cannot sit side by
+     side without the longer label wrapping awkwardly, so they stack. */
+  @media (max-width: 26rem) {
+    .direct__actions {
+      display: grid;
+    }
+  }
+
+  .direct__email {
+    margin: 1rem 0 0;
+    font-size: 0.93rem;
+    color: var(--ink-500);
+  }
+  /* Long addresses and numbers must never push the card wider than the page. */
+  .direct__email a {
+    overflow-wrap: anywhere;
+  }
+</style>

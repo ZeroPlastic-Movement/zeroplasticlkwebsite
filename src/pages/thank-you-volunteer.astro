@@ -1,0 +1,135 @@
+---
+/**
+ * Confirmation page for the Sri Lankan volunteer registration form.
+ *
+ * Monday.com redirects here after a submission. Warmer in tone than the
+ * partnership confirmation, but it promises nothing about timing or selection:
+ * placements depend on what is running when, so the copy says a suitable
+ * opportunity rather than a date. noindex, and kept out of the sitemap and the
+ * main navigation.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StreamHero from '../components/StreamHero.astro';
+import UrgentContact from '../components/UrgentContact.astro';
+
+const STEPS = [
+  {
+    step: 'Step 1',
+    title: 'Application review',
+    body: 'Our team reviews your volunteer registration and areas of interest.',
+  },
+  {
+    step: 'Step 2',
+    title: 'Team contact',
+    body: 'When a suitable opportunity is available, our team will contact you with the next steps.',
+  },
+  {
+    step: 'Step 3',
+    title: 'Get involved',
+    body: 'Join campaigns, projects, events and initiatives where your skills can make an impact.',
+  },
+];
+
+const CONTRIBUTIONS = [
+  'Environmental campaigns',
+  'Community engagement',
+  'Social media and communications',
+  'Photography and video',
+  'Graphic design',
+  'Research',
+  'Technology',
+  'Event coordination',
+  'Education and awareness',
+  'University initiatives',
+];
+---
+
+<BaseLayout
+  title="Thank you for stepping forward"
+  description="Your volunteer registration has been submitted to the ZeroPlastic Movement team."
+  noindex
+  nofollow
+>
+  <StreamHero
+    eyebrow="Registration received"
+    title="Thank you for stepping forward."
+    lede="Your volunteer registration has been successfully submitted. Our team will review your details and contact you with opportunities to get involved with ZeroPlastic."
+    note="Every meaningful change starts with someone deciding to take action."
+  />
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section__title">What happens next</h2>
+      <div class="tile-grid">
+        {
+          STEPS.map((item) => (
+            <article class="tile">
+              <p class="tile__meta">{item.step}</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section__title">Ways volunteers may contribute</h2>
+      <p class="lede">
+        Opportunities vary by project and by what is running at the time.
+      </p>
+      <ul class="ticks">
+        {CONTRIBUTIONS.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="narrow">
+        <UrgentContact heading="Urgent questions?" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section__title">Keep going</h2>
+      <p class="actions">
+        <a class="button button--lg" href="/our-work/">Explore ZeroPlastic</a>
+        <a class="button button--ghost button--lg" href="/volunteers/">
+          Explore volunteer opportunities
+        </a>
+        <a class="button button--ghost button--lg" href="/">Return to home</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* The card should not stretch across the full 72rem container and look
+     empty, but it still starts on the same left edge as every heading on the
+     page, so the vertical rhythm is not broken by one centred block. */
+  .narrow {
+    max-width: 46rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.5rem 0 0;
+  }
+  /* Three calls to action cannot sit on one line on a phone, and half-width
+     buttons read as broken, so they become full-width blocks instead. */
+  @media (max-width: 34rem) {
+    .actions {
+      display: grid;
+    }
+    .actions .button {
+      text-align: center;
+    }
+  }
+</style>

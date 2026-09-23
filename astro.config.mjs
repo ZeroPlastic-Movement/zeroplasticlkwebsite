@@ -56,7 +56,9 @@ export default defineConfig({
   output: 'static',
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404'),
+      // The thank-you pages are form confirmations: noindex, not linked from
+      // navigation, and reachable only by redirect after a submission.
+      filter: (page) => !page.includes('/404') && !page.includes('/thank-you-'),
       changefreq: 'weekly',
       lastmod: new Date(),
       customPages: STATIC_LANDING_PAGES.map((path) => new URL(path, SITE_URL).href),

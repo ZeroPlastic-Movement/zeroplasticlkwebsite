@@ -20,6 +20,8 @@ interface Props {
   /** Extra JSON-LD objects to emit alongside the defaults. */
   schema?: Record<string, unknown>[];
   noindex?: boolean;
+  /** Only meaningful with noindex. Confirmation pages use it; the 404 does not. */
+  nofollow?: boolean;
 }
 
 const {
@@ -31,6 +33,7 @@ const {
   modifiedTime,
   schema = [],
   noindex = false,
+  nofollow = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
@@ -46,7 +49,7 @@ const fullTitle = title.toLowerCase().includes('zeroplastic')
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex, follow" />}
+{noindex && <meta name="robots" content={`noindex, ${nofollow ? 'nofollow' : 'follow'}`} />}
 
 <meta property="og:site_name" content={SITE.name} />
 <meta property="og:type" content={type} />

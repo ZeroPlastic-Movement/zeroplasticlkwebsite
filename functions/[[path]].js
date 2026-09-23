@@ -31,6 +31,11 @@ const LEGACY_HTML_PATHS = new Set([
   '/zh-cn/craft-experiences-sigiriya.html',
   '/sigiriya-craft-village/index.html',
   '/sigiriya-sri-lanka/index.html',
+  // Monday.com redirects to these two after a form submission, and the URLs
+  // are configured in forms we do not control, so they answer 200 themselves
+  // rather than bouncing the person through a redirect.
+  '/thank-you-contact.html',
+  '/thank-you-volunteer.html',
 ]);
 
 /** The path Cloudflare Pages actually serves this asset from. */

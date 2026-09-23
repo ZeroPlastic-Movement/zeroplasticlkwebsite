@@ -1,0 +1,154 @@
+---
+/**
+ * Confirmation page for the general contact and partnership form.
+ *
+ * Monday.com redirects here after a submission, so this page is only ever
+ * reached by someone who has just sent a message. It is noindex and kept out
+ * of the sitemap and the main navigation.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StreamHero from '../components/StreamHero.astro';
+import UrgentContact from '../components/UrgentContact.astro';
+import { EXTERNAL, SOCIAL } from '../consts';
+
+/** Every destination here is a route that exists in this repository. */
+const EXPLORE = [
+  {
+    label: 'Our impact',
+    body: 'The campaigns, clean-ups and programmes the movement runs across Sri Lanka.',
+    href: '/our-work/',
+  },
+  {
+    label: 'Volunteer with ZeroPlastic',
+    body: 'Ways to contribute, locally or while visiting Sri Lanka.',
+    href: '/volunteers/',
+  },
+  {
+    label: 'Impact Center Sigiriya',
+    body: "Sri Lanka's first plastic-alternative and traveller experience center.",
+    href: EXTERNAL.impactCenter,
+    external: true,
+  },
+  {
+    label: 'Latest stories',
+    body: 'Project updates and reporting from the movement.',
+    href: '/blog/',
+  },
+  {
+    label: 'Partnerships',
+    body: 'How organisations work with ZeroPlastic across sectors.',
+    href: '/contact/',
+  },
+  {
+    label: 'Return to home',
+    body: 'Back to the start of zeroplastic.lk.',
+    href: '/',
+  },
+];
+---
+
+<BaseLayout
+  title="Thank you for reaching out"
+  description="Your message has been submitted to the ZeroPlastic Movement team."
+  noindex
+  nofollow
+>
+  <StreamHero
+    eyebrow="Message received"
+    title="Thank you for reaching out."
+    lede="Your message has been successfully submitted to the ZeroPlastic Movement team. We will review your inquiry and get back to you within 24 hours."
+  />
+
+  <section class="section">
+    <div class="container">
+      <div class="narrow">
+        <UrgentContact heading="Need to reach us urgently?" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section__title">While you are here, explore ZeroPlastic</h2>
+      <div class="tile-grid">
+        {
+          EXPLORE.map((item) => (
+            <article class="tile">
+              <h3>{item.label}</h3>
+              <p>{item.body}</p>
+              <p class="tile__cta">
+                <a
+                  class="ext-link"
+                  href={item.href}
+                  rel={item.external ? 'noopener noreferrer' : undefined}
+                  target={item.external ? '_blank' : undefined}
+                >
+                  {item.external ? 'Visit the site' : 'Open'}
+                </a>
+              </p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section__title">Stay connected with ZeroPlastic</h2>
+      <p class="lede">Follow the movement for campaign news, clean-ups and project updates.</p>
+      <ul class="social">
+        {
+          SOCIAL.map((item) => (
+            <li>
+              <a
+                href={item.url}
+                rel="noopener noreferrer me"
+                target="_blank"
+                aria-label={`${item.name}, opens in a new tab`}
+              >
+                {item.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* The card should not stretch across the full 72rem container and look
+     empty, but it still starts on the same left edge as every heading on the
+     page, so the vertical rhythm is not broken by one centred block. */
+  .narrow {
+    max-width: 46rem;
+  }
+
+  /* The site ships no icon set: the footer lists these same four platforms as
+     text links, so they are styled as text here too rather than pulling in an
+     icon library for one section. */
+  .social {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+  .social a {
+    display: inline-block;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    background: var(--surface);
+    transition: background-color 0.15s ease;
+  }
+  .social a:hover {
+    background: var(--green-50);
+    color: var(--ink-900);
+  }
+</style>
