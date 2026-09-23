@@ -144,13 +144,13 @@ export const EXTERNAL = {
   /**
    * Volunteer registration for people in Sri Lanka.
    *
-   * Short link https://wkf.ms/3GkxYNK, stored resolved so a conversion CTA
-   * does not depend on a second redirect. This is only the local pathway:
-   * international applicants use the form embedded in
-   * public/volunteer-sri-lanka.html, which posts to its own endpoint and is
-   * deliberately not routed through Monday.
+   * Stored as the wkf.ms short link rather than the form it currently
+   * resolves to, so the form behind it can be repointed in Monday without a
+   * deploy. This is only the local pathway: international applicants use the
+   * form embedded in public/volunteer-sri-lanka.html, which posts to its own
+   * endpoint and is deliberately not routed through Monday.
    */
-  volunteerForm: 'https://forms.monday.com/forms/91baed94dc06958386fb56a030ac1f49?r=apse2',
+  volunteerForm: 'https://wkf.ms/3GkxYNK',
   /**
    * Partnership and contact enquiries, for organisations rather than
    * individual volunteers. This is the same Monday form the production
