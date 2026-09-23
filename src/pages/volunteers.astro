@@ -4,9 +4,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { CONTACT, EXTERNAL } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 
-// International volunteer applications are handled by the dedicated landing
-// page at /volunteer-sri-lanka, which carries the full programme detail and
-// the application form. Local enquiries still route through /contact/.
+// Two separate pathways, and they must not be crossed. Local volunteers
+// register through EXTERNAL.volunteerForm, the Monday form for people in Sri
+// Lanka. International applicants use the dedicated landing page at
+// /volunteer-sri-lanka, which carries the full programme detail and its own
+// embedded application form. /contact/ is for organisations, not for either.
 
 const LOCAL = [
   { title: 'Clean-ups', body: 'Coastal, waterway and public-space clean-up campaigns.' },
@@ -99,7 +101,9 @@ const INTERNATIONAL = [
       </div>
 
       <p class="actions">
-        <a class="button" href="/contact/">Contact us to volunteer</a>
+        <a class="button" href={EXTERNAL.volunteerForm} rel="noopener noreferrer" target="_blank">
+          Register as a Volunteer
+        </a>
         <a class="button button--ghost" href="/clubs/">Start a club instead</a>
       </p>
       <p class="registration-note">

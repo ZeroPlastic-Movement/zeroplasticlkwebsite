@@ -142,10 +142,21 @@ export const EXTERNAL = {
   clubForm: 'https://forms.monday.com/forms/5fb1d5240ca347a5e056018f45e117f8?r=apse2',
   travellerPledge: 'https://forms.monday.com/forms/c351b9e6446530939747ada85a9fe335?r=apse2',
   /**
-   * Partnership and contact enquiries. This is the same Monday form the
-   * production WordPress contact page already embeds, so submissions continue
-   * to land in one place. Recovered from the iframe on
-   * https://www.zeroplastic.lk/contact/
+   * Volunteer registration for people in Sri Lanka.
+   *
+   * Short link https://wkf.ms/3GkxYNK, stored resolved so a conversion CTA
+   * does not depend on a second redirect. This is only the local pathway:
+   * international applicants use the form embedded in
+   * public/volunteer-sri-lanka.html, which posts to its own endpoint and is
+   * deliberately not routed through Monday.
+   */
+  volunteerForm: 'https://forms.monday.com/forms/91baed94dc06958386fb56a030ac1f49?r=apse2',
+  /**
+   * Partnership and contact enquiries, for organisations rather than
+   * individual volunteers. This is the same Monday form the production
+   * WordPress contact page already embeds, so submissions continue to land in
+   * one place. Recovered from the iframe on https://www.zeroplastic.lk/contact/
+   * and the same form the short link https://wkf.ms/3EZOTEs resolves to.
    */
   contactFormEmbed: 'https://forms.monday.com/forms/embed/9b3e25c3f1f917465270bfb91b1bf634?r=apse2',
   contactForm: 'https://forms.monday.com/forms/9b3e25c3f1f917465270bfb91b1bf634?r=apse2',
