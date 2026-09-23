@@ -3,8 +3,8 @@
  * Confirmation page for the general contact and partnership form.
  *
  * Monday.com redirects here after a submission, so this page is only ever
- * reached by someone who has just sent a message. It is noindex and kept out
- * of the sitemap and the main navigation.
+ * reached by someone who has just sent a message. It is noindex, kept out of
+ * the sitemap, and absent from the main navigation.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import StreamHero from '../components/StreamHero.astro';
@@ -53,74 +53,86 @@ const EXPLORE = [
   noindex
   nofollow
 >
-  <StreamHero
-    eyebrow="Message received"
-    title="Thank you for reaching out."
-    lede="Your message has been successfully submitted to the ZeroPlastic Movement team. We will review your inquiry and get back to you within 24 hours."
-  />
+  <div class="ty">
+    <StreamHero
+      eyebrow="Message received"
+      title="Thank you for reaching out."
+      lede="Your message has been successfully submitted to the ZeroPlastic Movement team. We will review your inquiry and get back to you within 24 hours."
+    />
 
-  <section class="section">
-    <div class="container">
-      <div class="narrow">
-        <UrgentContact heading="Need to reach us urgently?" />
+    <section class="section">
+      <div class="container">
+        <div class="narrow">
+          <UrgentContact heading="Need urgent assistance?" />
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section section--alt">
-    <div class="container">
-      <h2 class="section__title">While you are here, explore ZeroPlastic</h2>
-      <div class="tile-grid">
-        {
-          EXPLORE.map((item) => (
-            <article class="tile">
-              <h3>{item.label}</h3>
-              <p>{item.body}</p>
-              <p class="tile__cta">
+    <section class="section section--alt">
+      <div class="container">
+        <h2 class="section__title">While you are here, explore ZeroPlastic</h2>
+        <div class="tile-grid">
+          {
+            EXPLORE.map((item) => (
+              <article class="tile">
+                <h3>{item.label}</h3>
+                <p>{item.body}</p>
+                <p class="tile__cta">
+                  <a
+                    class="ext-link"
+                    href={item.href}
+                    rel={item.external ? 'noopener noreferrer' : undefined}
+                    target={item.external ? '_blank' : undefined}
+                  >
+                    {item.external ? 'Visit the site' : 'Open'}
+                  </a>
+                </p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section__title">Stay connected with ZeroPlastic</h2>
+        <p class="lede">Follow the movement for campaign news, clean-ups and project updates.</p>
+        <ul class="social">
+          {
+            SOCIAL.map((item) => (
+              <li>
                 <a
-                  class="ext-link"
-                  href={item.href}
-                  rel={item.external ? 'noopener noreferrer' : undefined}
-                  target={item.external ? '_blank' : undefined}
+                  href={item.url}
+                  rel="noopener noreferrer me"
+                  target="_blank"
+                  aria-label={`${item.name}, opens in a new tab`}
                 >
-                  {item.external ? 'Visit the site' : 'Open'}
+                  {item.name}
                 </a>
-              </p>
-            </article>
-          ))
-        }
+              </li>
+            ))
+          }
+        </ul>
       </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <h2 class="section__title">Stay connected with ZeroPlastic</h2>
-      <p class="lede">Follow the movement for campaign news, clean-ups and project updates.</p>
-      <ul class="social">
-        {
-          SOCIAL.map((item) => (
-            <li>
-              <a
-                href={item.url}
-                rel="noopener noreferrer me"
-                target="_blank"
-                aria-label={`${item.name}, opens in a new tab`}
-              >
-                {item.name}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
+  /* Scoped to this page only, and deliberately not a change to global.css.
+     The shared --green-600 measures 3.35:1 on white, below the 4.5:1 minimum
+     for body text, which would fail the eyebrow, the tile links and the email
+     link. This is the same hue darkened until it clears AA on both white and
+     --surface-alt, so the page still reads as the site. The site-wide token is
+     a separate decision and is untouched here. */
+  .ty {
+    --green-600: #547c1e;
+  }
+
   /* The card should not stretch across the full 72rem container and look
      empty, but it still starts on the same left edge as every heading on the
-     page, so the vertical rhythm is not broken by one centred block. */
+     page, so one centred block does not break the vertical rhythm. */
   .narrow {
     max-width: 46rem;
   }
