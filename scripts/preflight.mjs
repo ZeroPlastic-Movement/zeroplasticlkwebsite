@@ -122,11 +122,27 @@ const LANDING = [
 const missingLanding = LANDING.filter((p) => !existsSync(join(DIST, p)));
 check('All 8 static landing pages present', missingLanding.length === 0, missingLanding.join(', '));
 
+// This page is the Final URL of a live Google Ads campaign, so what matters is
+// that the parts the campaign depends on survive an edit, not that the file is
+// a particular number of bytes. A size assertion failed on every legitimate
+// change and said nothing about whether the page still worked.
 const ads = join(DIST, 'impact-center-premium.html');
+const adsExists = existsSync(ads);
+const adsBody = adsExists ? read(ads) : '';
+const adsParts = [
+  ['page present', adsExists],
+  ['Ads conversion label', adsBody.includes('AW-17612444693/ioVgCNSlpdgcEJWoos5B')],
+  ['GTM container', adsBody.includes('GTM-N85V5638')],
+  ['enquiry form posts to its endpoint', /<form[^>]+id="visitForm"[^>]+action="https:\/\/hook\.[^"]+"/.test(adsBody)],
+  ['conversion fires on a sent enquiry', /function showSent\(\)\{\s*reportConversion\(\);/.test(adsBody)],
+];
+const adsMissing = adsParts.filter(([, ok]) => !ok).map(([name]) => name);
 check(
   'Google Ads landing page intact',
-  existsSync(ads) && statSync(ads).size === 64100,
-  existsSync(ads) ? `${statSync(ads).size} bytes` : 'missing',
+  adsMissing.length === 0,
+  adsMissing.length
+    ? `missing: ${adsMissing.join(', ')}`
+    : `${adsParts.length} checks, ${adsExists ? statSync(ads).size : 0} bytes`,
 );
 
 const htmlImages = all.filter((f) => f.includes(`${posix.sep}htmlimages${posix.sep}`) || f.includes('/htmlimages/'));

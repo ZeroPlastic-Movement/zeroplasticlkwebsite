@@ -307,6 +307,52 @@ img{font-family:var(--mono);font-size:.7rem;line-height:1.4;color:rgba(233,232,2
   .hero-copy{padding-top:7rem}
 }
 
+/* ---------- google trust strip (hero) ---------- */
+.gtrust{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.45rem .9rem;
+  margin-top:1.15rem;font-size:.93rem;color:rgba(233,232,226,.9);
+}
+.gtrust-stars{color:var(--sun);letter-spacing:.06em;font-size:1rem}
+.gtrust-score b{font-family:var(--display);font-weight:700;font-size:1.08rem;color:var(--bone)}
+.gtrust-sub{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(233,232,226,.58);
+}
+.gtrust-link{color:var(--bone);text-decoration:underline;text-underline-offset:.22em;font-weight:600}
+.gtrust-link:hover{color:var(--sun)}
+
+/* ---------- reviews ---------- */
+.reviews{background:var(--chalk)}
+.rev-rail{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1rem,1.6vw,1.5rem)}
+.rev{
+  display:flex;flex-direction:column;
+  background:var(--bone);border:1px solid var(--line);border-radius:3px;
+  padding:1.6rem 1.5rem 1.7rem;
+}
+.rev-stars{color:var(--sun);letter-spacing:.06em}
+.rev-text{margin-top:.75rem;color:rgba(20,28,27,.78);font-size:.97rem;flex:1}
+.rev-by{margin-top:1.3rem}
+.rev-by b{display:block;font-family:var(--display);font-weight:700;font-size:1rem;letter-spacing:-.01em}
+.rev-by span{
+  display:block;margin-top:.2rem;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(20,28,27,.55);
+}
+.rev-foot{margin-top:clamp(2rem,4vw,3rem);display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.4rem}
+.rev-attr{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(20,28,27,.55)}
+/* One card at a time on a phone, so three reviews cost one screen, not three. */
+@media(max-width:680px){
+  .rev-rail{
+    grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:84%;
+    overflow-x:auto;overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+    margin-inline:calc(var(--pad) * -1);padding-inline:var(--pad);
+    scrollbar-width:none;
+  }
+  .rev-rail::-webkit-scrollbar{display:none}
+  .rev{scroll-snap-align:start}
+}
+
 /* ---------- facts band ---------- */
 .facts{background:var(--ink-2);color:var(--bone);padding:1.6rem var(--pad)}
 .facts-inner{
@@ -715,6 +761,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a class="btn btn--ghost" href="#see" style="color:var(--bone);border-color:rgba(233,232,226,.45)">What there is to do</a>
       </div>
       <p class="hero-clarify"><strong>Free to visit and explore.</strong> Walk in to meet the elephant, observe artisans at work and discover more than 1,000 plastic-free products. Products and hands-on craft experiences are paid. The complete Tree of Life storytelling experience requires advance booking.</p>
+      <p class="gtrust">
+        <span class="gtrust-stars" aria-hidden="true">★★★★★</span>
+        <span class="gtrust-score"><b data-g="rating">5.0</b> on Google</span>
+        <span class="gtrust-sub">Based on <span data-g="count">141</span> traveler reviews</span>
+        <a class="gtrust-link" data-g="maps" href="https://maps.app.goo.gl/jEaZkPa4oMAFCiTu9" target="_blank" rel="noopener">Read Google Reviews →</a>
+      </p>
     </div>
     <div class="seam hero-seam" aria-hidden="true"></div>
   </section>
@@ -950,6 +1002,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
+  <!-- WHAT TRAVELERS SAY -->
+  <!-- Cards are intentionally absent until real Google reviews are pasted in.
+       Nothing here is written by us: the section stays hidden until it has
+       either static reviews or a response from /api/place-reviews. -->
+  <section class="sec reviews" id="reviews" data-g="section" hidden>
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow">What travelers say</span>
+        <h2 class="h2">What travelers say.</h2>
+        <p>Reviews left on Google by people who have visited the Impact Center.</p>
+      </div>
+      <div class="rev-rail" data-g="reviews"></div>
+      <p class="rev-foot">
+        <a class="btn btn--ghost" data-g="maps" href="https://maps.app.goo.gl/jEaZkPa4oMAFCiTu9" target="_blank" rel="noopener">See all reviews on Google</a>
+        <span class="rev-attr">Reviews from Google</span>
+      </p>
+    </div>
+  </section>
+
   <section class="sec visit" id="plan">
     <div class="wrap">
       <div class="visit-grid">
@@ -1179,6 +1250,84 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById('sentMsg').classList.add('is-on');
     document.getElementById('sentMsg').scrollIntoView({block:'center', behavior:'smooth'});
   }
+
+  // ---- Google rating and reviews ----------------------------------------
+  // Reads /api/place-reviews on the same origin. The Places API key lives in
+  // the Cloudflare runtime and is never sent to the browser.
+  //
+  // Purely an enhancement: the rating, count and link are already in the HTML
+  // and stay exactly as served if this fails, is blocked, or returns nothing.
+  // Review text is written with textContent, never innerHTML, so nothing a
+  // reviewer typed can be parsed as markup.
+  (function(){
+    var STARS = '\u2605\u2605\u2605\u2605\u2605';
+
+    function each(key, fn){
+      var nodes = document.querySelectorAll('[data-g="' + key + '"]');
+      for (var i = 0; i < nodes.length; i++) fn(nodes[i]);
+    }
+
+    function buildCard(review){
+      var card = document.createElement('article');
+      card.className = 'rev';
+
+      var stars = document.createElement('p');
+      stars.className = 'rev-stars';
+      stars.setAttribute('aria-hidden', 'true');
+      var score = Math.round(review.rating || 5);
+      stars.textContent = STARS.slice(0, Math.min(5, Math.max(1, score)));
+
+      var text = document.createElement('p');
+      text.className = 'rev-text';
+      text.textContent = review.text;
+
+      var by = document.createElement('p');
+      by.className = 'rev-by';
+      var who = document.createElement('b');
+      who.textContent = review.author;
+      by.appendChild(who);
+      if (review.relativeTime){
+        var when = document.createElement('span');
+        when.textContent = review.relativeTime;
+        by.appendChild(when);
+      }
+
+      card.appendChild(stars);
+      card.appendChild(text);
+      card.appendChild(by);
+      return card;
+    }
+
+    try {
+      fetch('/api/place-reviews', { headers: { accept: 'application/json' } })
+        .then(function(res){ return res.ok ? res.json() : null; })
+        .then(function(data){
+          if (!data || data.ok !== true) return;
+
+          if (typeof data.rating === 'number'){
+            each('rating', function(n){ n.textContent = data.rating.toFixed(1); });
+          }
+          if (typeof data.userRatingCount === 'number'){
+            each('count', function(n){ n.textContent = String(data.userRatingCount); });
+          }
+          if (data.googleMapsUri){
+            each('maps', function(n){ n.setAttribute('href', data.googleMapsUri); });
+          }
+
+          var list = (data.reviews || []).filter(function(r){
+            return r && r.text && r.author;
+          });
+          if (!list.length) return;
+
+          each('reviews', function(rail){
+            rail.textContent = '';
+            for (var i = 0; i < list.length; i++) rail.appendChild(buildCard(list[i]));
+          });
+          each('section', function(sec){ sec.removeAttribute('hidden'); });
+        })
+        .catch(function(){ /* static content stays exactly as served */ });
+    } catch (e) { /* no fetch, nothing to do */ }
+  })();
 })();
 </script>
 </body>
