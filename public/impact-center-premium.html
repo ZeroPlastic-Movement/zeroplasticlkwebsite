@@ -330,7 +330,7 @@ img{font-family:var(--mono);font-size:.7rem;line-height:1.4;color:rgba(233,232,2
   padding:1.6rem 1.5rem 1.7rem;
 }
 .rev-stars{color:var(--sun);letter-spacing:.06em}
-.rev-text{margin-top:.75rem;color:rgba(20,28,27,.78);font-size:.97rem;flex:1}
+.rev-text{margin-top:.75rem;color:rgba(20,28,27,.78);font-size:.97rem;flex:1;white-space:pre-wrap}
 .rev-by{margin-top:1.3rem}
 .rev-by b{display:block;font-family:var(--display);font-weight:700;font-size:1rem;letter-spacing:-.01em}
 .rev-by span{
@@ -1003,17 +1003,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </section>
 
   <!-- WHAT TRAVELERS SAY -->
-  <!-- Cards are intentionally absent until real Google reviews are pasted in.
-       Nothing here is written by us: the section stays hidden until it has
-       either static reviews or a response from /api/place-reviews. -->
-  <section class="sec reviews" id="reviews" data-g="section" hidden>
+  <!-- The three cards below are real Google reviews, copied verbatim from a
+       Places API response on 2026-09-24: text, author and relative time
+       exactly as Google returned them, nothing rewritten or shortened. They
+       are the fallback for a visitor with JavaScript off or when
+       /api/place-reviews is unreachable. When the endpoint answers, the
+       script swaps in whatever Google currently returns. -->
+  <section class="sec reviews" id="reviews" data-g="section">
     <div class="wrap">
       <div class="sec-head rise">
         <span class="eyebrow">What travelers say</span>
         <h2 class="h2">What travelers say.</h2>
         <p>Reviews left on Google by people who have visited the Impact Center.</p>
       </div>
-      <div class="rev-rail" data-g="reviews"></div>
+      <div class="rev-rail" data-g="reviews">
+        <article class="rev">
+          <p class="rev-stars" aria-hidden="true">★★★★★</p>
+          <p class="rev-text">This was great fun for our family being able to make a bowl out of a coconut shell. The kids loved the hands on experience and the delicious tea at the end. Lots of handmade goods available for purchase. We bought some coconut shell servers. We highly recommend a stop here.</p>
+          <p class="rev-by"><b>Abby Carr</b><span>5 months ago</span></p>
+        </article>
+        <article class="rev">
+          <p class="rev-stars" aria-hidden="true">★★★★★</p>
+          <p class="rev-text">Very informative and enjoyed the hands on experience also the herbal tea offered once finished.  So nice!
+A wonderful collection of locally made items to purchase.  A great place to visit</p>
+          <p class="rev-by"><b>Chris Chapman</b><span>2 months ago</span></p>
+        </article>
+        <article class="rev">
+          <p class="rev-stars" aria-hidden="true">★★★★★</p>
+          <p class="rev-text">Wonderful place and great purpose for the environment! They are really nice kind people. If you pass through their shop you must stop and see what they do.</p>
+          <p class="rev-by"><b>Luca Puddu</b><span>6 months ago</span></p>
+        </article>
+      </div>
       <p class="rev-foot">
         <a class="btn btn--ghost" data-g="maps" href="https://maps.app.goo.gl/jEaZkPa4oMAFCiTu9" target="_blank" rel="noopener">See all reviews on Google</a>
         <span class="rev-attr">Reviews from Google</span>
