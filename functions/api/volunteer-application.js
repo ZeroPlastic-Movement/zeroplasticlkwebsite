@@ -148,6 +148,16 @@ function validate(body) {
     page_url: field(body.page_url, 500),
   };
 
+  // Acknowledgements the applicant had to tick to submit. Recorded as sent
+  // rather than trusted: the browser already refuses to submit without them,
+  // and these are the record of what the applicant was shown about the fee,
+  // what is excluded and how placements are matched. Additive only, so every
+  // field the Make scenario already maps is untouched.
+  data.programme_fee_acknowledged = isTrue(body.programme_fee_acknowledged) ? 'true' : 'false';
+  data.transport_exclusion_acknowledged = isTrue(body.transport_exclusion_acknowledged) ? 'true' : 'false';
+  data.programme_requirements_acknowledged = isTrue(body.programme_requirements_acknowledged) ? 'true' : 'false';
+  data.pricing_band_displayed = field(body.pricing_band_displayed, 60);
+
   for (const name of [
     'full_name',
     'nationality',
@@ -185,6 +195,12 @@ function validate(body) {
   const consentPrivacy = isTrue(body.privacy_ack);
   if (!consentContact) bad.push('consent_contact');
   if (!consentPrivacy) bad.push('privacy_ack');
+
+  // The page will not submit without these three, so a request missing them
+  // did not come from the form as published.
+  if (data.programme_fee_acknowledged !== 'true') bad.push('programme_fee_acknowledged');
+  if (data.transport_exclusion_acknowledged !== 'true') bad.push('transport_exclusion_acknowledged');
+  if (data.programme_requirements_acknowledged !== 'true') bad.push('programme_requirements_acknowledged');
 
   // Make filters on these two names, and only forwards when both are "true".
   data.communication_consent = consentContact ? 'true' : 'false';
