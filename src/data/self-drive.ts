@@ -43,6 +43,12 @@ export const VISIT = {
   directions: 'https://maps.app.goo.gl/jEaZkPa4oMAFCiTu9',
   /** PUBLISHED: the WhatsApp number already used by the Impact Center page. */
   whatsapp: 'https://wa.me/94716901094',
+  /**
+   * The Impact Center's "Plan your visit or request an experience" section,
+   * which is where a workshop enquiry belongs. Site-relative on purpose: it is
+   * the same origin, so it needs no new tab and works on preview deploys.
+   */
+  planVisit: '/impact-center-premium.html#plan',
 } as const;
 
 /**
