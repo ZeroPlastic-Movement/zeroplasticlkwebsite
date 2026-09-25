@@ -9,10 +9,10 @@
  *
  *   PUBLISHED  already live in public/impact-center-premium.html, which is the
  *              current Google Ads landing page for the Impact Center. Safe.
- *   OWNER      asserted by the business owner in the brief for this page and
- *              not yet published anywhere. Used, because the owner is the
- *              source of truth for their own operation, but listed in the
- *              handover so it can be checked before the campaign runs.
+ *   CONFIRMED  signed off by the business owner at review as a verified
+ *              business requirement for this page. Not published elsewhere
+ *              yet, but authoritative: the owner is the source of truth for
+ *              their own operation.
  *   OMITTED    could not be verified in either. Left off the page entirely.
  *              See UNVERIFIED at the foot of this file.
  */
@@ -102,9 +102,9 @@ export const JOURNEY: Step[] = [
 /* ------------------------------------------------------------------ */
 /* Free services                                                       */
 /*                                                                     */
-/* OWNER: water refill and washroom access are asserted in the brief   */
-/* for this page. Neither appears in the published Impact Center copy. */
-/* The drop-off and the demonstration are PUBLISHED.                   */
+/* CONFIRMED: free drinking-water refill and free washroom access were  */
+/* signed off by the owner at review as available to self-drive         */
+/* travellers. The drop-off and the demonstration are PUBLISHED.        */
 /* ------------------------------------------------------------------ */
 
 export const FREE: Card[] = [
@@ -168,9 +168,12 @@ export const EXPERIENCES: Experience[] = [
 /* ------------------------------------------------------------------ */
 /* Benefit                                                             */
 /*                                                                     */
-/* OWNER: the 20% and 15% rates, and the partner network itself, are   */
-/* asserted in the brief. Nothing about either appears in the          */
-/* repository, so both are unpublished business rules.                 */
+/* CONFIRMED: the owner signed off both rates at review. 20% is for     */
+/* customers arriving through a registered Responsible Travel Partner;  */
+/* 15% is for independent travellers whose rental company is not yet    */
+/* registered. Both apply to ELIGIBLE purchases and ELIGIBLE paid       */
+/* workshops only. Keep "eligible" in the copy: it is what stops the    */
+/* page promising a discount on future excluded products or services.   */
 /* ------------------------------------------------------------------ */
 
 export const BENEFIT = {
@@ -181,13 +184,13 @@ export const BENEFIT = {
       label: 'Partner Benefit',
       who: 'Registered Partner Customer',
       rate: '20% OFF',
-      body: 'Customers from registered ZeroPlastic travel and rental partners receive 20% off eligible purchases and paid workshop experiences.',
+      body: 'Customers arriving through a registered ZeroPlastic Responsible Travel Partner receive 20% off eligible Impact Center purchases and eligible paid workshop experiences.',
     },
     {
       label: 'Ask Our Team',
       who: 'Independent Traveller',
       rate: '15% OFF',
-      body: 'Travelling with a tuk-tuk, bike, scooter, motorbike or self-drive vehicle from a rental company that is not yet registered? Ask our Impact Center team for the independent traveller discount.',
+      body: 'Travelling with a tuk-tuk, bike, scooter, motorbike or self-drive vehicle from a rental company that is not yet registered? Ask our Impact Center team for the independent traveller discount: 15% off eligible Impact Center purchases and eligible paid workshop experiences.',
     },
   ],
   footnote: 'Free services are available regardless of discount status where applicable:',
@@ -201,13 +204,20 @@ export const BENEFIT = {
 
 /* ------------------------------------------------------------------ */
 /* Partners                                                            */
+/*                                                                     */
+/* CONFIRMED: the owner signed off at review that TukTukRental.com is  */
+/* an official partner of ZeroPlastic Impact Center Sigiriya.          */
+/*                                                                     */
+/* The partnership is named but never exclusive. Travellers using any  */
+/* other rental company are welcome, and those businesses are invited  */
+/* to join the Responsible Travel Partner network. Keep it that way.   */
 /* ------------------------------------------------------------------ */
 
 export const PARTNERS = {
   heading: 'Responsible Self-Drive Travel Partners',
   body: [
     'TukTukRental.com and ZeroPlastic Impact Center Sigiriya have partnered to encourage more responsible self-drive travel across Sri Lanka.',
-    'Registered ZeroPlastic rental partners can offer their customers a 20% discount on eligible Impact Center purchases and paid workshop experiences.',
+    'Registered ZeroPlastic rental partners can offer their customers 20% off eligible Impact Center purchases and eligible paid workshop experiences.',
   ],
   inclusive: 'Travelling with another rental company? You are welcome too.',
   invite:
@@ -218,7 +228,7 @@ export const PARTNERS = {
 export const RENTAL_BENEFITS = {
   customers: [
     '20% off eligible Impact Center purchases',
-    '20% off eligible paid workshops',
+    '20% off eligible paid workshop experiences',
     'free water refill',
     'free washroom access',
     'plastic drop-off',
@@ -254,8 +264,8 @@ export const FAQS: Faq[] = [
     id: 'discount',
     q: 'What discount do self-drive travellers receive?',
     a: [
-      'Customers from registered ZeroPlastic rental partners can receive 20% off eligible purchases and paid workshop experiences.',
-      'Independent travellers arriving through unregistered rental companies may request the 15% independent traveller discount from our team.',
+      'Customers arriving through a registered ZeroPlastic Responsible Travel Partner receive 20% off eligible Impact Center purchases and eligible paid workshop experiences.',
+      'Independent travellers arriving through a rental company that is not registered with ZeroPlastic may ask our team for the independent traveller discount: 15% off eligible Impact Center purchases and eligible paid workshop experiences.',
     ],
   },
   {
@@ -347,10 +357,11 @@ export const FAQS: Faq[] = [
  *       No prices or per-workshop durations are published.
  *   Exact list of materials accepted at the elephant
  *       Not published, so the page tells visitors to ask the team.
- *   Government-registered non-profit
- *       The live page says "a Sri Lankan nonprofit", which this page mirrors.
- *       The stronger "government-registered" wording is not published, so it
- *       is not used.
+ *   "Government-registered" non-profit
+ *       The owner confirmed "a registered Sri Lankan non-profit" at review,
+ *       which is the wording this page uses. The stronger
+ *       "government-registered" phrasing was explicitly withheld, so it must
+ *       not appear here without separate instruction.
  */
 export const UNVERIFIED = [
   '0% commission on artisan sales',
@@ -360,5 +371,5 @@ export const UNVERIFIED = [
   '10 million+ annual reach',
   'workshop prices and durations',
   'list of materials accepted at the elephant',
-  'government-registered non-profit wording',
+  '"government-registered" wording ("registered Sri Lankan non-profit" is approved)',
 ] as const;
