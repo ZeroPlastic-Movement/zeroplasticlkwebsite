@@ -1,0 +1,1076 @@
+---
+/**
+ * /self-drive-sri-lanka/ — Google Ads landing page for independent travellers.
+ *
+ * Target: people driving Sri Lanka themselves by tuk-tuk, bike, scooter or car,
+ * searching things like "things to do in Sigiriya" or "Sri Lanka tuk tuk road
+ * trip", who can be persuaded to make one meaningful stop.
+ *
+ * Three things shaped the implementation:
+ *
+ *   1. Content lives in src/data/self-drive.ts, where every factual claim is
+ *      tagged with whether it is already published on the Impact Center page
+ *      or asserted by the owner for this page. The FAQ JSON-LD is generated
+ *      from the same array the page renders.
+ *
+ *   2. Astro pages ship no analytics anywhere on this site: GTM lives only on
+ *      the standalone public/*.html landing pages. This page therefore loads
+ *      the same GTM container itself. It is the only Astro route that does,
+ *      so no page ends up with two copies of the tag, and nothing about the
+ *      existing Impact Center tracking is touched.
+ *
+ *   3. TukTukRental is a real partner but must not look like the only one.
+ *      Their branded photographs are confined to the partner section. The
+ *      hero, the arrival shot and the elephant are deliberately unbranded,
+ *      and the arrival shot shows several different tuk-tuks.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { CONTACT, EXTERNAL } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+import {
+  ARTISAN,
+  BENEFIT,
+  EXPERIENCES,
+  FAQS,
+  FREE,
+  HERO,
+  JOURNEY,
+  JUMPNAV,
+  PARTNERS,
+  RENTAL_BENEFITS,
+  VISIT,
+} from '../data/self-drive';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a.join(' ') },
+  })),
+};
+
+/**
+ * The same TouristAttraction the Impact Center landing page describes. Every
+ * value here is on the published page: free entry, daily 07:30 to 18:30, and
+ * the Sigiriya road location. Nothing is asserted that the site does not say.
+ */
+const placeSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'TouristAttraction',
+  name: 'ZeroPlastic Impact Center, Sigiriya',
+  description:
+    'A free-to-visit craft and environmental education centre on the main Sigiriya road, about 5 km before Sigiriya Rock. A useful stop for travellers driving themselves by tuk tuk, motorbike or car.',
+  url: 'https://www.zeroplastic.lk/self-drive-sri-lanka/',
+  image: 'https://www.zeroplastic.lk/images/sd-tuktuks-parked-800.jpg',
+  isAccessibleForFree: true,
+  publicAccess: true,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Sigiriya',
+    addressRegion: 'Central Province',
+    addressCountry: 'LK',
+  },
+  hasMap: VISIT.directions,
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ],
+    opens: '07:30',
+    closes: '18:30',
+  },
+  touristType: ['Self-drive travellers', 'Families', 'Couples', 'Cultural travellers'],
+};
+
+const crumbs = breadcrumbSchema([
+  { name: 'Home', url: '/' },
+  { name: 'Self-drive Sri Lanka', url: '/self-drive-sri-lanka/' },
+]);
+
+const title = 'Sri Lanka Tuk Tuk Road Trip Stop | ZeroPlastic Sigiriya';
+const description =
+  'Travelling Sri Lanka by tuk tuk, bike or self-drive car? Stop at ZeroPlastic Impact Center Sigiriya for water refill, plastic drop-off, local crafts, family-friendly workshops and traveller discounts.';
+
+/** Drops a sentence-leading capital so a published phrase reads mid-sentence.
+ *  Only the first character changes, so proper nouns keep their casing. */
+const lowerFirst = (v: string) => v.charAt(0).toLowerCase() + v.slice(1);
+
+/** Section image helper, mirroring the srcset convention in Figure.astro. */
+const SECTION_W = [480, 800, 1200];
+const srcset = (name: string, ext: string, widths: number[] = SECTION_W) =>
+  widths.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image="/images/sd-tuktuks-parked-800.jpg"
+  schema={[organizationSchema(), placeSchema, faqSchema, crumbs]}
+>
+  <!-- Same container as the existing Impact Center landing page. This is the
+       only Astro route that loads GTM, so no document gets the tag twice. -->
+  <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=GTM-N85V5638"></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'GTM-N85V5638');
+  </script>
+
+  <div class="sd">
+    <!-- ============================= HERO ============================ -->
+    <section class="sd-hero">
+      <picture class="sd-hero__media">
+        <source type="image/avif" srcset={srcset('sd-hero-roadtrip', 'avif', [640, 960, 1280])} sizes="100vw" />
+        <source type="image/webp" srcset={srcset('sd-hero-roadtrip', 'webp', [640, 960, 1280])} sizes="100vw" />
+        <img
+          src="/images/sd-hero-roadtrip-960.jpg"
+          width="1333"
+          height="1333"
+          alt="A traveller standing up through the roof of a tuk-tuk with arms outstretched on a sandy track lined with palms in Sri Lanka."
+          loading="eager"
+          decoding="sync"
+          fetchpriority="high"
+        />
+      </picture>
+
+      <div class="container sd-hero__inner">
+        <p class="sd-hero__eyebrow">{HERO.eyebrow}</p>
+        <h1 class="sd-hero__h1">{HERO.h1}</h1>
+        <p class="sd-hero__sub">{HERO.sub}</p>
+        <p class="sd-hero__body">{HERO.body[0]}</p>
+        <p class="sd-hero__body">{HERO.body[1]}</p>
+
+        <p class="sd-hero__actions">
+          <a class="button button--lg" href={HERO.primary.href} data-ev={HERO.primary.event}>
+            {HERO.primary.label}
+          </a>
+          <a class="button button--lg button--outline" href={HERO.secondary.href} data-ev={HERO.secondary.event}>
+            {HERO.secondary.label}
+          </a>
+        </p>
+
+        <p class="sd-hero__meta">
+          {VISIT.entry} · {VISIT.hours} · {VISIT.distance}
+        </p>
+      </div>
+    </section>
+
+    <!-- =========================== JUMP NAV ========================== -->
+    <nav class="sd-jump" aria-label="On this page">
+      <div class="container sd-jump__inner">
+        <ul>
+          {JUMPNAV.map((j) => <li><a href={j.href}>{j.label}</a></li>)}
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ========================= VALUE STRIP ========================= -->
+    <section class="sd-sec sd-sec--tight" aria-labelledby="value-h">
+      <div class="container">
+        <h2 id="value-h" class="visually-hidden">Why stop here</h2>
+        <ul class="sd-values">
+          <li>
+            <h3>Travel responsibly</h3>
+            <p>Reduce unnecessary plastic and refill instead of buying another bottle.</p>
+          </li>
+          <li>
+            <h3>Support local livelihoods</h3>
+            <p>Discover products and experiences connected to local makers and artisan families.</p>
+          </li>
+          <li>
+            <h3>Keep plastic out of nature</h3>
+            <p>Bring suitable plastic collected during your journey to the ZeroPlastic Elephant.</p>
+          </li>
+          <li>
+            <h3>Support a non-profit movement</h3>
+            <p>Your visit supports the wider environmental and community work of ZeroPlastic Movement.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================== JOURNEY ============================ -->
+    <section class="sd-sec sd-sec--alt" id="journey" aria-labelledby="journey-h">
+      <div class="container">
+        <p class="eyebrow">Your road trip</p>
+        <h2 id="journey-h" class="sd-h2">Turn Your Road Trip Into Positive Impact</h2>
+
+        <ol class="sd-steps">
+          {
+            JOURNEY.map((s) => (
+              <li>
+                <span class="sd-steps__n" aria-hidden="true">{s.n}</span>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <figure class="sd-fig sd-fig--wide">
+          <picture>
+            <source type="image/avif" srcset={srcset('sd-tuktuks-parked', 'avif')} sizes="(max-width: 60rem) 100vw, 64rem" />
+            <source type="image/webp" srcset={srcset('sd-tuktuks-parked', 'webp')} sizes="(max-width: 60rem) 100vw, 64rem" />
+            <img
+              src="/images/sd-tuktuks-parked-800.jpg"
+              width="1280"
+              height="960"
+              alt="Three tuk-tuks in different colours and a van parked under trees at the ZeroPlastic Impact Center in Sigiriya."
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <figcaption>Travellers from several different rental companies parked at the Impact Center in Sigiriya.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ========================== ELEPHANT =========================== -->
+    <section class="sd-sec" id="elephant" aria-labelledby="elephant-h">
+      <div class="container">
+        <div class="sd-split">
+          <div>
+            <p class="eyebrow">Hello Zero</p>
+            <h2 id="elephant-h" class="sd-h2">Feed the ZeroPlastic Elephant</h2>
+            <p>Travelling Sri Lanka by tuk-tuk or bike?</p>
+            <p>
+              Keep suitable plastic from your journey safely inside your vehicle and bring it to the
+              ZeroPlastic Impact Center in Sigiriya.
+            </p>
+            <p>
+              Drop it into our elephant sculpture and help keep plastic out of Sri Lanka's natural
+              environment.
+            </p>
+            <p class="sd-note">
+              Please ask our team which plastic materials we currently accept. Not every type of
+              plastic can be recovered.
+            </p>
+          </div>
+
+          <figure class="sd-fig">
+            <picture>
+              <source type="image/avif" srcset={srcset('sd-elephant-feed', 'avif', [480, 800])} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <source type="image/webp" srcset={srcset('sd-elephant-feed', 'webp', [480, 800])} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <img
+                src="/images/sd-elephant-feed-800.jpg"
+                width="960"
+                height="1280"
+                alt="A traveller placing a plastic bottle into the ZeroPlastic Elephant, a life-size sculpture built from salvaged plastic beside the road in Sigiriya."
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <figcaption>A traveller dropping road-trip plastic into the ZeroPlastic Elephant.</figcaption>
+          </figure>
+        </div>
+
+        <figure class="sd-fig sd-fig--wide">
+          <picture>
+            <source type="image/avif" srcset={srcset('sd-elephant-visitors', 'avif')} sizes="(max-width: 60rem) 100vw, 64rem" />
+            <source type="image/webp" srcset={srcset('sd-elephant-visitors', 'webp')} sizes="(max-width: 60rem) 100vw, 64rem" />
+            <img
+              src="/images/sd-elephant-visitors-800.jpg"
+              width="1600"
+              height="1200"
+              alt="A group of visitors standing with a ZeroPlastic team member beside the salvaged-plastic elephant sculpture at the roadside in Sigiriya."
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <figcaption>Visitors hearing how the elephant was built, from plastic waste collected around Sigiriya.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ======================== FREE SERVICES ======================== -->
+    <section class="sd-sec sd-sec--alt" id="free" aria-labelledby="free-h">
+      <div class="container">
+        <p class="eyebrow">Free for every traveller</p>
+        <h2 id="free-h" class="sd-h2">A Useful Stop on Your Sri Lanka Road Trip</h2>
+        <ul class="sd-cards">
+          {
+            FREE.map((c) => (
+              <li class="sd-card">
+                <h3>{c.title}</h3>
+                <p>{c.body}</p>
+                {c.note && <p class="sd-card__note">{c.note}</p>}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================= EXPERIENCES ========================= -->
+    <section class="sd-sec" id="experiences" aria-labelledby="exp-h">
+      <div class="container">
+        <div class="sd-split">
+          <div>
+            <p class="eyebrow">Paid hands-on experiences</p>
+            <h2 id="exp-h" class="sd-h2">Make More Than a Memory</h2>
+            <p class="lede">
+              Instead of buying another ordinary souvenir, create something yourself in Sigiriya.
+            </p>
+            <p>
+              The bench is a working one. What is running on the day depends on which
+              craftspeople are there, so ask the team when you arrive.
+            </p>
+          </div>
+
+          <figure class="sd-fig">
+            <picture>
+              <source type="image/avif" srcset={srcset('sd-workshop-coconut', 'avif', [480, 800])} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <source type="image/webp" srcset={srcset('sd-workshop-coconut', 'webp', [480, 800])} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <img
+                src="/images/sd-workshop-coconut-800.jpg"
+                width="1200"
+                height="1600"
+                alt="Two visitors sanding coconut shells at the Impact Center workbench while a ZeroPlastic team member looks on, with finished coconut bowls in the foreground."
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <figcaption>Visitors shaping their own coconut shell bowls at the Impact Center bench.</figcaption>
+          </figure>
+        </div>
+
+        <div class="sd-exps">
+          {
+            EXPERIENCES.map((e) => (
+              <article class="sd-exp">
+                <div class="sd-exp__body">
+                  <h3>{e.title}</h3>
+                  <p>{e.body}</p>
+                  <p class="sd-exp__meta">{e.meta}</p>
+                  <p class="sd-exp__cta">
+                    <a class="button button--sm" href={VISIT.whatsapp} rel="noopener noreferrer" target="_blank" data-ev="self_drive_book_workshop">
+                      Ask about this experience
+                    </a>
+                  </p>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== COUPLES =========================== -->
+    <section class="sd-sec sd-sec--alt" id="couples" aria-labelledby="couples-h">
+      <div class="container">
+        <div class="sd-split sd-split--rev">
+          <figure class="sd-fig">
+            <picture>
+              <source type="image/avif" srcset={srcset('sd-couple-sigiriya', 'avif', [480, 800])} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <source type="image/webp" srcset={srcset('sd-couple-sigiriya', 'webp', [480, 800])} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <img
+                src="/images/sd-couple-sigiriya-800.jpg"
+                width="1365"
+                height="1706"
+                alt="A couple standing beside their hired tuk-tuk on a track below Sigiriya Lion Rock."
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <figcaption>Independent travellers below Sigiriya Lion Rock, a few kilometres from the Impact Center.</figcaption>
+          </figure>
+
+          <div>
+            <p class="eyebrow">For two</p>
+            <h2 id="couples-h" class="sd-h2">For Couples Travelling Sri Lanka</h2>
+            <p class="sd-lead">Create something together instead of buying another souvenir.</p>
+            <p>
+              A self-drive road trip gives couples the freedom to stop somewhere meaningful. At the
+              Impact Center you can create a handmade keepsake, learn a local craft story, support
+              local artisans, refill your bottle and continue your journey with something that has a
+              real story behind it.
+            </p>
+            <ul class="sd-ticks">
+              <li>make a keepsake together</li>
+              <li>take photos with the ZeroPlastic Elephant</li>
+              <li>join a hands-on craft experience</li>
+              <li>discover locally made products</li>
+              <li>support Sri Lankan artisan families</li>
+              <li>add a responsible travel stop to your road trip</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================== FAMILIES =========================== -->
+    <section class="sd-sec" id="families" aria-labelledby="families-h">
+      <div class="container measure">
+        <p class="eyebrow">For families</p>
+        <h2 id="families-h" class="sd-h2">Things to Do in Sigiriya With Kids</h2>
+        <p class="sd-lead">Let children see what happens after we throw something away.</p>
+        <p>
+          The Impact Center gives families a hands-on way to talk about waste, creativity, local
+          culture and responsible travel.
+        </p>
+        <p class="sd-sub">Children can:</p>
+        <ul class="sd-ticks">
+          <li>drop travel plastic into the ZeroPlastic Elephant</li>
+          <li>see how bottle lids can become something new</li>
+          <li>make a coconut-shell craft in a paid workshop</li>
+          <li>discover locally made alternatives to plastic</li>
+          <li>meet local craft stories</li>
+          <li>refill their bottle before getting back on the road</li>
+        </ul>
+        <p class="sd-note">
+          Suitable for families travelling independently around Sigiriya and Dambulla. Ask the team
+          if you need guidance for younger children.
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================== ARTISANS =========================== -->
+    <section class="sd-sec sd-sec--alt" id="artisans" aria-labelledby="artisans-h">
+      <div class="container">
+        <div class="sd-split">
+          <div>
+            <p class="eyebrow">Local makers</p>
+            <h2 id="artisans-h" class="sd-h2">Support Local Makers Along the Way</h2>
+            <p>
+              When you buy a locally made product at the Impact Center, your road-trip stop can also
+              support Sri Lankan makers and communities.
+            </p>
+            <dl class="sd-metrics">
+              <div>
+                <dt>{ARTISAN.families}</dt>
+                <dd>artisan families behind the products</dd>
+              </div>
+              <div>
+                <dt>{ARTISAN.products}</dt>
+                <dd>plastic-free products on the shelves</dd>
+              </div>
+            </dl>
+            <p class="sd-cta-row">
+              <a class="ext-link" href="/sustainable-travel/">Sustainable travel with ZeroPlastic</a>
+            </p>
+          </div>
+
+          <figure class="sd-fig">
+            <picture>
+              <source type="image/avif" srcset={srcset('sd-artisan-tuktuks', 'avif', [480, 800])} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <source type="image/webp" srcset={srcset('sd-artisan-tuktuks', 'webp', [480, 800])} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <img
+                src="/images/sd-artisan-tuktuks-800.jpg"
+                width="1280"
+                height="960"
+                alt="Three hand-carved wooden tuk-tuk models on grass, one unpainted and two finished in blue and yellow, made by Sri Lankan artisans."
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <figcaption>Hand-carved tuk-tuks, from raw timber to finished piece, made by artisans supplying the Impact Center.</figcaption>
+          </figure>
+        </div>
+
+        <div class="sd-introduce">
+          <h3>Meet a Craftsperson on Your Journey?</h3>
+          <p>
+            Self-drive travellers often reach villages and communities that conventional tours never
+            visit. If you meet a local craftsperson or small producer who may benefit from additional
+            market access, tell us about them. ZeroPlastic works with local makers and communities
+            across Sri Lanka and welcomes introductions.
+          </p>
+          <p>
+            <a class="button button--ghost" href="/contact/" data-ev="self_drive_artisan_intro">
+              Introduce a Local Maker
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== PLASTIC FOOTPRINT ====================== -->
+    <section class="sd-sec" aria-labelledby="footprint-h">
+      <div class="container measure">
+        <p class="eyebrow">On the road</p>
+        <h2 id="footprint-h" class="sd-h2">Make Your Road Trip's Plastic Footprint Smaller</h2>
+        <p>Responsible travel is not about being perfect. It is about making better choices during the journey.</p>
+        <ul class="sd-ticks">
+          <li>Carry a reusable bottle</li>
+          <li>Refill instead of buying another disposable bottle</li>
+          <li>Keep your waste with you</li>
+          <li>Dispose of plastic responsibly</li>
+          <li>Choose local products</li>
+          <li>Support businesses working to reduce unnecessary plastic</li>
+        </ul>
+        <p class="sd-pull">Carry memories.<br />Not plastic waste.</p>
+      </div>
+    </section>
+
+    <!-- =========================== BENEFIT =========================== -->
+    <section class="sd-sec sd-sec--alt" id="benefit" aria-labelledby="benefit-h">
+      <div class="container">
+        <p class="eyebrow">Traveller benefit</p>
+        <h2 id="benefit-h" class="sd-h2">Your Self-Drive Traveller Benefit</h2>
+        <p class="lede">{BENEFIT.intro}</p>
+
+        <div class="sd-benefit">
+          {
+            BENEFIT.cards.map((c) => (
+              <article class="sd-ben">
+                <p class="sd-ben__label">{c.label}</p>
+                <h3 class="sd-ben__who">{c.who}</h3>
+                <p class="sd-ben__rate">{c.rate}</p>
+                <p class="sd-ben__body">{c.body}</p>
+              </article>
+            ))
+          }
+        </div>
+
+        <div class="sd-benefit__free">
+          <p>{BENEFIT.footnote}</p>
+          <ul class="sd-ticks sd-ticks--inline">
+            {BENEFIT.freeList.map((f) => <li>{f}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== PARTNERS ========================== -->
+    <section class="sd-sec" id="partners" aria-labelledby="partners-h">
+      <div class="container">
+        <div class="sd-split">
+          <div>
+            <p class="eyebrow">Partner network</p>
+            <h2 id="partners-h" class="sd-h2">{PARTNERS.heading}</h2>
+            {PARTNERS.body.map((p) => <p>{p}</p>)}
+            <p class="sd-lead">{PARTNERS.inclusive}</p>
+            <p>{PARTNERS.invite}</p>
+          </div>
+
+          <figure class="sd-fig">
+            <picture>
+              <source type="image/avif" srcset={srcset('sd-partner-sigiriya', 'avif')} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <source type="image/webp" srcset={srcset('sd-partner-sigiriya', 'webp')} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <img
+                src="/images/sd-partner-sigiriya-800.jpg"
+                width="4096"
+                height="4096"
+                alt="A hired tuk-tuk parked on the road below Sigiriya Lion Rock under a heavy sky."
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <figcaption>TukTukRental.com, a ZeroPlastic Responsible Travel Partner, on the Sigiriya road.</figcaption>
+          </figure>
+        </div>
+
+        <div class="sd-rental">
+          <h3>Do You Run a Tuk Tuk, Bike or Self-Drive Rental Business?</h3>
+          <p class="sd-lead">Become a ZeroPlastic Responsible Travel Partner.</p>
+          <p>
+            If your customers travel independently across Sri Lanka, give them one more reason to
+            make a meaningful stop in Sigiriya.
+          </p>
+          <p class="sd-sub">Registered partners can offer customers:</p>
+          <ul class="sd-ticks">
+            {RENTAL_BENEFITS.customers.map((b) => <li>{b}</li>)}
+          </ul>
+          <p>
+            Already sending travellers through Sigiriya? Turn one of their stops into environmental
+            and local community impact.
+          </p>
+          <p>
+            <a class="button button--lg" href={PARTNERS.cta.href} data-ev={PARTNERS.cta.event}>
+              {PARTNERS.cta.label}
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ VISIT ============================ -->
+    <section class="sd-sec sd-sec--alt" id="visit" aria-labelledby="visit-h">
+      <div class="container">
+        <div class="sd-split sd-split--rev">
+          <figure class="sd-fig">
+            <picture>
+              <source type="image/avif" srcset={srcset('sd-center-dusk', 'avif')} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <source type="image/webp" srcset={srcset('sd-center-dusk', 'webp')} sizes="(max-width: 60rem) 100vw, 30rem" />
+              <img
+                src="/images/sd-center-dusk-800.jpg"
+                width="1280"
+                height="960"
+                alt="The ZeroPlastic Impact Center in Sigiriya lit up at dusk, an open timber and mesh pavilion among trees with an OPEN sign at the entrance."
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <figcaption>The Impact Center at dusk, on the main road about 5 km before Sigiriya Rock.</figcaption>
+          </figure>
+
+          <div>
+            <p class="eyebrow">Find us</p>
+            <h2 id="visit-h" class="sd-h2">A Meaningful Stop Near Sigiriya</h2>
+            <p>
+              Driving from Dambulla toward Sigiriya? Travelling through the Cultural Triangle?
+              Exploring Sri Lanka by tuk-tuk, bike or self-drive car?
+            </p>
+            <p>ZeroPlastic Impact Center is {lowerFirst(VISIT.distance)}.</p>
+
+            <dl class="sd-facts">
+              <div><dt>Open</dt><dd>{VISIT.hours}</dd></div>
+              <div><dt>Entry</dt><dd>{VISIT.entry}</dd></div>
+              <div><dt>Typical stop</dt><dd>Twenty to thirty minutes for a free walk-in visit</dd></div>
+            </dl>
+
+            <p class="sd-hero__actions">
+              <a class="button button--lg" href={VISIT.directions} rel="noopener noreferrer" target="_blank" data-ev="self_drive_get_directions">
+                Get Directions
+              </a>
+              <a class="button button--lg button--ghost" href={VISIT.whatsapp} rel="noopener noreferrer" target="_blank" data-ev="self_drive_whatsapp_click">
+                Message on WhatsApp
+              </a>
+            </p>
+            <p class="sd-note">
+              Or email <a href={`mailto:${CONTACT.email}`} data-ev="self_drive_contact">{CONTACT.email}</a>, or
+              read more about the <a href={EXTERNAL.impactCenter} rel="noopener noreferrer" target="_blank">Impact Center</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= FAQ ============================= -->
+    <section class="sd-sec" id="faq" aria-labelledby="faq-h">
+      <div class="container measure">
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-h" class="sd-h2">Self-Drive Traveller Questions</h2>
+        <div class="sd-faq">
+          {
+            FAQS.map((f) => (
+              <details class="sd-q" id={f.id}>
+                <summary><span>{f.q}</span></summary>
+                <div class="sd-q__a">{f.a.map((p) => <p>{p}</p>)}</div>
+              </details>
+            ))
+          }
+        </div>
+
+        <p class="sd-note sd-links">
+          More from ZeroPlastic:
+          <a href="/facts/">The facts behind ZeroPlastic</a>,
+          <a href="/our-work/">our work</a>,
+          <a href="/sustainable-travel/">sustainable travel</a>,
+          <a href="/volunteers/">volunteering</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======================= MOBILE STICKY CTA ===================== -->
+    <div class="sd-sticky" data-sticky hidden>
+      <a class="button button--sm" href={VISIT.directions} rel="noopener noreferrer" target="_blank" data-ev="self_drive_get_directions">
+        Get Directions
+      </a>
+      <a class="button button--sm button--ghost" href="#experiences" data-ev="self_drive_view_experience">
+        Experiences
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Scoped under .sd so no other route is affected. Tokens come from
+     global.css; only what this page genuinely needs is added. */
+  .sd {
+    --sand: #fbf8f2;
+    --sand-2: #f3ece0;
+    --line-2: #e6dccb;
+    --ink-1: #16261a;
+    --muted-1: #5d6f64;
+    /* Brand green fails AA as small text on sand, so links and small labels
+       use a darkened tone of the same hue. */
+    --accent-ink: #4d7219;
+    background: var(--sand);
+  }
+
+  /* Constrain the prose, not the container, so these blocks keep the same
+     left gutter as every other section instead of floating centred. */
+  .sd .measure > * { max-width: 46rem; }
+
+  /* The shared --green-600 eyebrow reads 2.86:1 on this page's cream panels,
+     under the 4.5:1 AA minimum at 12px bold. Darkened for this route only so
+     no other page's styling changes. Worst case here is 4.79:1. */
+  .sd .eyebrow { color: #54702c; }
+
+  /* Jump-nav targets must clear the 4.5rem site header and the sticky
+     jump bar beneath it, or a heading lands hidden behind both. */
+  .sd-sec[id] { scroll-margin-top: 9rem; }
+  .sd-sec { padding-block: clamp(2.5rem, 6.5vw, 4.5rem); }
+  .sd-sec--tight { padding-block: clamp(1.75rem, 4vw, 2.75rem); }
+  .sd-sec--alt { background: var(--sand-2); border-block: 1px solid var(--line-2); }
+
+  .sd-h2 {
+    font-size: clamp(1.45rem, 1.15rem + 1.5vw, 2.25rem);
+    margin-bottom: 0.8rem;
+  }
+  .sd-lead { font-weight: 650; color: var(--ink-1); font-size: 1.08rem; }
+  .sd-sub { font-weight: 700; margin-bottom: 0.5rem; }
+  .sd-note { font-size: 0.9rem; color: var(--muted-1); }
+  .sd-note a { color: var(--accent-ink); }
+
+  /* ------------------------------ hero ---------------------------- */
+  .sd-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: #0d1712;
+    padding-block: clamp(2.75rem, 9vw, 6rem);
+  }
+  .sd-hero__media { position: absolute; inset: 0; z-index: 0; }
+  .sd-hero__media img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    /* Keeps the standing traveller in frame at every viewport ratio. */
+    object-position: center 28%;
+  }
+  .sd-hero::after {
+    content: '';
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to right, rgb(8 18 13 / 90%) 0%, rgb(8 18 13 / 74%) 52%, rgb(8 18 13 / 42%) 100%);
+  }
+  .sd-hero__inner { position: relative; z-index: 2; }
+  .sd-hero__eyebrow {
+    text-transform: uppercase; letter-spacing: 0.15em;
+    font-size: 0.68rem; font-weight: 700; color: var(--green-400);
+    margin: 0 0 1rem;
+  }
+  .sd-hero__h1 {
+    color: #fff; margin: 0 0 0.5rem; max-width: 17ch;
+    font-size: clamp(1.85rem, 1.2rem + 3.2vw, 3.4rem);
+  }
+  .sd-hero__sub {
+    color: var(--green-400); font-weight: 700;
+    font-size: clamp(1.05rem, 0.95rem + 0.7vw, 1.45rem);
+    margin: 0 0 1.1rem;
+  }
+  .sd-hero__body {
+    color: rgb(255 255 255 / 86%); max-width: 46ch; margin: 0 0 0.7rem;
+    font-size: clamp(0.96rem, 0.92rem + 0.2vw, 1.05rem);
+  }
+  .sd-hero__actions {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.6rem 0 0;
+  }
+  @media (max-width: 28rem) {
+    .sd-hero__actions { display: grid; }
+    .sd-hero__actions :global(.button) { text-align: center; }
+  }
+  .sd-hero__meta {
+    margin: 1.4rem 0 0; font-size: 0.85rem;
+    color: rgb(255 255 255 / 72%);
+  }
+
+  /* ---------------------------- jump nav -------------------------- */
+  .sd-jump {
+    position: sticky; top: 4.5rem; z-index: 20;
+    background: rgb(251 248 242 / 94%);
+    backdrop-filter: saturate(150%) blur(10px);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .sd-jump__inner { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .sd-jump ul {
+    display: flex; gap: 0.35rem; list-style: none;
+    margin: 0; padding: 0.3rem 0; white-space: nowrap;
+  }
+  /* 2.75rem keeps every chip at the 44px minimum touch target on phones. */
+  .sd-jump a {
+    display: flex; align-items: center; min-height: 2.75rem;
+    padding: 0 0.85rem;
+    font-size: 0.84rem; font-weight: 600; text-decoration: none;
+    color: var(--ink-1); border-radius: 999px;
+  }
+  .sd-jump a:hover { background: var(--green-50); }
+
+  /* ----------------------------- values --------------------------- */
+  .sd-values {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: 1.1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  }
+  .sd-values h3 {
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--accent-ink); margin: 0 0 0.45rem;
+  }
+  .sd-values p { margin: 0; font-size: 0.94rem; color: var(--muted-1); }
+
+  /* ----------------------------- steps ---------------------------- */
+  .sd-steps {
+    list-style: none; margin: 2rem 0 0; padding: 0;
+    display: grid; gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    counter-reset: none;
+  }
+  .sd-steps li {
+    background: #fff; border: 1px solid var(--line-2);
+    border-radius: var(--radius); padding: 1.3rem 1.2rem;
+  }
+  .sd-steps__n {
+    display: block; font-size: 1.5rem; font-weight: 800;
+    color: #54702c; line-height: 1; margin-bottom: 0.6rem;
+  }
+  .sd-steps h3 {
+    font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase;
+    margin: 0 0 0.45rem; color: var(--ink-1);
+  }
+  .sd-steps p { margin: 0; font-size: 0.92rem; color: var(--muted-1); }
+
+  /* ---------------------------- figures --------------------------- */
+  .sd-fig { margin: 0; }
+  .sd-fig img {
+    width: 100%; height: auto; border-radius: var(--radius);
+    border: 1px solid var(--line-2);
+  }
+  .sd-fig figcaption {
+    margin-top: 0.6rem; font-size: 0.82rem; color: var(--muted-1);
+  }
+  .sd-fig--wide { margin-top: 2rem; }
+
+  .sd-split {
+    display: grid; gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    align-items: center;
+  }
+  .sd-split--rev > *:first-child { order: 2; }
+  @media (max-width: 60rem) {
+    .sd-split--rev > *:first-child { order: 0; }
+  }
+
+  /* ----------------------------- cards ---------------------------- */
+  .sd-cards {
+    list-style: none; margin: 2rem 0 0; padding: 0;
+    display: grid; gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .sd-card {
+    background: #fff; border: 1px solid var(--line-2);
+    border-top: 3px solid var(--green-500);
+    border-radius: var(--radius); padding: 1.4rem 1.25rem;
+  }
+  .sd-card h3 { font-size: 1.02rem; margin-bottom: 0.5rem; }
+  .sd-card p { margin: 0; font-size: 0.94rem; color: var(--muted-1); }
+  .sd-card__note {
+    margin-top: 0.7rem !important; font-size: 0.83rem !important;
+    padding-top: 0.6rem; border-top: 1px dashed var(--line-2);
+  }
+
+  /* -------------------------- experiences ------------------------- */
+  .sd-exps {
+    display: grid; gap: 1.25rem; margin-top: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+  .sd-exp {
+    background: #fff; border: 1px solid var(--line-2);
+    border-radius: var(--radius); overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .sd-exp__body { padding: 1.3rem 1.25rem; display: flex; flex-direction: column; flex: 1; }
+  .sd-exp h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .sd-exp p { font-size: 0.94rem; color: var(--muted-1); }
+  .sd-exp__meta {
+    font-size: 0.83rem !important; color: var(--accent-ink) !important;
+    font-weight: 600; margin-bottom: 0 !important;
+  }
+  .sd-exp__cta { margin: 1rem 0 0 !important; padding-top: 0.9rem; }
+  /* The shared button--sm renders 41px here, just under the 44px
+     touch-target minimum for a standalone control. */
+  .sd-exp__cta .button { min-height: 2.75rem; }
+
+  /* ----------------------------- ticks ---------------------------- */
+  .sd-ticks {
+    list-style: none; padding: 0; margin: 1.1rem 0;
+    display: grid; gap: 0.5rem;
+  }
+  .sd-ticks li {
+    position: relative; padding-left: 1.5rem;
+    font-size: 0.96rem; color: var(--ink-1);
+  }
+  .sd-ticks li::before {
+    content: ''; position: absolute; left: 0; top: 0.55em;
+    width: 0.45rem; height: 0.45rem; border-radius: 2px;
+    background: var(--green-500);
+  }
+  .sd-ticks--inline {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+
+  /* ---------------------------- metrics --------------------------- */
+  .sd-metrics {
+    display: grid; gap: 1rem; margin: 1.5rem 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  }
+  .sd-metrics dt {
+    font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.6rem);
+    font-weight: 800; line-height: 1; color: var(--accent-ink);
+    letter-spacing: -0.02em;
+  }
+  .sd-metrics dd {
+    margin: 0.4rem 0 0; font-size: 0.88rem; color: var(--muted-1);
+  }
+
+  .sd-introduce {
+    margin-top: 2.5rem; padding: clamp(1.4rem, 4vw, 2rem);
+    background: #fff; border: 1px solid var(--line-2);
+    border-left: 4px solid var(--green-500); border-radius: var(--radius);
+  }
+  .sd-introduce h3 { font-size: 1.15rem; margin-bottom: 0.6rem; }
+  .sd-introduce p { color: var(--muted-1); }
+
+  .sd-cta-row :global(a) { color: var(--accent-ink); }
+
+  .sd-pull {
+    margin: 1.8rem 0 0; padding: 1.2rem 1.4rem;
+    background: var(--ink-1); color: #fff; border-radius: var(--radius);
+    font-size: clamp(1.1rem, 0.95rem + 0.8vw, 1.5rem); font-weight: 700;
+  }
+
+  /* ---------------------------- benefit --------------------------- */
+  .sd-benefit {
+    display: grid; gap: 1.1rem; margin-top: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+  .sd-ben {
+    background: #fff; border: 1px solid var(--line-2);
+    border-radius: var(--radius); padding: 1.6rem 1.4rem;
+  }
+  .sd-ben__label {
+    display: inline-block; margin: 0 0 0.9rem;
+    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 800; color: var(--accent-ink);
+    background: var(--green-50); border-radius: 999px; padding: 0.3rem 0.7rem;
+  }
+  .sd-ben__who { font-size: 1rem; margin-bottom: 0.3rem; }
+  .sd-ben__rate {
+    font-size: clamp(2.1rem, 1.7rem + 1.8vw, 2.9rem);
+    font-weight: 800; line-height: 1; letter-spacing: -0.03em;
+    color: var(--ink-1); margin: 0.2rem 0 0.8rem;
+  }
+  .sd-ben__body { margin: 0; font-size: 0.93rem; color: var(--muted-1); }
+  .sd-benefit__free {
+    margin-top: 1.5rem; padding: 1.2rem 1.3rem;
+    background: #fff; border: 1px dashed var(--line-2); border-radius: var(--radius);
+  }
+  .sd-benefit__free p { margin: 0 0 0.6rem; font-weight: 650; font-size: 0.93rem; }
+  .sd-benefit__free .sd-ticks { margin: 0; }
+
+  .sd-rental {
+    margin-top: 2.5rem; padding: clamp(1.5rem, 4vw, 2.25rem);
+    background: var(--ink-1); color: rgb(255 255 255 / 76%);
+    border-radius: var(--radius);
+  }
+  .sd-rental h3 { color: #fff; font-size: clamp(1.15rem, 1rem + 0.8vw, 1.6rem); }
+  .sd-rental .sd-lead { color: var(--green-400); }
+  .sd-rental .sd-ticks li { color: rgb(255 255 255 / 80%); }
+  .sd-rental .sd-sub { color: #fff; }
+
+  /* ----------------------------- facts ---------------------------- */
+  .sd-facts { margin: 1.4rem 0; display: grid; gap: 0.7rem; }
+  .sd-facts > div {
+    display: flex; gap: 0.9rem; align-items: baseline;
+    border-bottom: 1px dashed var(--line-2); padding-bottom: 0.6rem;
+  }
+  .sd-facts dt {
+    flex: none; min-width: 7rem; font-weight: 700;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--accent-ink);
+  }
+  .sd-facts dd { margin: 0; font-size: 0.95rem; }
+
+  /* ------------------------------ faq ----------------------------- */
+  .sd-faq { display: grid; gap: 0.7rem; margin-top: 1.8rem; }
+  .sd-q {
+    background: #fff; border: 1px solid var(--line-2);
+    border-radius: var(--radius); scroll-margin-top: 9rem;
+  }
+  .sd-q summary {
+    cursor: pointer; list-style: none;
+    padding: 1.05rem 1.2rem; font-weight: 650;
+    display: flex; justify-content: space-between; gap: 1rem;
+    align-items: flex-start; min-height: 2.75rem;
+  }
+  .sd-q summary::-webkit-details-marker { display: none; }
+  .sd-q summary::after {
+    content: '+'; flex: none; font-weight: 700;
+    color: var(--accent-ink); font-size: 1.2rem; line-height: 1.2;
+  }
+  .sd-q[open] summary::after { content: '\2212'; }
+  .sd-q__a { padding: 0 1.2rem 0.4rem; }
+  .sd-q__a p { font-size: 0.95rem; color: var(--muted-1); }
+
+  .sd-links :global(a) { color: var(--accent-ink); }
+
+  /* --------------------------- sticky CTA ------------------------- */
+  .sd-sticky {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
+    display: flex; gap: 0.6rem; justify-content: center;
+    padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom));
+    background: rgb(251 248 242 / 96%);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line-2);
+  }
+  .sd-sticky[hidden] { display: none; }
+  .sd-sticky :global(.button) { min-height: 2.75rem; display: inline-flex; align-items: center; }
+  @media (min-width: 52rem) { .sd-sticky { display: none; } }
+</style>
+
+<script>
+  /**
+   * Analytics and the mobile sticky bar.
+   *
+   * The tracker mirrors the helper already used by public/volunteer-sri-lanka.html:
+   * gtag when it is there, dataLayer otherwise, and never throw, because a
+   * blocked analytics script must not take the page down with it.
+   */
+  (() => {
+    const root = document.querySelector('.sd');
+    if (!root) return;
+
+    function track(name: string, params?: Record<string, unknown>) {
+      try {
+        const w = window as unknown as {
+          gtag?: (...a: unknown[]) => void;
+          dataLayer?: Record<string, unknown>[];
+        };
+        if (typeof w.gtag === 'function') w.gtag('event', name, params || {});
+        else if (w.dataLayer) w.dataLayer.push(Object.assign({ event: name }, params || {}));
+      } catch {
+        /* analytics must never break the page */
+      }
+    }
+
+    track('self_drive_page_view', { page_location: location.pathname });
+
+    // One delegated listener rather than one per control, so adding a CTA in
+    // the template is enough to have it tracked.
+    root.addEventListener('click', (e) => {
+      const el = (e.target as HTMLElement)?.closest?.('[data-ev]') as HTMLElement | null;
+      if (!el) return;
+      const name = el.dataset.ev;
+      if (name) track(name, { link_text: (el.textContent || '').trim().slice(0, 80) });
+    });
+
+    // The sticky bar is only useful once the hero has scrolled away, and it is
+    // shipped hidden so a no-JS visitor never gets a bar covering the footer.
+    const sticky = root.querySelector<HTMLElement>('[data-sticky]');
+    const hero = root.querySelector('.sd-hero');
+    if (sticky && hero && 'IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entry]) => { sticky.hidden = entry.isIntersecting; },
+        { rootMargin: '0px' },
+      ).observe(hero);
+    }
+  })();
+</script>
