@@ -1,0 +1,1463 @@
+---
+/**
+ * /facts — the ZeroPlastic reference page.
+ *
+ * Purpose: when someone raises a common criticism of the movement, this is the
+ * single URL we send them. Every answer therefore needs its own permanent,
+ * shareable address, and the page has to survive being opened from a Facebook
+ * comment on a 320px phone with a slow connection.
+ *
+ * Three decisions follow from that:
+ *
+ *   1. Content lives in src/data/facts.ts as typed blocks, not in this
+ *      template. A second language is a data change, and the FAQ JSON-LD is
+ *      generated from the same objects the page renders, so structured data
+ *      cannot drift from visible content.
+ *
+ *   2. Answers are expanded in the HTML. JavaScript collapses them on load and
+ *      adds the sharing controls. With JavaScript off, or before it runs, the
+ *      whole page is still readable, which is the point of a reference page.
+ *
+ *   3. Sinhala is the content language while the site chrome is English, so
+ *      Sinhala blocks carry lang="si" and a Sinhala-capable font stack. No web
+ *      font is downloaded: the stack names the fonts Windows, macOS, iOS,
+ *      Android and Linux already ship, then falls back to the site default.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+import { breadcrumbSchema } from '../lib/schema';
+import {
+  CLOSING,
+  CONTRAST,
+  FAQS,
+  INTRO,
+  PAGE,
+  PILLARS,
+  SOURCES,
+  SOURCE_BY_KEY,
+  UI,
+  pick,
+  type Block,
+  type Locale,
+} from '../data/facts';
+
+/** Sinhala first. Switching this to 'en' renders the page from the same data. */
+const locale: Locale = 'si';
+const t = <T,>(value: { si: T } & Partial<Record<'en', T>>): T => pick(value, locale);
+
+/**
+ * Flatten an answer to plain text for FAQPage structured data.
+ *
+ * Built from the same blocks the template renders, so the structured data
+ * always matches what a visitor reads. Google requires the answer text to be
+ * present on the page, and it is.
+ */
+function answerText(blocks: Block[]): string {
+  const out: string[] = [];
+  for (const b of blocks) {
+    switch (b.kind) {
+      case 'p':
+      case 'sub':
+      case 'quote':
+        out.push(t(b.text));
+        break;
+      case 'callout':
+        out.push(t(b.text));
+        if (b.lines) out.push(...t(b.lines));
+        break;
+      case 'list':
+      case 'steps':
+        out.push(...t(b.items));
+        break;
+      case 'columns':
+        for (const g of b.groups) out.push(`${t(g.title)}: ${t(g.items).join(', ')}`);
+        break;
+      case 'flow':
+        out.push(t(b.steps).join(' > '));
+        break;
+      case 'breakdown':
+        out.push(b.rows.map((r) => `${r.value} ${t(r.label)}`).join(', '));
+        break;
+      case 'link':
+        out.push(t(b.text));
+        break;
+    }
+  }
+  return out.join(' ');
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((faq) => ({
+    '@type': 'Question',
+    name: t(faq.question),
+    acceptedAnswer: { '@type': 'Answer', text: answerText(faq.answer) },
+  })),
+};
+
+const crumbs = breadcrumbSchema([
+  { name: 'Home', url: '/' },
+  { name: 'The facts behind ZeroPlastic', url: '/facts/' },
+]);
+
+const description =
+  'ZeroPlastic කියන්නේ සියලුම plastic තහනම් කිරීමද? Recycling ප්‍රමාණවත්ද? Single-use plastic ගැන focus කරන්නේ ඇයි? ZeroPlastic Movement හි vision සහ ප්‍රධාන ප්‍රශ්න සඳහා evidence-based answers.';
+
+/** Search haystack, precomputed at build time so the client script stays small. */
+const searchIndex = (faq: (typeof FAQS)[number]) =>
+  [t(faq.question), ...faq.keywords, answerText(faq.answer)].join(' ').toLowerCase();
+---
+
+<BaseLayout
+  title={`${t(PAGE.title)} | ${SITE.name} Sri Lanka`}
+  description={description}
+  image="/images/og-home.jpg"
+  schema={[faqSchema, crumbs]}
+>
+  <div class="facts">
+    <!-- ============================ HERO ============================ -->
+    <section class="fhero">
+      <picture class="fhero__media">
+        <source
+          type="image/avif"
+          srcset="/images/clubs-network-480.avif 480w, /images/clubs-network-800.avif 800w, /images/clubs-network-1200.avif 1200w"
+          sizes="100vw"
+        />
+        <source
+          type="image/webp"
+          srcset="/images/clubs-network-480.webp 480w, /images/clubs-network-800.webp 800w, /images/clubs-network-1200.webp 1200w"
+          sizes="100vw"
+        />
+        <img
+          src="/images/clubs-network-800.jpg"
+          width="1200"
+          height="800"
+          alt="ZeroPlastic volunteers standing together beside bags of waste collected during a nationwide clean-up in Sri Lanka."
+          loading="eager"
+          decoding="sync"
+          fetchpriority="high"
+        />
+      </picture>
+
+      <div class="container fhero__inner">
+        <p class="fhero__eyebrow">{PAGE.eyebrow}</p>
+        <p class="fhero__brand" lang="si">{t(PAGE.title)}</p>
+        <h1 class="fhero__title" lang="si">{t(PAGE.heroHeadline)}</h1>
+        <p class="fhero__support" lang="si">
+          {t(PAGE.heroSupport).map((line, i) => (
+            <>
+              {i > 0 && <br />}
+              {line}
+            </>
+          ))}
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================== PILLARS =========================== -->
+    <section class="section fsection" aria-labelledby="vision-heading">
+      <div class="container">
+        <h2 id="vision-heading" class="visually-hidden">The ZeroPlastic vision</h2>
+        <ol class="pillars">
+          {
+            PILLARS.map((p) => (
+              <li class="pillar">
+                <span class="pillar__num" aria-hidden="true">{p.number}</span>
+                <h3 class="pillar__title">{p.title}</h3>
+                <p class="pillar__body" lang="si">{t(p.body)}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <p class="cornerstone" lang="si">
+          {t(PAGE.cornerstone).map((line, i) => (
+            <>
+              {i > 0 && <br />}
+              <span class={i === 0 ? 'cornerstone__a' : 'cornerstone__b'}>{line}</span>
+            </>
+          ))}
+        </p>
+      </div>
+    </section>
+
+    <!-- =========================== INTRO ============================ -->
+    <section class="section fsection fsection--alt" aria-labelledby="intro-heading">
+      <div class="container measure">
+        <h2 id="intro-heading" class="intro__heading" lang="si">{t(INTRO.heading)}</h2>
+        {t(INTRO.body).map((para) => <p class="intro__p" lang="si">{para}</p>)}
+      </div>
+    </section>
+
+    <!-- ========================== CONTRAST ========================== -->
+    <section class="section fsection" aria-labelledby="contrast-heading">
+      <div class="container">
+        <h2 id="contrast-heading" class="visually-hidden">What we mean and what we do not mean</h2>
+        <div class="contrast">
+          <div class="contrast__col contrast__col--yes">
+            <h3 class="contrast__title" lang="si">{t(CONTRAST.affirm.title)}</h3>
+            <ul class="contrast__list">
+              {t(CONTRAST.affirm.items).map((item) => (
+                <li lang="si"><span class="contrast__mark" aria-hidden="true">✓</span>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="contrast__col contrast__col--no">
+            <h3 class="contrast__title" lang="si">{t(CONTRAST.deny.title)}</h3>
+            <ul class="contrast__list">
+              {t(CONTRAST.deny.items).map((item) => (
+                <li lang="si"><span class="contrast__mark" aria-hidden="true">✕</span>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ FAQS ============================ -->
+    <section class="section fsection fsection--alt" id="questions" aria-labelledby="faq-heading">
+      <div class="container">
+        <p class="eyebrow">Common questions</p>
+        <h2 id="faq-heading" class="faq__heading" lang="si">ප්‍රධාන ප්‍රශ්න සහ ඇත්ත පිළිතුරු</h2>
+
+        <div class="faq-search" data-faq-search hidden>
+          <label class="faq-search__label" for="faq-q" lang="si">{t(UI.searchLabel)}</label>
+          <input
+            id="faq-q"
+            type="search"
+            class="faq-search__input"
+            autocomplete="off"
+            placeholder="plastic, recycling, chair, partner"
+          />
+          <p class="faq-search__empty" data-faq-empty hidden lang="si">{t(UI.noResults)}</p>
+        </div>
+
+        <div class="faq-list" data-faq-list>
+          {
+            FAQS.map((faq) => {
+              const src = faq.sourceKey ? SOURCE_BY_KEY.get(faq.sourceKey) : undefined;
+              const statSrc = faq.stat ? SOURCE_BY_KEY.get(faq.stat.sourceKey) : undefined;
+              return (
+                <article
+                  class="qcard"
+                  id={faq.id}
+                  data-faq
+                  data-search={searchIndex(faq)}
+                >
+                  <h3 class="qcard__h">
+                    <button
+                      type="button"
+                      class="qcard__trigger"
+                      id={`t-${faq.id}`}
+                      aria-expanded="true"
+                      aria-controls={`p-${faq.id}`}
+                      data-faq-trigger
+                    >
+                      <span class="qcard__q" lang="si">{t(faq.question)}</span>
+                      <span class="qcard__chev" aria-hidden="true"></span>
+                    </button>
+                  </h3>
+
+                  <div
+                    class="qcard__panel"
+                    id={`p-${faq.id}`}
+                    role="region"
+                    aria-labelledby={`t-${faq.id}`}
+                    data-faq-panel
+                  >
+                    <div class="qcard__body">
+                      {faq.stat && (
+                        <aside class="statbox">
+                          <p class="statbox__value">{faq.stat.value}</p>
+                          <p class="statbox__caption">{t(faq.stat.caption)}</p>
+                          {statSrc && (
+                            <p class="statbox__src">
+                              <a href={statSrc.url} rel="noopener noreferrer" target="_blank">
+                                {statSrc.label}
+                              </a>
+                            </p>
+                          )}
+                        </aside>
+                      )}
+
+                      {faq.answer.map((b) => {
+                        if (b.kind === 'p') return <p lang="si">{t(b.text)}</p>;
+                        if (b.kind === 'sub') return <p class="a-sub" lang="si">{t(b.text)}</p>;
+                        if (b.kind === 'quote') return <p class="a-quote" lang="si">{t(b.text)}</p>;
+                        if (b.kind === 'list')
+                          return (
+                            <ul class="a-list">
+                              {t(b.items).map((i) => <li lang="si">{i}</li>)}
+                            </ul>
+                          );
+                        if (b.kind === 'steps')
+                          return (
+                            <ol class="a-steps">
+                              {t(b.items).map((i) => <li lang="si">{i}</li>)}
+                            </ol>
+                          );
+                        if (b.kind === 'callout')
+                          return (
+                            <div class="a-callout">
+                              <p class="a-callout__lead" lang="si">{t(b.text)}</p>
+                              {b.lines &&
+                                t(b.lines).map((l) => <p class="a-callout__line" lang="si">{l}</p>)}
+                            </div>
+                          );
+                        if (b.kind === 'columns')
+                          return (
+                            <div class="a-cols">
+                              {b.groups.map((g) => (
+                                <div class="a-cols__g">
+                                  <p class="a-cols__t">{t(g.title)}</p>
+                                  <ul>
+                                    {t(g.items).map((i) => <li lang="si">{i}</li>)}
+                                  </ul>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        if (b.kind === 'flow')
+                          return (
+                            <ol class="a-flow">
+                              {t(b.steps).map((s) => <li>{s}</li>)}
+                            </ol>
+                          );
+                        if (b.kind === 'breakdown')
+                          return (
+                            <dl class="a-breakdown">
+                              {b.rows.map((r) => (
+                                <div class="a-breakdown__row">
+                                  <dt>{r.value}</dt>
+                                  <dd lang="si">{t(r.label)}</dd>
+                                </div>
+                              ))}
+                            </dl>
+                          );
+                        if (b.kind === 'link')
+                          return (
+                            <p class="a-link">
+                              <a class="ext-link" href={b.href} lang="si">{t(b.text)}</a>
+                            </p>
+                          );
+                        return null;
+                      })}
+
+                      {src && (
+                        <p class="qcard__src">
+                          <span lang="si">{t(UI.sourcePrefix)}:</span>{' '}
+                          <a href={src.url} rel="noopener noreferrer" target="_blank">{src.label}</a>
+                        </p>
+                      )}
+                    </div>
+
+                    <div class="qcard__share" data-share hidden>
+                      <span class="qcard__sharelabel" lang="si">{t(UI.shareLabel)}</span>
+                      <span class="qcard__sharebtns">
+                        <button type="button" class="chip" data-copy={faq.id}>{t(UI.copy)}</button>
+                        <button type="button" class="chip" data-native={faq.id} hidden>
+                          {t(UI.share)}
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== SOURCES ========================== -->
+    <section class="section fsection" aria-labelledby="sources-heading">
+      <div class="container measure">
+        <details class="sources">
+          <summary class="sources__summary">
+            <h2 id="sources-heading" class="sources__h" lang="si">{t(UI.sourcesTitle)}</h2>
+          </summary>
+          <ol class="sources__list">
+            {
+              SOURCES.map((s) => (
+                <li>
+                  <a href={s.url} rel="noopener noreferrer" target="_blank">{s.label}</a>
+                </li>
+              ))
+            }
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- =========================== CLOSING ========================== -->
+    <section class="section fclosing" aria-labelledby="closing-heading">
+      <div class="container">
+        <p class="fclosing__label">{CLOSING.label}</p>
+        <h2 id="closing-heading" class="fclosing__lines" lang="si">
+          {t(CLOSING.lines).map((line, i) => (
+            <>
+              {i > 0 && <br />}
+              <span class={i === 1 ? 'fclosing__accent' : undefined}>{line}</span>
+            </>
+          ))}
+        </h2>
+
+        <ul class="fclosing__pillars">
+          {CLOSING.pillars.map((p) => <li>{p}</li>)}
+        </ul>
+
+        <p class="fclosing__actions">
+          {
+            CLOSING.actions.map((a) => (
+              <a
+                class={`button button--lg${a.primary ? '' : ' button--outline'}`}
+                href={a.href}
+                lang="si"
+              >
+                {t(a.label)}
+              </a>
+            ))
+          }
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== FLOATING QUESTION JUMP ================= -->
+    <div class="qjump" data-qjump hidden>
+      <button type="button" class="qjump__btn" data-qjump-open aria-expanded="false" aria-controls="qjump-panel">
+        <span aria-hidden="true">☰</span>
+        <span lang="si">{t(UI.questionsButton)}</span>
+      </button>
+      <div class="qjump__panel" id="qjump-panel" hidden>
+        <div class="qjump__head">
+          <p class="qjump__title" lang="si">{t(UI.questionsTitle)}</p>
+          <button type="button" class="qjump__close" data-qjump-close>
+            <span aria-hidden="true">✕</span>
+            <span class="visually-hidden" lang="si">{t(UI.close)}</span>
+          </button>
+        </div>
+        <ul class="qjump__list">
+          {FAQS.map((f) => <li><a href={`#${f.id}`} lang="si">{t(f.question)}</a></li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* ---------------------------------------------------------------- */
+  /* Page scope                                                        */
+  /*                                                                   */
+  /* Everything is nested under .facts so this file cannot affect any  */
+  /* other route. Tokens come from global.css; only the few this page  */
+  /* genuinely needs are introduced here.                              */
+  /* ---------------------------------------------------------------- */
+  .facts {
+    /* Warm off-white editorial ground, distinct from the site's cool
+       --surface-alt without introducing a second brand palette. */
+    --paper: #fbfaf6;
+    --paper-2: #f4f2ea;
+    --rule: #e6e2d6;
+    --ink: #14201a;
+    --muted: #5d6f64;
+    --accent: #6a9a24;
+    /* The brand green fails AA as small text on paper, so links and small
+       labels inside this page use a darkened tone of the same hue. */
+    --accent-ink: #4d7219;
+    --sinhala: 'Noto Sans Sinhala', 'Iskoola Pota', 'Nirmala UI', 'Kandy',
+      'SinhalaSangamMN', var(--font-sans);
+
+    background: var(--paper);
+  }
+
+  /* Sinhala needs a font that actually has the glyphs, and a little more
+     line height than Latin at the same size. No web font is fetched. */
+  .facts [lang='si'] {
+    font-family: var(--sinhala);
+    line-height: 1.85;
+  }
+
+  .facts .measure {
+    max-width: 46rem;
+  }
+
+  .fsection {
+    padding-block: clamp(2.75rem, 7vw, 5rem);
+  }
+  .fsection--alt {
+    background: var(--paper-2);
+    border-block: 1px solid var(--rule);
+  }
+
+  /* ------------------------------ hero ---------------------------- */
+  .fhero {
+    position: relative;
+    isolation: isolate;
+    background: #0d1712;
+    padding-block: clamp(3rem, 12vw, 7rem);
+    overflow: hidden;
+  }
+  .fhero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .fhero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+  /* Scrim: the headline is long Sinhala text, so it needs a dependable
+     contrast floor rather than luck with the photograph. */
+  .fhero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      to right,
+      rgb(8 18 13 / 92%) 0%,
+      rgb(8 18 13 / 80%) 45%,
+      rgb(8 18 13 / 55%) 100%
+    );
+  }
+  .fhero__inner {
+    position: relative;
+    z-index: 2;
+  }
+  .fhero__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--green-400);
+    margin: 0 0 1.1rem;
+  }
+  .fhero__brand {
+    font-size: clamp(1.05rem, 0.9rem + 0.7vw, 1.4rem);
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.9rem;
+    opacity: 0.92;
+  }
+  .fhero__title {
+    color: #fff;
+    font-size: clamp(1.6rem, 1.1rem + 3.1vw, 3.1rem);
+    max-width: 20ch;
+    margin: 0 0 1.2rem;
+    letter-spacing: -0.01em;
+  }
+  .fhero__support {
+    color: rgb(255 255 255 / 84%);
+    font-size: clamp(0.98rem, 0.93rem + 0.3vw, 1.12rem);
+    max-width: 44ch;
+    margin: 0;
+  }
+
+  /* ---------------------------- pillars --------------------------- */
+  .pillars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .pillar {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.35rem;
+  }
+  .pillar__num {
+    display: block;
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1;
+    /* Solid rather than outlined: text-stroke renders inconsistently and an
+       outline that fails leaves an invisible number. */
+    color: #cfe0ab;
+    margin-bottom: 0.7rem;
+  }
+  .pillar__title {
+    font-size: 0.86rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 0 0 0.6rem;
+  }
+  .pillar__body {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .cornerstone {
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    padding: clamp(1.4rem, 4vw, 2rem);
+    background: var(--ink);
+    border-radius: var(--radius);
+    color: #fff;
+    font-size: clamp(1.05rem, 0.92rem + 0.75vw, 1.5rem);
+    font-weight: 600;
+    text-align: center;
+  }
+  .cornerstone__b {
+    color: var(--green-400);
+  }
+
+  /* ----------------------------- intro ---------------------------- */
+  .intro__heading {
+    font-size: clamp(1.4rem, 1.1rem + 1.5vw, 2.15rem);
+    margin-bottom: 1.4rem;
+  }
+  .intro__p {
+    color: var(--ink);
+    font-size: 1.03rem;
+  }
+  .intro__p:nth-child(3) {
+    font-weight: 700;
+  }
+
+  /* --------------------------- contrast --------------------------- */
+  .contrast {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  }
+  .contrast__col {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 1.6rem 1.4rem;
+    background: #fff;
+  }
+  .contrast__col--yes {
+    border-left: 4px solid var(--accent);
+  }
+  .contrast__col--no {
+    border-left: 4px solid #b9482f;
+  }
+  .contrast__title {
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+  }
+  .contrast__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .contrast__list li {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    font-size: 0.97rem;
+    color: var(--ink);
+  }
+  /* The tick and cross are decorative; the column heading carries the
+     meaning, so nothing here depends on colour alone. */
+  .contrast__mark {
+    flex: none;
+    font-weight: 800;
+    line-height: 1.6;
+  }
+  .contrast__col--yes .contrast__mark {
+    color: var(--accent-ink);
+  }
+  .contrast__col--no .contrast__mark {
+    color: #b9482f;
+  }
+
+  /* ------------------------------ faq ----------------------------- */
+  .faq__heading {
+    font-size: clamp(1.4rem, 1.1rem + 1.5vw, 2.15rem);
+    margin-bottom: 1.6rem;
+  }
+
+  .faq-search {
+    margin-bottom: 1.75rem;
+    max-width: 30rem;
+  }
+  .faq-search__label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+  .faq-search__input {
+    width: 100%;
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--ink);
+  }
+  .faq-search__empty {
+    margin: 0.75rem 0 0;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  .faq-list {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .qcard {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    /* Sticky header is 4.5rem; add breathing room so a deep link does not
+       land with the question tucked under it. */
+    scroll-margin-top: 6.5rem;
+    overflow: hidden;
+  }
+  .qcard[hidden] {
+    display: none;
+  }
+  /* Temporary highlight when arrived at via a hash link. */
+  .qcard.is-targeted {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(106 154 36 / 18%);
+  }
+
+  .qcard__h {
+    margin: 0;
+    font-size: 1rem;
+  }
+  .qcard__trigger {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    text-align: left;
+    background: none;
+    border: 0;
+    padding: 1.15rem 1.25rem;
+    cursor: pointer;
+    font: inherit;
+    color: var(--ink);
+  }
+  .qcard__q {
+    font-size: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
+    font-weight: 650;
+  }
+  .qcard__chev {
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-top: 0.5rem;
+    border-right: 2px solid var(--accent-ink);
+    border-bottom: 2px solid var(--accent-ink);
+    transform: rotate(45deg);
+    transition: transform 0.18s ease;
+  }
+  .qcard__trigger[aria-expanded='false'] .qcard__chev {
+    transform: rotate(-45deg);
+  }
+  /* Only meaningful once the script has taken over; without JS every panel
+     stays open and the chevron is inert decoration. */
+  .qcard__panel[hidden] {
+    display: none;
+  }
+  .qcard__body {
+    padding: 0 1.25rem;
+  }
+  .qcard__body > :global(p),
+  .qcard__body :global(li) {
+    color: var(--ink);
+  }
+  .qcard__body :global(p) {
+    font-size: 0.99rem;
+  }
+
+  .a-sub {
+    font-weight: 700;
+    margin-bottom: 0.6em;
+  }
+  .a-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.1em;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .a-list li {
+    position: relative;
+    padding-left: 1.4rem;
+    font-size: 0.97rem;
+  }
+  .a-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .a-steps {
+    list-style: none;
+    counter-reset: s;
+    padding: 0;
+    margin: 0 0 1.1em;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .a-steps li {
+    counter-increment: s;
+    position: relative;
+    padding-left: 3rem;
+    font-size: 0.99rem;
+  }
+  .a-steps li::before {
+    content: '0' counter(s);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--accent-ink);
+    letter-spacing: -0.02em;
+  }
+
+  .a-callout {
+    margin: 1.4rem 0;
+    padding: 1.15rem 1.25rem;
+    background: var(--paper-2);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+  }
+  .a-callout__lead {
+    margin: 0;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .a-callout__line {
+    margin: 0.4rem 0 0;
+    color: var(--ink);
+  }
+
+  .a-quote {
+    margin: 1.4rem 0;
+    font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.25rem);
+    font-weight: 650;
+    color: var(--ink);
+    border-left: 4px solid var(--ink);
+    padding-left: 1rem;
+  }
+
+  .a-cols {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    margin: 1.3rem 0;
+  }
+  .a-cols__g {
+    background: var(--paper-2);
+    border-radius: 10px;
+    padding: 1.1rem;
+  }
+  .a-cols__t {
+    margin: 0 0 0.6rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    font-weight: 800;
+    color: var(--accent-ink);
+  }
+  .a-cols__g ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .a-cols__g li {
+    font-size: 0.93rem;
+  }
+
+  .a-flow {
+    list-style: none;
+    counter-reset: f;
+    margin: 1.4rem 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+    max-width: 22rem;
+  }
+  .a-flow li {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 0.62rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 750;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    text-align: center;
+  }
+  .a-flow li:not(:last-child)::after {
+    content: '↓';
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: -0.52rem;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .a-flow li:first-child {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #10240f;
+  }
+
+  .a-breakdown {
+    margin: 1.2rem 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .a-breakdown__row {
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+    border-bottom: 1px dashed var(--rule);
+    padding-bottom: 0.45rem;
+  }
+  .a-breakdown dt {
+    flex: none;
+    min-width: 3.4rem;
+    font-weight: 800;
+    color: var(--accent-ink);
+    font-size: 1rem;
+  }
+  .a-breakdown dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  .a-link {
+    margin-top: 1.2rem;
+  }
+  .a-link :global(a) {
+    color: var(--accent-ink);
+  }
+
+  .statbox {
+    float: right;
+    width: min(16rem, 100%);
+    margin: 0 0 1.1rem 1.4rem;
+    padding: 1.15rem 1.2rem;
+    background: var(--ink);
+    border-radius: var(--radius);
+    color: #fff;
+  }
+  .statbox__value {
+    margin: 0;
+    font-size: clamp(2.4rem, 2rem + 2.2vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--green-400);
+  }
+  .statbox__caption {
+    margin: 0.6rem 0 0;
+    font-size: 0.88rem;
+    color: rgb(255 255 255 / 80%);
+  }
+  .statbox__src {
+    margin: 0.65rem 0 0;
+    font-size: 0.74rem;
+  }
+  .statbox__src a {
+    color: var(--green-400);
+  }
+  @media (max-width: 40rem) {
+    .statbox {
+      float: none;
+      width: 100%;
+      margin: 0 0 1.2rem;
+    }
+  }
+
+  .qcard__src {
+    margin: 1.3rem 0 0;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .qcard__src a {
+    color: var(--accent-ink);
+  }
+
+  .qcard__share {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.2rem;
+    padding: 0.85rem 1.25rem;
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+  }
+  .qcard__sharelabel {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .qcard__sharebtns {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .chip {
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 650;
+    /* 44px tall so it stays a comfortable tap target on a phone. */
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .chip:hover {
+    background: var(--green-50);
+  }
+  .chip.is-done {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #10240f;
+  }
+
+  /* --------------------------- sources ---------------------------- */
+  .sources {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: #fff;
+    padding: 0.4rem 1.25rem;
+  }
+  .sources__summary {
+    cursor: pointer;
+    padding: 0.9rem 0;
+    list-style: none;
+  }
+  .sources__summary::-webkit-details-marker {
+    display: none;
+  }
+  .sources__summary::after {
+    content: '+';
+    float: right;
+    font-weight: 700;
+    color: var(--accent-ink);
+    font-size: 1.2rem;
+    line-height: 1.2;
+  }
+  .sources[open] .sources__summary::after {
+    content: '\2212';
+  }
+  .sources__h {
+    display: inline;
+    font-size: 1.05rem;
+  }
+  .sources__list {
+    margin: 0 0 1rem;
+    padding-left: 1.3rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .sources__list a {
+    color: var(--accent-ink);
+    font-size: 0.93rem;
+  }
+
+  /* --------------------------- closing ---------------------------- */
+  .fclosing {
+    background: #0d1712;
+    color: rgb(255 255 255 / 72%);
+    padding-block: clamp(3rem, 8vw, 5.5rem);
+  }
+  .fclosing__label {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--green-400);
+    margin: 0 0 1.4rem;
+  }
+  .fclosing__lines {
+    color: #fff;
+    font-size: clamp(1.5rem, 1.1rem + 2.4vw, 2.8rem);
+    max-width: 22ch;
+    margin: 0 0 2.2rem;
+  }
+  .fclosing__accent {
+    color: var(--green-400);
+  }
+  .fclosing__pillars {
+    list-style: none;
+    margin: 0 0 2.4rem;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .fclosing__pillars li {
+    border: 1px solid rgb(255 255 255 / 16%);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    color: #fff;
+    text-align: center;
+  }
+  .fclosing__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  @media (max-width: 28rem) {
+    .fclosing__actions {
+      display: grid;
+    }
+    .fclosing__actions :global(.button) {
+      text-align: center;
+    }
+  }
+
+  /* ------------------------ floating jump ------------------------- */
+  .qjump {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 25;
+  }
+  @media (min-width: 60rem) {
+    .qjump {
+      display: none;
+    }
+  }
+  .qjump__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    min-height: 2.9rem;
+    padding: 0.6rem 1.15rem;
+    border-radius: 999px;
+    border: 0;
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 6px 22px rgb(13 23 18 / 28%);
+    cursor: pointer;
+  }
+  .qjump__panel {
+    position: absolute;
+    right: 0;
+    bottom: 3.6rem;
+    width: min(21rem, calc(100vw - 2rem));
+    max-height: min(60vh, 26rem);
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 40px rgb(13 23 18 / 22%);
+  }
+  .qjump__panel[hidden] {
+    display: none;
+  }
+  .qjump__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    background: #fff;
+  }
+  .qjump__title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--ink);
+  }
+  .qjump__close {
+    font: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: var(--muted);
+    min-height: 2.5rem;
+    min-width: 2.5rem;
+  }
+  .qjump__list {
+    list-style: none;
+    margin: 0;
+    padding: 0.35rem 0;
+  }
+  .qjump__list a {
+    display: block;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .qjump__list a:hover {
+    background: var(--green-50);
+  }
+</style>
+
+<script>
+  /**
+   * Progressive enhancement for /facts.
+   *
+   * The HTML ships with every answer expanded and the share controls hidden,
+   * so the page is complete before this runs and complete if it never runs.
+   * This script collapses the answers, reveals the controls it can actually
+   * deliver, and wires up deep linking.
+   */
+  (() => {
+    const root = document.querySelector('.facts');
+    if (!root) return;
+
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-faq]'));
+    if (!cards.length) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---------------- accordion ---------------- */
+
+    const setOpen = (card: HTMLElement, open: boolean) => {
+      const trigger = card.querySelector<HTMLButtonElement>('[data-faq-trigger]');
+      const panel = card.querySelector<HTMLElement>('[data-faq-panel]');
+      if (!trigger || !panel) return;
+      trigger.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+
+    const isOpen = (card: HTMLElement) =>
+      card.querySelector('[data-faq-trigger]')?.getAttribute('aria-expanded') === 'true';
+
+    // Collapse everything now that scripting is confirmed available.
+    cards.forEach((card) => setOpen(card, false));
+
+    cards.forEach((card) => {
+      const trigger = card.querySelector<HTMLButtonElement>('[data-faq-trigger]');
+      trigger?.addEventListener('click', () => {
+        const next = !isOpen(card);
+        setOpen(card, next);
+        // Opening a question makes it addressable; closing gives the hash back.
+        if (next) {
+          history.pushState(null, '', `#${card.id}`);
+        } else if (location.hash === `#${card.id}`) {
+          history.pushState(null, '', location.pathname + location.search);
+        }
+      });
+    });
+
+    /* ---------------- deep linking ---------------- */
+
+    let highlightTimer: number | undefined;
+
+    const reveal = (id: string, smooth: boolean) => {
+      const card = document.getElementById(id);
+      if (!card || !card.matches('[data-faq]')) return false;
+
+      // A filtered-out card cannot be scrolled to, so clear the filter first.
+      if (card.hidden) {
+        const input = root.querySelector<HTMLInputElement>('#faq-q');
+        if (input) {
+          input.value = '';
+          applyFilter('');
+        }
+      }
+
+      setOpen(card, true);
+      // 'auto' resolves to the CSS scroll-behavior, which is smooth site-wide,
+      // so an arrival jump would animate for almost a second and land focus
+      // mid-flight. 'instant' is the only value that genuinely overrides it.
+      card.scrollIntoView({
+        behavior: smooth && !reduceMotion ? 'smooth' : 'instant',
+        block: 'start',
+      });
+
+      // Focus the question itself, so a keyboard or screen-reader visitor
+      // lands on the thing the link promised rather than the page top.
+      //
+      // Deferred by a task: the browser's own fragment navigation resets focus
+      // to <body> shortly after the document loads, and a synchronous focus
+      // here is silently undone a millisecond later.
+      const trigger = card.querySelector<HTMLButtonElement>('[data-faq-trigger]');
+      window.setTimeout(() => trigger?.focus({ preventScroll: true }), 0);
+
+      card.classList.add('is-targeted');
+      window.clearTimeout(highlightTimer);
+      highlightTimer = window.setTimeout(() => card.classList.remove('is-targeted'), 2400);
+      return true;
+    };
+
+    const syncToHash = (smooth: boolean) => {
+      const id = decodeURIComponent(location.hash.replace(/^#/, ''));
+      if (id) reveal(id, smooth);
+    };
+
+    // Back and forward across question links.
+    window.addEventListener('popstate', () => syncToHash(true));
+    // Same-page anchor clicks, including the floating list.
+    window.addEventListener('hashchange', () => syncToHash(true));
+
+    /* ---------------- share controls ---------------- */
+
+    const absolute = (id: string) =>
+      `${location.origin}${location.pathname.replace(/\/$/, '')}#${id}`;
+
+    const canShare = typeof navigator.share === 'function';
+    const copyLabel = root.querySelector<HTMLButtonElement>('[data-copy]')?.textContent ?? 'Copy link';
+    const copiedLabel = 'Link copied';
+
+    root.querySelectorAll<HTMLElement>('[data-share]').forEach((el) => {
+      el.hidden = false;
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.copy!;
+        const url = absolute(id);
+        try {
+          await navigator.clipboard.writeText(url);
+        } catch {
+          // Clipboard API is unavailable or blocked (older Safari, insecure
+          // context). Fall back to a selection the visitor can copy.
+          const ta = document.createElement('textarea');
+          ta.value = url;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+          } catch {
+            /* nothing more we can do; the URL is still in the address bar */
+          }
+          ta.remove();
+        }
+        btn.textContent = copiedLabel;
+        btn.classList.add('is-done');
+        window.setTimeout(() => {
+          btn.textContent = copyLabel;
+          btn.classList.remove('is-done');
+        }, 1800);
+      });
+    });
+
+    if (canShare) {
+      root.querySelectorAll<HTMLButtonElement>('[data-native]').forEach((btn) => {
+        btn.hidden = false;
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.native!;
+          const card = document.getElementById(id);
+          const title =
+            card?.querySelector('.qcard__q')?.textContent?.trim() ?? document.title;
+          try {
+            await navigator.share({ title, url: absolute(id) });
+          } catch {
+            /* the visitor dismissed the sheet */
+          }
+        });
+      });
+    }
+
+    /* ---------------- search ---------------- */
+
+    const search = root.querySelector<HTMLElement>('[data-faq-search]');
+    const empty = root.querySelector<HTMLElement>('[data-faq-empty]');
+
+    function applyFilter(raw: string) {
+      const q = raw.trim().toLowerCase();
+      let shown = 0;
+      cards.forEach((card) => {
+        const hay = card.dataset.search ?? '';
+        const match = !q || hay.includes(q);
+        card.hidden = !match;
+        if (match) shown++;
+      });
+      if (empty) empty.hidden = shown !== 0;
+    }
+
+    if (search) {
+      search.hidden = false;
+      const input = search.querySelector<HTMLInputElement>('#faq-q');
+      input?.addEventListener('input', () => applyFilter(input.value));
+      // Escape clears, which is what people expect of a search field.
+      input?.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && input.value) {
+          input.value = '';
+          applyFilter('');
+        }
+      });
+    }
+
+    /* ---------------- floating question list ---------------- */
+
+    const jump = root.querySelector<HTMLElement>('[data-qjump]');
+    if (jump) {
+      jump.hidden = false;
+      const openBtn = jump.querySelector<HTMLButtonElement>('[data-qjump-open]');
+      const closeBtn = jump.querySelector<HTMLButtonElement>('[data-qjump-close]');
+      const panel = jump.querySelector<HTMLElement>('#qjump-panel');
+
+      const toggle = (open: boolean) => {
+        if (!panel || !openBtn) return;
+        panel.hidden = !open;
+        openBtn.setAttribute('aria-expanded', String(open));
+        if (open) panel.querySelector<HTMLAnchorElement>('a')?.focus();
+        else openBtn.focus();
+      };
+
+      openBtn?.addEventListener('click', () => toggle(panel ? panel.hidden === true : true));
+      closeBtn?.addEventListener('click', () => toggle(false));
+      panel?.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a')) toggle(false);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && panel && !panel.hidden) toggle(false);
+      });
+      document.addEventListener('click', (e) => {
+        if (panel && !panel.hidden && !jump.contains(e.target as Node)) toggle(false);
+      });
+    }
+
+    /* ---------------- first paint ---------------- */
+
+    // A visitor arriving on /facts#recycling should land on that answer, open.
+    // Jump without animation on load: the smooth version fights the browser's
+    // own restoration and lands short. Waiting for load lets the browser finish
+    // its native fragment handling first, so ours is the one that sticks.
+    if (document.readyState === 'complete') {
+      syncToHash(false);
+    } else {
+      window.addEventListener('load', () => syncToHash(false), { once: true });
+    }
+  })();
+</script>
