@@ -26,7 +26,7 @@ node scripts/preflight.mjs                               # 15 checks, run after 
 
 The build **must** have `WORDPRESS_BASE_URL` set, or it falls back to the old
 origin and silently fetches the wrong content. There is no test runner beyond
-`check` and `preflight` — those two are the suite.
+`check` and `preflight`: those two are the suite.
 
 To look at a build in a browser, serve `dist/` over plain HTTP:
 
@@ -48,7 +48,7 @@ unless the current request overrides them:
 - **Do not commit, merge, push or deploy unless explicitly told to in that
   message.** Approval for one step is not approval for the next. "Commit it" is
   not "merge it"; "merge it" is not "deploy it" (though on `main` those are the
-  same act — say so).
+  same act, so say so).
 - **Never fabricate.** No invented statistics, testimonials, partner names,
   accreditations, prices, review text or project results. If a number cannot be
   traced to something already published, leave it off the page and say why.
@@ -67,7 +67,7 @@ unless the current request overrides them:
 
 ## House style
 
-- **No em dashes.** `scripts/preflight.mjs` exits non-zero on any `—` in
+- **No em dashes.** `scripts/preflight.mjs` exits non-zero on any em dash in
   Astro-generated content. It is a separate step from `npm run build`, so a build
   can succeed while preflight fails: always run both. Use a comma, a colon or a full stop. (The migrated
   `public/*.html` landing pages carry pre-existing em dashes; those are grandfathered
@@ -109,7 +109,7 @@ Wording that is **withheld**: "government-registered".
 Originals go in `assets/source/<page>/`, and a script in `scripts/build-*-images.mjs`
 writes AVIF/WebP/JPEG variants into `public/images/`. Section widths are
 `[480, 800, 1200]` (`SECTION_IMAGE_WIDTHS`), hero widths `[640, 960, 1280, 1600]`.
-The scripts never upscale, so a small original yields fewer variants — pass the
+The scripts never upscale, so a small original yields fewer variants, so pass the
 widths that actually exist to any hand-written `srcset`, or the browser will
 request a 404. Nothing is cropped; framing is handled in CSS with `object-position`.
 
@@ -122,7 +122,7 @@ landing pages and `/self-drive-sri-lanka/` load GTM container `GTM-N85V5638`
 inline. Conversions are configured **in GTM**, never hardcoded: do not add an
 `AW-` id or fire a `gtag` conversion from page code. Landing pages push named
 `dataLayer` events via `data-ev="..."` attributes and one delegated listener.
-Event names are a contract with GTM — renaming one silently breaks a conversion.
+Event names are a contract with GTM: renaming one silently breaks a conversion.
 
 **Styling** is scoped to the page. `src/styles/global.css` is shared by every
 route, so changing a token there changes the whole site. To fix contrast or
@@ -135,15 +135,15 @@ spacing on one page, override inside that page's `<style>` block.
 For anything user-facing, this is the expected sequence. Do not report success
 without it:
 
-1. `npm run check` — 0 errors
+1. `npm run check`, expecting 0 errors
 2. Build with `WORDPRESS_BASE_URL` set
-3. `node scripts/preflight.mjs` — 15/15
+3. `node scripts/preflight.mjs`, expecting 15/15
 4. Serve `dist/` and drive it in a real browser at **320, 375, 390, 430, 768,
    1280, 1440**: no horizontal overflow, exactly one `<h1>`, every image has
    `alt`, every local asset resolves, no console errors
 5. Check contrast against the *composited* background. A naive computed-style
    reading treats `rgba(255,255,255,0.1)` over a dark hero as a white background
-   and reports a false failure — sample real rendered pixels before "fixing" it
+   and reports a false failure. Sample real rendered pixels before "fixing" it
 6. Anchor targets need `scroll-margin-top` clearing the sticky header (4.5rem)
    plus any sticky sub-nav, or headings land hidden
 7. Standalone tap targets ≥ 44px. Inline links inside a sentence are exempt
@@ -152,7 +152,7 @@ without it:
    (`sha256sum`), rather than assuming the deploy shipped what you tested
 
 Note `html { scroll-behavior: smooth }` is global, so
-`scrollIntoView({behavior:'auto'})` still animates — use `'instant'`.
+`scrollIntoView({behavior:'auto'})` still animates, so use `'instant'`.
 
 ---
 
