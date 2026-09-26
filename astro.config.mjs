@@ -41,6 +41,7 @@ const STATIC_LANDING_PAGES = [
   '/volunteer-sri-lanka',
   '/impact-center-premium.html',
   '/craft-experiences-sigiriya.html',
+  '/coconut-shell-lamp-workshop-sigiriya/',
   '/zeroplastic-movement-sri-lanka.html',
   '/es/craft-experiences-sigiriya.html',
   '/fr/craft-experiences-sigiriya.html',

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- BUILD 2026-09-26a · coconut shell lamp workshop landing page
+     Design tokens, header, footer and booking pattern inherited from
+     craft-experiences-sigiriya.html and impact-center-premium.html so this
+     reads as a native sibling of those pages, not a new sub-brand.
+     Booking now goes through the centralised ZeroPlastic booking widget
+     (book.zeroplastic.lk/widget.js) instead of the page's own Make.com
+     form. Experience slug: coconut-shell-lamp. This will not resolve in
+     production until the slug exists in Experience Management and the
+     booking API/frontend/widget.js are deployed there; see the change
+     report for the full dependency list.
+     DO NOT DEPLOY OR MERGE WITHOUT EXPLICIT OWNER AUTHORISATION. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coconut Shell Lamp Workshop in Sigiriya | ZeroPlastic</title>
+<meta name="description" content="Make your own coconut shell lamp in Sigiriya. Sand, polish and design your creation, enjoy herbal tea and discover Sri Lankan sustainable crafts.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://zeroplastic.lk/coconut-shell-lamp-workshop-sigiriya/">
+<meta name="theme-color" content="#141C1B">
+<link rel="icon" href="https://impactcenter.zeroplastic.lk/wp-content/uploads/2026/02/cropped-cropped-c5f91785-9074-4458-a937-2997f60e96c9-182x70.png">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Make Your Own Coconut Shell Lamp in Sigiriya">
+<meta property="og:description" content="Create a handmade coconut shell lamp and discover Sri Lankan craft, local artisans and the ZeroPlastic Impact Center.">
+<meta property="og:url" content="https://zeroplastic.lk/coconut-shell-lamp-workshop-sigiriya/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://zeroplastic.lk/images/experiences/coconut-lamp/og-coconut-lamp.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Make Your Own Coconut Shell Lamp in Sigiriya">
+<meta name="twitter:description" content="Create a handmade coconut shell lamp and discover Sri Lankan craft, local artisans and the ZeroPlastic Impact Center.">
+<meta name="twitter:image" content="https://zeroplastic.lk/images/experiences/coconut-lamp/og-coconut-lamp.jpg">
+
+<!-- Google tag (reuses the site's existing GTM container, no new analytics account) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GTM-N85V5638"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GTM-N85V5638');
+</script>
+
+<link rel="preload" as="image" href="/images/experiences/coconut-lamp/hero-coconut-lamp.webp" type="image/webp" fetchpriority="high">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   COCONUT SHELL LAMP WORKSHOP, SIGIRIYA
+   Design tokens inherited from impact-center-premium.html and
+   craft-experiences-sigiriya.html so all three pages read as one site.
+   ============================================================ */
+:root{
+  --ink:#141C1B; --ink-2:#1E2A28; --slate:#2E4550;
+  --bone:#E9E8E2; --chalk:#F6F5F1;
+  --signal:#E4552B; --sea:#1F7A78; --sun:#E3B23C;
+  --line:rgba(20,28,27,.14); --line-dk:rgba(233,232,226,.18);
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --pad:clamp(1.25rem,5vw,5.5rem);
+  --maxw:1360px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--body);background:var(--bone);color:var(--ink);
+  font-size:clamp(1rem,.96rem + .18vw,1.06rem);line-height:1.72;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%;font-family:var(--mono);font-size:.7rem;
+  line-height:1.4;color:rgba(233,232,226,.75);object-fit:cover}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--signal);outline-offset:3px}
+section[id],div[id]{scroll-margin-top:96px}
+
+.display{font-family:var(--display);font-weight:800;letter-spacing:-.035em;
+  line-height:.98;font-size:clamp(2.25rem,5.8vw,4.6rem)}
+.h2{font-family:var(--display);font-weight:700;letter-spacing:-.025em;
+  line-height:1.04;font-size:clamp(1.8rem,3.6vw,2.9rem)}
+.h3{font-family:var(--display);font-weight:700;letter-spacing:-.02em;
+  line-height:1.12;font-size:clamp(1.2rem,1.7vw,1.45rem)}
+.eyebrow{font-family:var(--mono);font-size:.7rem;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase}
+.lede{font-size:clamp(1.06rem,1.4vw,1.2rem);line-height:1.62}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--pad)}
+
+.seam{height:16px;background-image:
+  radial-gradient(circle .09rem at 10px 4.5px, rgba(0,0,0,.45) 99%, transparent 100%),
+  radial-gradient(circle .09rem at 10px 11.5px, rgba(0,0,0,.45) 99%, transparent 100%),
+  linear-gradient(90deg,var(--slate) 0 6%,var(--sun) 6% 11%,var(--bone) 11% 19%,
+  var(--sea) 19% 24%,var(--signal) 24% 29%,var(--slate) 29% 38%,var(--bone) 38% 43%,
+  var(--sun) 43% 50%,var(--sea) 50% 56%,var(--slate) 56% 64%,var(--signal) 64% 69%,
+  var(--bone) 69% 77%,var(--sea) 77% 82%,var(--sun) 82% 88%,var(--slate) 88% 100%);
+  background-size:20px 16px,20px 16px,340px 16px;background-repeat:repeat-x}
+
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--ink);
+  color:var(--bone);padding:.8rem 1.2rem;font-family:var(--mono);font-size:.75rem;
+  letter-spacing:.1em;text-transform:uppercase}
+.skip:focus{left:0}
+
+/* ---------- header ---------- */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(20,28,27,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line-dk);transition:background .25s ease}
+.hdr.is-stuck{background:rgba(20,28,27,.98)}
+.hdr-in{max-width:var(--maxw);margin:0 auto;padding:.85rem var(--pad);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.mark img{height:34px;width:auto}
+.hdr-nav{display:flex;align-items:center;gap:1.8rem}
+.hdr-nav a{font-family:var(--mono);font-size:.79rem;font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;text-decoration:none;color:rgba(233,232,226,.78);transition:color .2s ease}
+.hdr-nav a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;gap:.55rem;padding:.95rem 1.5rem;
+  border:1px solid var(--bone);background:transparent;color:var(--bone);
+  font-family:var(--mono);font-size:.78rem;font-weight:500;letter-spacing:.11em;
+  text-transform:uppercase;text-decoration:none;cursor:pointer;border-radius:2px;
+  min-height:44px;
+  transition:transform .22s ease,background .22s ease,color .22s ease,box-shadow .22s ease}
+.btn:hover{background:var(--signal);border-color:var(--signal);color:#fff;
+  transform:translateY(-2px);box-shadow:0 10px 24px rgba(228,85,43,.26)}
+.btn--solid{background:var(--signal);border-color:var(--signal);color:#fff}
+.btn--solid:hover{background:#c8461f;border-color:#c8461f}
+.btn--ghost{background:transparent}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:0;
+  padding:.5rem;cursor:pointer;min-width:44px;min-height:44px;align-items:center;justify-content:center}
+.nav-toggle span{display:block;width:19px;height:1.7px;background:#fff;
+  transition:transform .28s ease,opacity .2s ease}
+.nav-toggle[aria-expanded="true"] span:first-child{transform:translateY(3.35px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+.nav-toggle[aria-expanded="true"] span:last-child{transform:translateY(-3.35px) rotate(-45deg)}
+.nav-panel{display:none;flex-direction:column;gap:.2rem;background:var(--ink);
+  border-top:1px solid var(--line-dk);padding:1rem var(--pad) 1.6rem}
+.nav-panel.is-open{display:flex}
+.nav-panel a{font-family:var(--mono);font-size:.85rem;letter-spacing:.1em;
+  text-transform:uppercase;text-decoration:none;color:rgba(233,232,226,.85);padding:.9rem 0;
+  border-bottom:1px solid var(--line-dk)}
+@media(max-width:860px){.hdr-nav{display:none}.nav-toggle{display:flex}}
+
+/* ---------- breadcrumb ---------- */
+.crumbs{background:var(--ink-2);padding:.6rem var(--pad)}
+.crumbs ol{max-width:var(--maxw);margin:0 auto;list-style:none;display:flex;flex-wrap:wrap;
+  gap:.45rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;
+  text-transform:uppercase;color:rgba(233,232,226,.55)}
+.crumbs a{color:rgba(233,232,226,.8);text-decoration:none}
+.crumbs a:hover{color:#fff}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:clamp(560px,86vh,820px);display:flex;align-items:flex-end;
+  color:var(--bone);overflow:hidden;background:var(--ink)}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-position:50% 55%}
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(20,28,27,.62) 0%,rgba(20,28,27,.52) 40%,rgba(20,28,27,.93) 100%)}
+.hero-in{position:relative;z-index:1;width:100%;max-width:var(--maxw);margin:0 auto;
+  padding:clamp(2.5rem,7vw,5rem) var(--pad) clamp(2rem,5vw,3.5rem)}
+.hero-eyebrow{color:var(--sun)}
+.hero h1{margin-top:1rem;max-width:20ch}
+.hero-lede{margin-top:1.4rem;max-width:58ch;color:rgba(233,232,226,.9)}
+.hero-lede + .hero-lede{margin-top:1rem}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2rem}
+
+.chips{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.6rem}
+.chip{font-family:var(--mono);font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;
+  color:rgba(233,232,226,.85);border:1px solid rgba(233,232,226,.3);border-radius:99px;
+  padding:.45rem .9rem}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  margin-top:2.4rem;background:var(--line-dk);border:1px solid var(--line-dk)}
+.fact{background:rgba(20,28,27,.55);padding:.95rem 1.05rem}
+.fact b{display:block;font-family:var(--body);font-size:.95rem;font-weight:600;
+  color:var(--bone);line-height:1.35}
+.fact span{display:block;font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(233,232,226,.55);margin-bottom:.3rem}
+
+/* ---------- sections ---------- */
+.sec{padding:clamp(3.5rem,8vw,6.5rem) 0}
+.sec--neutral{background:var(--chalk)}
+.sec--dark{background:var(--ink);color:var(--bone)}
+.sec-head{max-width:64ch}
+.sec-head p{margin-top:1.1rem;color:rgba(20,28,27,.72)}
+.sec-head p + p{margin-top:.9rem}
+.sec--dark .sec-head p{color:rgba(233,232,226,.75)}
+
+/* ---------- cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:clamp(1.2rem,2.4vw,2rem);margin-top:clamp(2rem,4vw,3rem)}
+.card{background:#fff;border:1px solid var(--line);border-radius:3px;padding:1.7rem 1.6rem;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s ease}
+.card:hover{transform:translateY(-6px);box-shadow:0 22px 44px -22px rgba(20,28,27,.42)}
+.card .h3{margin-bottom:.7rem}
+.card p{color:rgba(20,28,27,.74);font-size:.97rem}
+.sec--dark .card{background:rgba(233,232,226,.05);border-color:var(--line-dk)}
+.sec--dark .card p{color:rgba(233,232,226,.75)}
+
+/* ---------- make-your-lamp timeline ---------- */
+.mk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:clamp(1.2rem,2.4vw,2rem);margin-top:clamp(2rem,4vw,3rem);counter-reset:mk}
+.mk-step{background:#fff;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.mk-img{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--slate)}
+.mk-img img{width:100%;height:100%}
+.mk-num{position:absolute;top:.7rem;left:.7rem;z-index:1;width:2.1rem;height:2.1rem;
+  border-radius:50%;background:var(--signal);color:#fff;font-family:var(--display);
+  font-weight:800;font-size:1.05rem;display:flex;align-items:center;justify-content:center}
+.mk-body{padding:1.2rem 1.3rem 1.4rem}
+.mk-body h3{font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
+.mk-body p{margin-top:.55rem;color:rgba(20,28,27,.72);font-size:.94rem}
+
+.safety-note{margin-top:clamp(1.6rem,3vw,2.2rem);background:rgba(31,122,120,.08);
+  border-left:3px solid var(--sea);padding:1.2rem 1.4rem;max-width:74ch}
+.safety-note p{color:rgba(20,28,27,.82);font-size:.95rem}
+.safety-note p + p{margin-top:.6rem}
+
+/* ---------- gallery ---------- */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:.6rem;margin-top:clamp(2rem,4vw,3rem)}
+.gallery a{display:block;aspect-ratio:1/1;overflow:hidden;border-radius:3px}
+.gallery img{width:100%;height:100%;transition:transform .5s ease}
+.gallery a:hover img{transform:scale(1.05)}
+
+/* ---------- split ---------- */
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(1.8rem,4vw,4rem);align-items:center}
+.split-media img{width:100%;height:auto;border-radius:3px}
+.split.is-reverse .split-media{order:2}
+@media(max-width:900px){.split{grid-template-columns:1fr}.split.is-reverse .split-media{order:0}}
+
+/* ---------- included list ---------- */
+.incl-list{margin-top:clamp(1.6rem,3vw,2.2rem);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:.6rem 2rem;max-width:76ch}
+.incl-list li{display:flex;gap:.7rem;align-items:flex-start;list-style:none;padding:.4rem 0}
+.incl-list i{flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:var(--sea);margin-top:.5rem}
+.sec--dark .incl-list i{background:var(--sun)}
+
+/* ---------- who-for cards ---------- */
+.who-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:clamp(1rem,2vw,1.6rem);margin-top:clamp(2rem,4vw,3rem)}
+.who-card{border-top:3px solid var(--signal);padding-top:1rem}
+.who-card h3{font-family:var(--display);font-weight:700;font-size:1.02rem}
+.who-card p{margin-top:.5rem;color:rgba(20,28,27,.72);font-size:.93rem}
+
+/* ---------- booking CTA banner ---------- */
+.cta-band{background:var(--ink);color:var(--bone);text-align:center}
+
+/* ---------- form ---------- */
+.book{background:var(--ink);color:var(--bone)}
+.book-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(2rem,4vw,4.5rem);align-items:start}
+@media(max-width:940px){.book-grid{grid-template-columns:1fr}}
+.visit-facts{margin-top:2rem;display:grid;gap:1rem}
+.visit-facts dt{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(233,232,226,.6)}
+.visit-facts dd{margin-top:.2rem;color:var(--bone)}
+.visit-facts a{color:var(--sun)}
+/* Wrapper only: widget.js owns everything inside .zp-booking-widget,
+   including its own iframe height and injected styles. */
+.booking-widget-col{background:var(--chalk);border-radius:3px;
+  padding:clamp(1.2rem,3vw,2rem)}
+.zp-booking-widget{width:100%}
+
+/* ---------- FAQ ---------- */
+.faq{margin-top:clamp(2rem,4vw,3rem);max-width:80ch}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-item summary{cursor:pointer;padding:1.15rem 2.5rem 1.15rem 0;position:relative;
+  font-family:var(--display);font-weight:700;font-size:1.03rem;letter-spacing:-.01em;list-style:none}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";position:absolute;right:.4rem;top:1.05rem;
+  font-family:var(--mono);font-size:1.15rem;color:var(--signal);transition:transform .25s ease}
+.faq-item[open] summary::after{transform:rotate(45deg)}
+.faq-item p{padding-bottom:1.2rem;color:rgba(20,28,27,.74);max-width:70ch}
+
+/* ---------- footer ---------- */
+.ftr{background:var(--ink);color:rgba(233,232,226,.72);padding:clamp(2.5rem,5vw,4rem) 0}
+.ftr-in{max-width:var(--maxw);margin:0 auto;padding-inline:var(--pad);display:grid;gap:.8rem;justify-items:start}
+.ftr-logo{height:44px;width:auto}
+.ftr .mono{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase}
+.ftr a{color:rgba(233,232,226,.85)}
+
+/* ---------- sticky mobile CTA ---------- */
+.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:120;display:none;
+  gap:.6rem;padding:.7rem var(--pad);background:rgba(20,28,27,.97);
+  border-top:1px solid var(--line-dk);transform:translateY(110%);transition:transform .3s ease}
+.sticky-cta.is-visible{transform:translateY(0)}
+.sticky-cta .btn{flex:1;justify-content:center;padding:.85rem 1rem;font-size:.72rem}
+@media(max-width:860px){.sticky-cta{display:flex}
+  body.has-sticky{padding-bottom:72px}}
+
+/* ---------- motion ---------- */
+.rise{opacity:0;transform:translateY(22px);
+  transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.3,1)}
+.rise.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rise{opacity:1;transform:none;transition:none}
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {
+      "@type":"Service",
+      "@id":"https://zeroplastic.lk/coconut-shell-lamp-workshop-sigiriya/#service",
+      "name":"Coconut Shell Lamp Workshop",
+      "serviceType":"Craft workshop",
+      "description":"A hands-on workshop at the ZeroPlastic Impact Center in Sigiriya where visitors sand, polish and design their own coconut shell lamp, take it home, and also experience the Impact Center's environmental education and local artisan collection.",
+      "provider":{"@id":"https://zeroplastic.lk/impact-center-premium.html#place"},
+      "areaServed":{"@type":"City","name":"Sigiriya"},
+      "image":"https://zeroplastic.lk/images/experiences/coconut-lamp/hero-coconut-lamp.webp",
+      "url":"https://zeroplastic.lk/coconut-shell-lamp-workshop-sigiriya/"
+    },
+    {
+      "@type":"BreadcrumbList",
+      "@id":"https://zeroplastic.lk/coconut-shell-lamp-workshop-sigiriya/#crumbs",
+      "itemListElement":[
+        {"@type":"ListItem","position":1,"name":"ZeroPlastic Impact Center","item":"https://zeroplastic.lk/impact-center-premium.html"},
+        {"@type":"ListItem","position":2,"name":"Craft Workshops in Sigiriya","item":"https://zeroplastic.lk/craft-experiences-sigiriya.html"},
+        {"@type":"ListItem","position":3,"name":"Coconut Shell Lamp Workshop","item":"https://zeroplastic.lk/coconut-shell-lamp-workshop-sigiriya/"}
+      ]
+    },
+    {
+      "@type":"FAQPage",
+      "@id":"https://zeroplastic.lk/coconut-shell-lamp-workshop-sigiriya/#faq",
+      "mainEntity":[
+        {"@type":"Question","name":"Is the coconut shell lamp workshop suitable for children?","acceptedAnswer":{"@type":"Answer","text":"The experience is recommended for children aged 10 and above. Small craft tools are used during part of the workshop, so children participate under guidance."}},
+        {"@type":"Question","name":"How long does the experience take?","acceptedAnswer":{"@type":"Answer","text":"Allow approximately one hour for the core workshop, with additional time if you would like to explore the Impact Center and artisan collection."}},
+        {"@type":"Question","name":"Do I take my coconut shell lamp home?","acceptedAnswer":{"@type":"Answer","text":"Yes. The lamp you finish during the workshop is yours to take home."}},
+        {"@type":"Question","name":"Do I need craft experience?","acceptedAnswer":{"@type":"Answer","text":"No. The shell is prepared in advance and our team guides you through the finishing, polishing and design stages."}},
+        {"@type":"Question","name":"What else can I see at the Impact Center?","acceptedAnswer":{"@type":"Answer","text":"Your visit also includes the Mr. Hero environmental experience, a plastic transformation demonstration and access to a collection of products sourced from local artisan and craftsman families."}},
+        {"@type":"Question","name":"Is herbal tea included?","acceptedAnswer":{"@type":"Answer","text":"Yes. Complimentary herbal tea is included with the experience."}},
+        {"@type":"Question","name":"Where is the experience?","acceptedAnswer":{"@type":"Answer","text":"The workshop takes place at the ZeroPlastic Impact Center near Sigiriya, Sri Lanka."}}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body id="top">
+<a class="skip" href="#experience">Skip to content</a>
+
+<header class="hdr" id="hdr">
+  <div class="hdr-in">
+    <a class="mark" href="/impact-center-premium.html" aria-label="ZeroPlastic Impact Center, home">
+      <img src="https://impactcenter.zeroplastic.lk/wp-content/uploads/2026/02/cropped-cropped-c5f91785-9074-4458-a937-2997f60e96c9-182x70.png"
+           alt="Impact Center by ZeroPlastic" width="182" height="70">
+    </a>
+    <nav class="hdr-nav" aria-label="Primary">
+      <a href="#experience">The Experience</a>
+      <a href="#how">How It's Made</a>
+      <a href="#included">Included</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn" href="#booking" data-ev="coconut_lamp_nav_book">Book Your Experience</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navPanel" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="nav-panel" id="navPanel" aria-label="Mobile">
+    <a href="#experience">The Experience</a>
+    <a href="#how">How It's Made</a>
+    <a href="#included">Included</a>
+    <a href="#faq">FAQ</a>
+    <a href="#booking" data-ev="coconut_lamp_nav_book">Book Your Experience &rarr;</a>
+  </nav>
+</header>
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <div class="wrap">
+    <ol>
+      <li><a href="/impact-center-premium.html">Impact Center</a> &rsaquo;</li>
+      <li><a href="/craft-experiences-sigiriya.html">Craft Workshops in Sigiriya</a> &rsaquo;</li>
+      <li aria-current="page">Coconut Shell Lamp Workshop</li>
+    </ol>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img src="/images/experiences/coconut-lamp/hero-coconut-lamp.webp" width="1600" height="1000"
+           alt="A visitor sanding a coconut shell lamp at the workbench of the ZeroPlastic Impact Center in Sigiriya."
+           fetchpriority="high" decoding="async">
+    </div>
+    <div class="hero-in">
+      <span class="eyebrow hero-eyebrow">Sigiriya &middot; Sri Lanka</span>
+      <h1 class="display">Make Your Own Coconut Shell Lamp in Sigiriya</h1>
+      <p class="lede hero-lede">Turn a coconut shell into a beautiful handmade lamp with guidance from our team. Sand, polish, create your design and watch light shine through something you made yourself.</p>
+      <p class="lede hero-lede">Your visit goes beyond the workshop. Explore plastic alternatives, meet Mr. Hero, watch discarded bottle lids transformed into a souvenir, enjoy herbal tea and discover products created by local Sri Lankan artisans.</p>
+
+      <div class="hero-cta">
+        <a class="btn btn--solid" href="#booking" data-ev="coconut_lamp_hero_book">Book Your Experience</a>
+        <a class="btn btn--ghost" href="#how" style="color:var(--bone);border-color:rgba(233,232,226,.45)" data-ev="coconut_lamp_hero_see_process">See What You'll Make</a>
+      </div>
+
+      <div class="chips">
+        <span class="chip">Hands-on experience</span>
+        <span class="chip">Suitable for ages 10+</span>
+        <span class="chip">Take your lamp home</span>
+        <span class="chip">Herbal tea included</span>
+        <span class="chip">Local artisan experience</span>
+        <span class="chip">ZeroPlastic experience</span>
+      </div>
+
+      <div class="facts">
+        <div class="fact"><span>Duration</span><b>Approximately 1 hour</b></div>
+        <div class="fact"><span>Location</span><b>ZeroPlastic Impact Center, Sigiriya</b></div>
+        <div class="fact"><span>Age</span><b>Recommended for ages 10+</b></div>
+        <div class="fact"><span>Language</span><b>English</b></div>
+        <div class="fact"><span>Experience</span><b>Hands-on guided workshop</b></div>
+        <div class="fact"><span>Take home</span><b>Your handmade coconut shell lamp</b></div>
+        <div class="fact"><span>Drink</span><b>Complimentary herbal tea</b></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam" aria-hidden="true"></div>
+
+  <!-- ============ MORE THAN A WORKSHOP ============ -->
+  <section class="sec" id="experience">
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow" style="color:var(--signal)">Not just a craft class</span>
+        <h2 class="h2" style="margin-top:1rem">More Than a Coconut Shell Workshop</h2>
+        <p>This experience is designed as more than a craft class. During your visit to the ZeroPlastic Impact Center, you will create your own coconut shell lamp while also discovering how natural materials, local craftsmanship and creative reuse can reduce our dependence on single-use plastic.</p>
+      </div>
+      <div class="cards rise">
+        <article class="card">
+          <h3 class="h3">Make Your Own Lamp</h3>
+          <p>Work with a prepared coconut shell and complete the final sanding, polishing and decorative design yourself.</p>
+        </article>
+        <article class="card">
+          <h3 class="h3">Experience ZeroPlastic</h3>
+          <p>Meet Mr. Hero, learn about Sri Lanka's plastic challenge and watch discarded plastic bottle lids transformed into a useful souvenir.</p>
+        </article>
+        <article class="card">
+          <h3 class="h3">Discover Local Craft</h3>
+          <p>Explore a collection of sustainable products sourced from local artisan and craftsman families across Sri Lanka.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW YOU MAKE YOUR LAMP ============ -->
+  <section class="sec sec--neutral" id="how">
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow" style="color:var(--sea)">Every stage, ready to photograph</span>
+        <h2 class="h2" style="margin-top:1rem">From Coconut Shell to Handmade Lamp</h2>
+        <p>We prepare the time-consuming parts before you arrive so you can spend your visit enjoying the most satisfying stages of the craft.</p>
+      </div>
+      <div class="mk-grid rise">
+        <article class="mk-step">
+          <div class="mk-img"><span class="mk-num">1</span>
+            <img src="/images/experiences/coconut-lamp/step-01-shell.webp" width="1000" height="750" loading="lazy" decoding="async"
+                 alt="A whole coconut shell set on the workbench before shaping begins.">
+          </div>
+          <div class="mk-body">
+            <h3>Start With a Coconut Shell</h3>
+            <p>Discover how an everyday coconut shell can become a beautiful and useful piece of Sri Lankan craft.</p>
+          </div>
+        </article>
+        <article class="mk-step">
+          <div class="mk-img"><span class="mk-num">2</span>
+            <img src="/images/experiences/coconut-lamp/step-02-sanding.webp" width="1000" height="750" loading="lazy" decoding="async"
+                 alt="A visitor sanding a partly shaped coconut shell by hand.">
+          </div>
+          <div class="mk-body">
+            <h3>Finish the Sanding</h3>
+            <p>Our team completes most of the heavy preparation beforehand. You finish the remaining sanding yourself using progressively finer sandpaper and feel the natural surface become smooth.</p>
+          </div>
+        </article>
+        <article class="mk-step">
+          <div class="mk-img"><span class="mk-num">3</span>
+            <img src="/images/experiences/coconut-lamp/step-03-polishing.webp" width="1000" height="750" loading="lazy" decoding="async"
+                 alt="A sanded coconut shell being buffed to a smooth finish.">
+          </div>
+          <div class="mk-body">
+            <h3>Polish the Shell</h3>
+            <p>Polish and buff the coconut shell and watch its natural colour and texture transform into a smooth, beautiful finish.</p>
+          </div>
+        </article>
+        <article class="mk-step">
+          <div class="mk-img"><span class="mk-num">4</span>
+            <img src="/images/experiences/coconut-lamp/step-04-design.webp" width="1000" height="750" loading="lazy" decoding="async"
+                 alt="A visitor marking a decorative pattern onto a polished coconut shell.">
+          </div>
+          <div class="mk-body">
+            <h3>Create Your Design</h3>
+            <p>Choose or create a simple pattern and make the small openings that allow light to shine through your lamp.</p>
+          </div>
+        </article>
+        <article class="mk-step">
+          <div class="mk-img"><span class="mk-num">5</span>
+            <img src="/images/experiences/coconut-lamp/step-05-light.webp" width="1000" height="750" loading="lazy" decoding="async"
+                 alt="Light shining through the finished pattern of a coconut shell lamp.">
+          </div>
+          <div class="mk-body">
+            <h3>Bring It to Life</h3>
+            <p>See your design come alive as light passes through the pattern you created.</p>
+          </div>
+        </article>
+        <article class="mk-step">
+          <div class="mk-img"><span class="mk-num">6</span>
+            <img src="/images/experiences/coconut-lamp/step-06-finished.webp" width="1000" height="750" loading="lazy" decoding="async"
+                 alt="A visitor holding their finished, glowing coconut shell lamp.">
+          </div>
+          <div class="mk-body">
+            <h3>Take It Home</h3>
+            <p>Your finished coconut shell lamp becomes a handmade memory of your visit to Sri Lanka.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="safety-note rise">
+        <p>Small craft tools are used under guidance from our team.</p>
+        <p>The experience is recommended for guests aged 10 and above. Younger participants should not use craft tools unless specifically approved and directly supervised by our team.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY ============ -->
+  <section class="sec" id="gallery">
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow" style="color:var(--signal)">A closer look</span>
+        <h2 class="h2" style="margin-top:1rem">The Workshop in Pictures</h2>
+      </div>
+      <div class="gallery rise">
+        <a href="/images/experiences/coconut-lamp/gallery-01.webp" data-ev="coconut_lamp_gallery_open">
+          <img src="/images/experiences/coconut-lamp/gallery-01.webp" width="900" height="900" loading="lazy" decoding="async" alt="A visitor at the workbench shaping a coconut shell lamp.">
+        </a>
+        <a href="/images/experiences/coconut-lamp/gallery-02.webp" data-ev="coconut_lamp_gallery_open">
+          <img src="/images/experiences/coconut-lamp/gallery-02.webp" width="900" height="900" loading="lazy" decoding="async" alt="Close-up of hands polishing a coconut shell.">
+        </a>
+        <a href="/images/experiences/coconut-lamp/gallery-03.webp" data-ev="coconut_lamp_gallery_open">
+          <img src="/images/experiences/coconut-lamp/gallery-03.webp" width="900" height="900" loading="lazy" decoding="async" alt="A finished coconut shell lamp lit from within, showing the hand-cut pattern.">
+        </a>
+        <a href="/images/experiences/coconut-lamp/gallery-04.webp" data-ev="coconut_lamp_gallery_open">
+          <img src="/images/experiences/coconut-lamp/gallery-04.webp" width="900" height="900" loading="lazy" decoding="async" alt="Herbal tea served at the Impact Center after the workshop.">
+        </a>
+        <a href="/images/experiences/coconut-lamp/gallery-05.webp" data-ev="coconut_lamp_gallery_open">
+          <img src="/images/experiences/coconut-lamp/gallery-05.webp" width="900" height="900" loading="lazy" decoding="async" alt="Shelves of plastic-free products made by local artisan families at the Impact Center.">
+        </a>
+        <a href="/images/experiences/coconut-lamp/gallery-06.webp" data-ev="coconut_lamp_gallery_open">
+          <img src="/images/experiences/coconut-lamp/gallery-06.webp" width="900" height="900" loading="lazy" decoding="async" alt="A family visiting the ZeroPlastic Impact Center in Sigiriya.">
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TREE OF LIFE ============ -->
+  <section class="sec sec--neutral" id="tree-of-life">
+    <div class="wrap">
+      <div class="split rise">
+        <div>
+          <span class="eyebrow" style="color:var(--sea)">A Sri Lankan story</span>
+          <h2 class="h2" style="margin-top:1rem">Discover Sri Lanka's Tree of Life</h2>
+          <p style="margin-top:1.2rem;color:rgba(20,28,27,.74);max-width:54ch">The coconut tree has supported Sri Lankan life for generations, providing food, drink, fibre, timber, household items and craft materials. In this experience, a coconut shell that might otherwise be discarded becomes something beautiful that you create with your own hands.</p>
+        </div>
+        <div class="split-media">
+          <img src="/images/experiences/coconut-lamp/tree-of-life.webp" width="1000" height="750" loading="lazy" decoding="async"
+               alt="Coconut palms in Sri Lanka, the source of the shell used in the workshop.">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HERBAL TEA ============ -->
+  <section class="sec" id="herbal-tea">
+    <div class="wrap">
+      <div class="split is-reverse rise">
+        <div>
+          <span class="eyebrow" style="color:var(--signal)">Take a moment</span>
+          <h2 class="h2" style="margin-top:1rem">Pause for a Cup of Herbal Tea</h2>
+          <p style="margin-top:1.2rem;color:rgba(20,28,27,.74);max-width:54ch">After crafting, enjoy complimentary Sri Lankan herbal tea served in the relaxed setting of the Impact Center. It is a chance to slow down, explore the space and talk with our team about Sri Lankan craft and sustainable living.</p>
+        </div>
+        <div class="split-media">
+          <img src="/images/experiences/coconut-lamp/herbal-tea.webp" width="1000" height="750" loading="lazy" decoding="async"
+               alt="Herbal tea served at the ZeroPlastic Impact Center in Sigiriya.">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MR. HERO ============ -->
+  <section class="sec sec--neutral" id="mr-hero">
+    <div class="wrap">
+      <div class="split rise">
+        <div>
+          <span class="eyebrow" style="color:var(--sea)">Meet the elephant</span>
+          <h2 class="h2" style="margin-top:1rem">Meet Mr. Hero</h2>
+          <p style="margin-top:1.2rem;color:rgba(20,28,27,.74);max-width:54ch">Your experience also includes a visit to Mr. Hero, our elephant sculpture built from salvaged plastic and created to start conversations about plastic pollution. Learn what happens to the plastic we use, why reducing single-use plastic matters and how ZeroPlastic is working with communities to create practical alternatives.</p>
+        </div>
+        <div class="split-media">
+          <img src="/images/experiences/coconut-lamp/mr-hero.webp" width="1000" height="750" loading="lazy" decoding="async"
+               alt="Mr. Hero, the life-size elephant sculpture built from salvaged plastic at the ZeroPlastic Impact Center.">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PLASTIC LID TRANSFORMATION ============ -->
+  <section class="sec" id="plastic-transformation">
+    <div class="wrap">
+      <div class="split is-reverse rise">
+        <div>
+          <span class="eyebrow" style="color:var(--signal)">Waste, reimagined</span>
+          <h2 class="h2" style="margin-top:1rem">Watch Waste Become Something New</h2>
+          <p style="margin-top:1.2rem;color:rgba(20,28,27,.74);max-width:54ch">See discarded plastic bottle lids transformed in front of you into a small reusable or decorative item. The demonstration shows how waste can be reimagined while opening a wider conversation about why recycling alone cannot solve the plastic problem.</p>
+        </div>
+        <div class="split-media">
+          <img src="/images/experiences/coconut-lamp/plastic-transformation.webp" width="1000" height="750" loading="lazy" decoding="async"
+               alt="Discarded plastic bottle lids being transformed into a small item at the Impact Center.">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ARTISAN MARKETPLACE ============ -->
+  <section class="sec sec--neutral" id="artisans">
+    <div class="wrap">
+      <div class="split rise">
+        <div>
+          <span class="eyebrow" style="color:var(--sea)">249 artisan families</span>
+          <h2 class="h2" style="margin-top:1rem">Discover Products Made by Local Artisans</h2>
+          <p style="margin-top:1.2rem;color:rgba(20,28,27,.74);max-width:54ch">Explore more than 1,000 product designs sourced through our network of approximately 249 artisan and craftsman families. Discover practical plastic alternatives, traditional crafts, natural-material products and creative items made using recovered materials.</p>
+          <p style="margin-top:1rem;color:rgba(20,28,27,.74);max-width:54ch">Buying a product is optional. Visitors are welcome to simply explore the collection and learn about the people and materials behind it.</p>
+        </div>
+        <div class="split-media">
+          <img src="/images/experiences/coconut-lamp/artisan-products.webp" width="1000" height="750" loading="lazy" decoding="async"
+               alt="Shelves of plastic-free products made by local artisan families, on display at the Impact Center.">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT'S INCLUDED ============ -->
+  <section class="sec sec--dark" id="included">
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow" style="color:var(--sun)">What's included</span>
+        <h2 class="h2" style="margin-top:1rem">Everything in Your Visit</h2>
+      </div>
+      <ul class="incl-list rise">
+        <li><i aria-hidden="true"></i>Prepared coconut shell</li>
+        <li><i aria-hidden="true"></i>Workshop materials</li>
+        <li><i aria-hidden="true"></i>Guided sanding and finishing</li>
+        <li><i aria-hidden="true"></i>Polishing and buffing</li>
+        <li><i aria-hidden="true"></i>Decorative lamp design activity</li>
+        <li><i aria-hidden="true"></i>Use of required craft tools under guidance</li>
+        <li><i aria-hidden="true"></i>Finished coconut shell lamp to take home</li>
+        <li><i aria-hidden="true"></i>Complimentary herbal tea</li>
+        <li><i aria-hidden="true"></i>Mr. Hero environmental experience</li>
+        <li><i aria-hidden="true"></i>Plastic transformation demonstration</li>
+        <li><i aria-hidden="true"></i>Access to the artisan product collection</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ WHO THIS IS FOR ============ -->
+  <section class="sec" id="who">
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow" style="color:var(--signal)">Who it suits</span>
+        <h2 class="h2" style="margin-top:1rem">A Sigiriya Experience for Every Kind of Traveller</h2>
+      </div>
+      <div class="who-grid rise">
+        <div class="who-card">
+          <h3>Families</h3>
+          <p>A creative family activity away from the usual sightseeing route.</p>
+        </div>
+        <div class="who-card">
+          <h3>Children 10+</h3>
+          <p>A hands-on experience where children can learn while making something themselves.</p>
+        </div>
+        <div class="who-card">
+          <h3>Couples</h3>
+          <p>Create a meaningful Sri Lankan souvenir together.</p>
+        </div>
+        <div class="who-card">
+          <h3>Solo Travellers</h3>
+          <p>Spend time with local people while learning a new craft.</p>
+        </div>
+        <div class="who-card">
+          <h3>Small Groups</h3>
+          <p>A relaxed cultural activity for friends and travelling groups.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THINGS TO DO IN SIGIRIYA (SEO) ============ -->
+  <section class="sec sec--neutral" id="sigiriya">
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow" style="color:var(--sea)">Beyond the rock</span>
+        <h2 class="h2" style="margin-top:1rem">Looking for Something Different to Do in Sigiriya?</h2>
+        <p>Sigiriya is famous for its ancient rock fortress, but the area also offers travellers an opportunity to experience Sri Lankan culture beyond sightseeing. If you are looking for hands-on things to do in Sigiriya, family activities, craft workshops or sustainable travel experiences, the ZeroPlastic Impact Center offers an experience you can actively participate in rather than simply observe.</p>
+        <p>Create your coconut shell lamp, learn about local materials and plastic alternatives, meet the people behind the initiative and leave with something made by your own hands.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BOOKING CTA BANNER ============ -->
+  <section class="sec cta-band">
+    <div class="wrap" style="text-align:center">
+      <h2 class="h2 rise">Make Something You'll Remember</h2>
+      <p class="lede rise" style="margin:1.2rem auto 0;max-width:52ch;color:rgba(233,232,226,.82)">Reserve your coconut shell lamp experience at the ZeroPlastic Impact Center in Sigiriya.</p>
+      <p class="rise" style="margin-top:2rem"><a class="btn btn--solid" href="#booking" data-ev="coconut_lamp_band_book">Book Your Experience</a></p>
+    </div>
+  </section>
+
+  <!-- ============ BOOKING ============ -->
+  <section class="sec book" id="booking">
+    <div class="wrap">
+      <div class="book-grid">
+
+        <div class="rise">
+          <span class="eyebrow" style="color:var(--sun)">Book your visit</span>
+          <h2 class="h2" style="margin-top:1rem">Book Your Coconut Shell Lamp Experience</h2>
+          <p class="lede" style="margin-top:1.2rem;color:rgba(233,232,226,.82);max-width:50ch">Choose your preferred date and time below to book your visit to the ZeroPlastic Impact Center.</p>
+          <dl class="visit-facts">
+            <div><dt>Where</dt><dd>Sigiriya, Central Province, Sri Lanka<br>Roughly 5 km before Sigiriya Lion Rock</dd></div>
+            <div><dt>Open</dt><dd>Every day, 7:30 &mdash; 18:30</dd></div>
+            <div><dt>WhatsApp</dt><dd><a href="https://wa.me/94716901094">+94 71 690 1094</a></dd></div>
+            <div><dt>Directions</dt><dd><a href="https://maps.app.goo.gl/jEaZkPa4oMAFCiTu9" target="_blank" rel="noopener">Open in Google Maps &rarr;</a></dd></div>
+          </dl>
+        </div>
+
+        <div class="booking-widget-col rise">
+          <div class="zp-booking-widget" data-experience="coconut-shell-lamp"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <script src="https://book.zeroplastic.lk/widget.js" defer></script>
+
+  <!-- ============ FAQ ============ -->
+  <section class="sec" id="faq">
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow" style="color:var(--signal)">Before you come</span>
+        <h2 class="h2" style="margin-top:1rem">Questions We Get Asked</h2>
+      </div>
+      <div class="faq rise">
+        <details class="faq-item">
+          <summary>Is the coconut shell lamp workshop suitable for children?</summary>
+          <p>The experience is recommended for children aged 10 and above. Small craft tools are used during part of the workshop, so children participate under guidance.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How long does the experience take?</summary>
+          <p>Allow approximately one hour for the core workshop, with additional time if you would like to explore the Impact Center and artisan collection.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I take my coconut shell lamp home?</summary>
+          <p>Yes. The lamp you finish during the workshop is yours to take home.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need craft experience?</summary>
+          <p>No. The shell is prepared in advance and our team guides you through the finishing, polishing and design stages.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What else can I see at the Impact Center?</summary>
+          <p>Your visit also includes the Mr. Hero environmental experience, a plastic transformation demonstration and access to a collection of products sourced from local artisan and craftsman families.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is herbal tea included?</summary>
+          <p>Yes. Complimentary herbal tea is included with the experience.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Where is the experience?</summary>
+          <p>The workshop takes place at the ZeroPlastic Impact Center near Sigiriya, Sri Lanka, roughly 5 km before Sigiriya Lion Rock.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="sec sec--dark">
+    <div class="wrap" style="text-align:center">
+      <h2 class="h2 rise">Create Something in Sigiriya You'll Take Home With You</h2>
+      <p class="lede rise" style="margin:1.2rem auto 0;max-width:52ch;color:rgba(233,232,226,.8)">Spend an hour creating your own coconut shell lamp and discover the craft, people and ideas behind the ZeroPlastic Impact Center.</p>
+      <p class="rise" style="margin-top:2rem"><a class="btn btn--solid" href="#booking" data-ev="coconut_lamp_final_book">Request Your Visit</a></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="ftr-in">
+    <img class="ftr-logo"
+         src="https://impactcenter.zeroplastic.lk/wp-content/uploads/2026/02/cropped-cropped-c5f91785-9074-4458-a937-2997f60e96c9-182x70.png"
+         alt="Impact Center by ZeroPlastic" width="182" height="70" loading="lazy">
+    <p class="mono">Coconut shell lamp workshop &middot; ZeroPlastic Impact Center, Sigiriya</p>
+    <p class="mono"><a href="/impact-center-premium.html">Impact Center</a> &middot; <a href="/craft-experiences-sigiriya.html">Craft Workshops in Sigiriya</a> &middot; <a href="/sigiriya-sri-lanka/">Sigiriya travel guide</a></p>
+    <p class="mono">&copy; 2026 ZeroPlastic Movement, a registered Sri Lankan non-profit</p>
+  </div>
+</footer>
+
+<div class="sticky-cta" id="stickyCta">
+  <a class="btn btn--solid" href="#booking" data-ev="coconut_lamp_sticky_book">Book Your Experience</a>
+  <a class="btn" href="https://wa.me/94716901094" aria-label="Message us on WhatsApp">WhatsApp</a>
+</div>
+
+<script>
+(function(){
+  var EXPERIENCE_NAME = 'coconut_shell_lamp';
+  var EXPERIENCE_LOCATION = 'sigiriya';
+  var EXPERIENCE_CODE = 'COCONUT_LAMP_SIGIRIYA';
+
+  /**
+   * Analytics: gtag when it is there, dataLayer otherwise, never throw.
+   * No AW- conversion id is hardcoded here (see CLAUDE.md analytics rule) -
+   * these are named dataLayer events for GTM to pick up and configure a
+   * conversion against, same contract as self-drive-sri-lanka.astro and
+   * volunteer-sri-lanka.html use for their own data-ev events.
+   */
+  function track(name, params){
+    try {
+      var p = Object.assign({experience_name: EXPERIENCE_NAME, location: EXPERIENCE_LOCATION, experience_code: EXPERIENCE_CODE}, params || {});
+      if (typeof gtag === 'function') gtag('event', name, p);
+      else if (window.dataLayer) window.dataLayer.push(Object.assign({event: name}, p));
+    } catch (e) { /* analytics must never break the page */ }
+  }
+
+  track('experience_view');
+
+  var hdr = document.getElementById('hdr');
+  var onScroll = function(){ hdr.classList.toggle('is-stuck', window.scrollY > 40); };
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  // mobile menu
+  var toggle = document.getElementById('navToggle');
+  var panel  = document.getElementById('navPanel');
+  var setMenu = function(open){
+    panel.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  toggle.addEventListener('click', function(){
+    setMenu(toggle.getAttribute('aria-expanded') !== 'true');
+  });
+  panel.addEventListener('click', function(e){ if (e.target.tagName === 'A') setMenu(false); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') setMenu(false); });
+  window.addEventListener('resize', function(){ if (window.innerWidth > 860) setMenu(false); });
+
+  // reveal on scroll
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var risers = document.querySelectorAll('.rise');
+  if (reduce || !('IntersectionObserver' in window)) {
+    risers.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -12% 0px', threshold:0.08});
+    risers.forEach(function(el){ io.observe(el); });
+  }
+
+  // sticky mobile CTA, shown once the hero has scrolled away
+  var sticky = document.getElementById('stickyCta');
+  var heroEl = document.querySelector('.hero');
+  if (sticky && heroEl && 'IntersectionObserver' in window) {
+    var sio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        var show = !e.isIntersecting;
+        sticky.classList.toggle('is-visible', show);
+        document.body.classList.toggle('has-sticky', show);
+      });
+    }, {rootMargin:'-1px 0px 0px 0px', threshold:0});
+    sio.observe(heroEl);
+  }
+
+  // One delegated listener for every data-ev control on the page.
+  document.addEventListener('click', function(e){
+    var el = e.target && e.target.closest && e.target.closest('[data-ev]');
+    if (!el) return;
+    track(el.getAttribute('data-ev'), {link_text: (el.textContent || '').trim().slice(0, 80)});
+  });
+})();
+</script>
+</body>
+</html>

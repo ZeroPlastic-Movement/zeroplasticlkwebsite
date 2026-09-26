@@ -198,7 +198,13 @@ check('Existing redirects intact', present.length === expected.length, `${presen
 // this migration and are carried over byte-identical, so those links are
 // expected. What must hold is that nothing Astro generates points at them, and
 // that no new reference is introduced.
-const landingPaths = new Set(LANDING.map((p) => join(DIST, p)));
+//
+// coconut-shell-lamp-workshop-sigiriya/index.html is the one deliberate
+// exception: it intentionally embeds the centralized booking widget
+// (book.zeroplastic.lk/widget.js). Allowed here only, not added to LANDING
+// itself, so it stays subject to the page-count and em-dash checks below.
+const BOOKING_REFERENCE_ALLOWED = [...LANDING, 'coconut-shell-lamp-workshop-sigiriya/index.html'];
+const landingPaths = new Set(BOOKING_REFERENCE_ALLOWED.map((p) => join(DIST, p)));
 for (const host of ['book.zeroplastic.lk', 'pos.zeroplastic.lk']) {
   const hits = all.filter((f) => /\.(html|xml|txt|json|js|css)$/.test(f) && read(f).includes(host));
   const fromAstro = hits.filter((f) => !landingPaths.has(f));
