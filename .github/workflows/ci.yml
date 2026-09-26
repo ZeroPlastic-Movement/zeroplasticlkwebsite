@@ -44,6 +44,10 @@ jobs:
           # environment; this value only affects the CI build's absolute URLs.
           SITE_URL: https://www.zeroplastic.lk
           BASE_PATH: /
+          # Without this, the build falls back to the old www.zeroplastic.lk
+          # WordPress origin, which this CI runner cannot reach — matches the
+          # documented local build command (see CLAUDE.md).
+          WORDPRESS_BASE_URL: https://cms.zeroplastic.lk
         run: npm run build
 
       - name: Summarise output
