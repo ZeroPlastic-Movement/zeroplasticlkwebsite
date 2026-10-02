@@ -48,6 +48,7 @@ const STATIC_LANDING_PAGES = [
   '/zh-cn/craft-experiences-sigiriya.html',
   '/sigiriya-craft-village/',
   '/sigiriya-sri-lanka/',
+  '/sigiriya-lion-rock/',
 ];
 
 export default defineConfig({
