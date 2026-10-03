@@ -333,13 +333,16 @@ img{font-family:var(--mono);font-size:.7rem;line-height:1.4;color:rgba(233,232,2
 .rev-text{margin-top:.75rem;color:rgba(20,28,27,.78);font-size:.97rem;flex:1;white-space:pre-wrap}
 .rev-by{margin-top:1.3rem}
 .rev-by b{display:block;font-family:var(--display);font-weight:700;font-size:1rem;letter-spacing:-.01em}
+/* .55 blends to #747875 on the bone card, 3.65:1 at this size, under the
+   4.5:1 AA minimum. .66 gives 5.14:1 and still reads as secondary text. */
 .rev-by span{
   display:block;margin-top:.2rem;
   font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;
-  text-transform:uppercase;color:rgba(20,28,27,.55);
+  text-transform:uppercase;color:rgba(20,28,27,.66);
 }
 .rev-foot{margin-top:clamp(2rem,4vw,3rem);display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.4rem}
-.rev-attr{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(20,28,27,.55)}
+/* Same reason: .55 was 3.77:1 on the chalk footer, .66 is 5.36:1. */
+.rev-attr{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(20,28,27,.66)}
 /* One card at a time on a phone, so three reviews cost one screen, not three. */
 @media(max-width:680px){
   .rev-rail{
