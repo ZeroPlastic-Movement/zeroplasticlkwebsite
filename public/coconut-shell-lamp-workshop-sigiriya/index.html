@@ -123,9 +123,11 @@ section[id],div[id]{scroll-margin-top:96px}
 .btn:hover{background:var(--signal);border-color:var(--signal);color:#fff;
   transform:translateY(-2px);box-shadow:0 10px 24px rgba(228,85,43,.26)}
 /* #E4552B gives white text only 3.73:1 at this size, under the 4.5:1 AA
-   minimum. #B23C1B is the same hue family at 5.91:1. Applied to the button
-   rather than to --signal itself, because --signal is also used for text on
-   the dark hero, where darkening it would make contrast worse, not better. */
+   minimum. #B23C1B is the same hue family at 5.91:1. Scoped to the button
+   rather than changing --signal, which is the whole accent across ten pages
+   including a live Google Ads landing page: .btn--solid is the only usage
+   that actually fails an audit, so this keeps the change reviewable and
+   trivially revertible. */
 .btn--solid{background:#B23C1B;border-color:#B23C1B;color:#fff}
 .btn--solid:hover{background:#9C3315;border-color:#9C3315}
 .btn--ghost{background:transparent}
