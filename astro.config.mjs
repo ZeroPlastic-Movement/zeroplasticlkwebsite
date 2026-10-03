@@ -49,6 +49,7 @@ const STATIC_LANDING_PAGES = [
   '/sigiriya-craft-village/',
   '/sigiriya-sri-lanka/',
   '/sigiriya-lion-rock/',
+  '/dambulla-cave-temple/',
 ];
 
 export default defineConfig({
