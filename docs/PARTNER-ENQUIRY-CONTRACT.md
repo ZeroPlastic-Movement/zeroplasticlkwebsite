@@ -144,3 +144,24 @@ the new scenario, with a clearly marked test company name:
 6. Break the destination on purpose: the page must show the failure message,
    not success.
 7. Delete the test record and note the test in the release notes.
+
+## Cloudflare Pages configuration
+
+The form endpoint and the page are built and served by the existing
+`zeroplasticlk` Pages project, like `/api/volunteer-application`. No other
+hosting is involved, and Vercel cannot run `functions/api/`.
+
+Preview and Production builds both need the CMS origin, because the same
+`astro build` that renders this page also fetches blog content from
+WordPress. Without it the build falls back to `www.zeroplastic.lk`, which no
+longer serves `/wp-json`, and the build fails before anything is deployed.
+
+| Variable | Preview | Production |
+|---|---|---|
+| `WORDPRESS_BASE_URL` | `https://cms.zeroplastic.lk` | `https://cms.zeroplastic.lk` |
+| `WORDPRESS_MEDIA_URL` | `https://cms.zeroplastic.lk` | `https://cms.zeroplastic.lk` |
+| `PARTNER_ENQUIRY_WEBHOOK_URL` | encrypted secret, dedicated Make webhook | encrypted secret, set only at release |
+
+The secret is read only by `functions/api/partner-enquiry.js`. It is never in
+source, logs or the browser. `VOLUNTEER_FORM_WEBHOOK_URL` is a separate secret
+and is not touched.
