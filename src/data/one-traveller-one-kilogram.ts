@@ -306,17 +306,22 @@ export const TRAVELLER_VOLUMES = [
 ];
 
 /**
- * The online application form is built but switched off. The Make scenario
- * behind it has not passed end-to-end testing, so until it has, visitors apply
- * by email or WhatsApp. To activate: set this to true AND set
- * PARTNER_ENQUIRY_ENABLED to "true" on the Cloudflare Pages project (the
- * endpoint refuses everything otherwise). Do it only after the integration is
- * verified: a recorded Monday lead, the email and Slack notifications, and no
- * duplicates on a replayed submission.
+ * The online application form is live. Make scenario 9981651 has been
+ * activated, so the page shows the form instead of the email and WhatsApp
+ * fallback below.
+ *
+ * Two switches control the form, and both must be on:
+ *   1. FORM_ENABLED here, which decides what the page renders.
+ *   2. PARTNER_ENQUIRY_ENABLED set to "true" on the Cloudflare Pages project,
+ *      without which /api/partner-enquiry refuses everything with 503.
+ * Cloudflare applies a changed variable on the next deployment, not
+ * immediately. If the form is showing but answers "not available", the second
+ * switch is off or the project has not been redeployed since it was set.
+ * To switch the form off again, set this to false and deploy.
  */
-export const FORM_ENABLED = false;
+export const FORM_ENABLED = true;
 
-/** Shown in place of the form while it is off. Email and WhatsApp are the live routes. */
+/** Shown in place of the form whenever FORM_ENABLED is false. */
 export const APPLY_INTERIM = {
   title: 'Apply by email or WhatsApp',
   body: 'Send us a short message and our team will reply personally. Please include:',
