@@ -3,7 +3,9 @@
 Applies to `POST /api/partner-enquiry` (`functions/api/partner-enquiry.js`),
 the form on `/one-traveller-one-kilogram/`.
 
-**Status: the Make scenario does not exist yet.** The function is written and
+**Status at release: the online form is switched off.** The scenario exists but has not passed end-to-end testing, so visitors apply by email or WhatsApp. (Earlier drafts of this note said the scenario did not exist yet.)
+
+**Original status note: the Make scenario does not exist yet.** The function is written and
 tested against a mock. Nothing here has reached a real Make scenario, a CRM
 record or a mailbox. Do not describe the form as live until the acceptance
 test at the bottom has been run and passed.
@@ -165,3 +167,18 @@ longer serves `/wp-json`, and the build fails before anything is deployed.
 The secret is read only by `functions/api/partner-enquiry.js`. It is never in
 source, logs or the browser. `VOLUNTEER_FORM_WEBHOOK_URL` is a separate secret
 and is not touched.
+
+## Activating the form (not done at release)
+
+The form is built but off, in two places, so having the Production webhook
+secret is not enough to start accepting applications:
+
+1. `FORM_ENABLED` in `src/data/one-traveller-one-kilogram.ts` is `false`, so the
+   page shows email and WhatsApp buttons instead of the form.
+2. `functions/api/partner-enquiry.js` answers 503 `not_enabled` to everything
+   unless `PARTNER_ENQUIRY_ENABLED` is exactly `"true"` on the Pages project.
+
+Turn both on only after the acceptance test above has passed: a recorded
+Monday lead, the email and Slack notifications, and no second lead or
+notification on a replayed `submission_id`. Set `FORM_ENABLED` to `true`,
+deploy, then set `PARTNER_ENQUIRY_ENABLED` to `"true"`.

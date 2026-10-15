@@ -305,6 +305,34 @@ export const TRAVELLER_VOLUMES = [
   'Not sure yet',
 ];
 
+/**
+ * The online application form is built but switched off. The Make scenario
+ * behind it has not passed end-to-end testing, so until it has, visitors apply
+ * by email or WhatsApp. To activate: set this to true AND set
+ * PARTNER_ENQUIRY_ENABLED to "true" on the Cloudflare Pages project (the
+ * endpoint refuses everything otherwise). Do it only after the integration is
+ * verified: a recorded Monday lead, the email and Slack notifications, and no
+ * duplicates on a replayed submission.
+ */
+export const FORM_ENABLED = false;
+
+/** Shown in place of the form while it is off. Email and WhatsApp are the live routes. */
+export const APPLY_INTERIM = {
+  title: 'Apply by email or WhatsApp',
+  body: 'Send us a short message and our team will reply personally. Please include:',
+  include: [
+    'Company name and type of organisation',
+    'Country, and your name and role',
+    'Company website',
+    'Roughly how many travellers you bring to Sri Lanka each year',
+    'Anything else you would like us to know',
+  ],
+  emailLabel: 'Email impactcenter@zeroplastic.lk',
+  whatsappLabel: 'Message us on WhatsApp',
+  mailBody:
+    'Hello ZeroPlastic,\n\nI would like to apply to become a One Traveller, One Kilogram travel partner.\n\nCompany name:\nType of organisation:\nCountry:\nMy name and role:\nWebsite:\nEstimated travellers to Sri Lanka each year:\nMessage:\n',
+} as const;
+
 export const APPLY = {
   eyebrow: 'Applications open',
   title: `Be one of our first ${PROGRAMME.foundingPartners} partners`,

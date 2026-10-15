@@ -7,6 +7,9 @@
  * webhook using a secret that only the Cloudflare Pages runtime can read.
  *
  * Environment:
+ *   PARTNER_ENQUIRY_ENABLED       must be "true" for the endpoint to accept anything.
+ *                                 Unset means it answers 503 and forwards nothing,
+ *                                 whatever else is configured.
  *   PARTNER_ENQUIRY_WEBHOOK_URL   a Make custom webhook dedicated to this form.
  *                                 Encrypted Pages secret, never in source and
  *                                 never sent to the browser. It is deliberately
@@ -186,6 +189,16 @@ function validate(body) {
 
 export async function onRequestPost(context) {
   const { request, env } = context;
+
+  // Off unless explicitly switched on. The Make scenario behind this endpoint
+  // has not passed end-to-end testing, and the webhook secret is already set in
+  // Production, so having the secret must not be enough to start accepting
+  // applications. Checked first, so a refused request is never read, never
+  // validated and never forwarded. Turn it on by setting PARTNER_ENQUIRY_ENABLED
+  // to "true" only after the integration has been verified.
+  if (env.PARTNER_ENQUIRY_ENABLED !== 'true') {
+    return json(503, { ok: false, error: 'not_enabled' });
+  }
 
   const contentType = request.headers.get('content-type') || '';
   if (!contentType.includes('application/json')) {

@@ -35,11 +35,13 @@ import { SITE } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
 import {
   APPLY,
+  APPLY_INTERIM,
   BENEFITS,
   CENTER,
   EVIDENCE,
   EXAMPLES,
   FAQS,
+  FORM_ENABLED,
   HERO,
   ILLUSTRATION,
   LINKS,
@@ -116,6 +118,8 @@ const heroSrcset = (ext: string) =>
 
 const waHref = PARTNER_CONTACT.whatsappHref;
 const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(PARTNER_CONTACT.mailSubject)}`;
+// Same address and subject, with the details we ask for pre-listed in the body.
+const applyMailHref = `${mailHref}&body=${encodeURIComponent(APPLY_INTERIM.mailBody)}`;
 ---
 
 <BaseLayout
@@ -415,91 +419,107 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
           </p>
         </div>
 
-        <div class="otk-formcard">
-          <h3>{APPLY.formTitle}</h3>
-          <p class="otk-formcard__sub">Fields marked with an asterisk are required.</p>
+        {
+          FORM_ENABLED ? (
+          <div class="otk-formcard">
+            <h3>{APPLY.formTitle}</h3>
+            <p class="otk-formcard__sub">Fields marked with an asterisk are required.</p>
 
-          <form id="otk-form" novalidate data-wa={waHref}>
-            <div class="otk-grid">
-              <div class="otk-field otk-field--full">
-                <label for="company">Company or organisation name *</label>
-                <input id="company" name="company" required maxlength="120" autocomplete="organization" />
-                <p class="otk-err" data-err-for="company" hidden></p>
-              </div>
-              <div class="otk-field">
-                <label for="organisation_type">Type of organisation *</label>
-                <select id="organisation_type" name="organisation_type" required>
-                  <option value="">Select one</option>
-                  {ORGANISATION_TYPES.map((t) => <option value={t}>{t}</option>)}
-                </select>
-                <p class="otk-err" data-err-for="organisation_type" hidden></p>
-              </div>
-              <div class="otk-field">
-                <label for="country">Country *</label>
-                <input id="country" name="country" required maxlength="80" autocomplete="country-name" />
-                <p class="otk-err" data-err-for="country" hidden></p>
-              </div>
-              <div class="otk-field">
-                <label for="contact_name">Contact name *</label>
-                <input id="contact_name" name="contact_name" required maxlength="100" autocomplete="name" />
-                <p class="otk-err" data-err-for="contact_name" hidden></p>
-              </div>
-              <div class="otk-field">
-                <label for="email">Business email *</label>
-                <input id="email" name="email" type="email" required maxlength="160" autocomplete="email" inputmode="email" />
-                <p class="otk-err" data-err-for="email" hidden></p>
-              </div>
-              <div class="otk-field">
-                <label for="whatsapp">WhatsApp number *</label>
-                <input id="whatsapp" name="whatsapp" type="tel" required maxlength="40" autocomplete="tel" inputmode="tel" aria-describedby="whatsapp-hint" />
-                <p class="otk-hint" id="whatsapp-hint">Include the country code.</p>
-                <p class="otk-err" data-err-for="whatsapp" hidden></p>
-              </div>
-              <div class="otk-field">
-                <label for="website">Company website</label>
-                <input id="website" name="website" maxlength="200" autocomplete="url" inputmode="url" />
-                <p class="otk-err" data-err-for="website" hidden></p>
-              </div>
-              <div class="otk-field otk-field--full">
-                <label for="estimated_traveller_volume">Estimated travellers to Sri Lanka each year *</label>
-                <select id="estimated_traveller_volume" name="estimated_traveller_volume" required>
-                  <option value="">Select an approximate band</option>
-                  {TRAVELLER_VOLUMES.map((v) => <option value={v}>{v}</option>)}
-                </select>
-                <p class="otk-err" data-err-for="estimated_traveller_volume" hidden></p>
-              </div>
-              <div class="otk-field otk-field--full">
-                <label for="message">Anything you would like us to know</label>
-                <textarea id="message" name="message" rows="4" maxlength="1500"></textarea>
+            <form id="otk-form" novalidate data-wa={waHref}>
+              <div class="otk-grid">
+                <div class="otk-field otk-field--full">
+                  <label for="company">Company or organisation name *</label>
+                  <input id="company" name="company" required maxlength="120" autocomplete="organization" />
+                  <p class="otk-err" data-err-for="company" hidden></p>
+                </div>
+                <div class="otk-field">
+                  <label for="organisation_type">Type of organisation *</label>
+                  <select id="organisation_type" name="organisation_type" required>
+                    <option value="">Select one</option>
+                    {ORGANISATION_TYPES.map((t) => <option value={t}>{t}</option>)}
+                  </select>
+                  <p class="otk-err" data-err-for="organisation_type" hidden></p>
+                </div>
+                <div class="otk-field">
+                  <label for="country">Country *</label>
+                  <input id="country" name="country" required maxlength="80" autocomplete="country-name" />
+                  <p class="otk-err" data-err-for="country" hidden></p>
+                </div>
+                <div class="otk-field">
+                  <label for="contact_name">Contact name *</label>
+                  <input id="contact_name" name="contact_name" required maxlength="100" autocomplete="name" />
+                  <p class="otk-err" data-err-for="contact_name" hidden></p>
+                </div>
+                <div class="otk-field">
+                  <label for="email">Business email *</label>
+                  <input id="email" name="email" type="email" required maxlength="160" autocomplete="email" inputmode="email" />
+                  <p class="otk-err" data-err-for="email" hidden></p>
+                </div>
+                <div class="otk-field">
+                  <label for="whatsapp">WhatsApp number *</label>
+                  <input id="whatsapp" name="whatsapp" type="tel" required maxlength="40" autocomplete="tel" inputmode="tel" aria-describedby="whatsapp-hint" />
+                  <p class="otk-hint" id="whatsapp-hint">Include the country code.</p>
+                  <p class="otk-err" data-err-for="whatsapp" hidden></p>
+                </div>
+                <div class="otk-field">
+                  <label for="website">Company website</label>
+                  <input id="website" name="website" maxlength="200" autocomplete="url" inputmode="url" />
+                  <p class="otk-err" data-err-for="website" hidden></p>
+                </div>
+                <div class="otk-field otk-field--full">
+                  <label for="estimated_traveller_volume">Estimated travellers to Sri Lanka each year *</label>
+                  <select id="estimated_traveller_volume" name="estimated_traveller_volume" required>
+                    <option value="">Select an approximate band</option>
+                    {TRAVELLER_VOLUMES.map((v) => <option value={v}>{v}</option>)}
+                  </select>
+                  <p class="otk-err" data-err-for="estimated_traveller_volume" hidden></p>
+                </div>
+                <div class="otk-field otk-field--full">
+                  <label for="message">Anything you would like us to know</label>
+                  <textarea id="message" name="message" rows="4" maxlength="1500"></textarea>
+                </div>
+
+                <!-- Honeypot. Off-screen rather than display:none, which many
+                     bots skip. Real visitors and assistive tech never reach it. -->
+                <div class="otk-trap" aria-hidden="true">
+                  <label for="hp_check">Leave this field empty</label>
+                  <input id="hp_check" name="hp_check" type="text" tabindex="-1" autocomplete="off" autocorrect="off" spellcheck="false" />
+                </div>
               </div>
 
-              <!-- Honeypot. Off-screen rather than display:none, which many
-                   bots skip. Real visitors and assistive tech never reach it. -->
-              <div class="otk-trap" aria-hidden="true">
-                <label for="hp_check">Leave this field empty</label>
-                <input id="hp_check" name="hp_check" type="text" tabindex="-1" autocomplete="off" autocorrect="off" spellcheck="false" />
+              <div class="otk-consent">
+                <input id="consent_contact" name="consent_contact" type="checkbox" required />
+                <label for="consent_contact">
+                  {APPLY.consent} <a href={LINKS.privacy}>Privacy policy</a>. *
+                </label>
+                <p class="otk-err" data-err-for="consent_contact" hidden></p>
               </div>
+
+              <div class="otk-alert" role="alert" tabindex="-1" data-alert hidden></div>
+
+              <button class="button button--lg otk-btn otk-submit" type="submit" data-submit>Send partnership enquiry</button>
+            </form>
+
+            <div class="otk-sent" data-sent tabindex="-1" hidden>
+              <h3>Thank you. Your enquiry has been received.</h3>
+              <p>Our team reviews every application personally and will reply to the email address you gave. Your reference is <strong data-ref></strong>.</p>
+              <p>Receiving this enquiry does not mean a partner place has been confirmed.</p>
             </div>
-
-            <div class="otk-consent">
-              <input id="consent_contact" name="consent_contact" type="checkbox" required />
-              <label for="consent_contact">
-                {APPLY.consent} <a href={LINKS.privacy}>Privacy policy</a>. *
-              </label>
-              <p class="otk-err" data-err-for="consent_contact" hidden></p>
-            </div>
-
-            <div class="otk-alert" role="alert" tabindex="-1" data-alert hidden></div>
-
-            <button class="button button--lg otk-btn otk-submit" type="submit" data-submit>Send partnership enquiry</button>
-          </form>
-
-          <div class="otk-sent" data-sent tabindex="-1" hidden>
-            <h3>Thank you. Your enquiry has been received.</h3>
-            <p>Our team reviews every application personally and will reply to the email address you gave. Your reference is <strong data-ref></strong>.</p>
-            <p>Receiving this enquiry does not mean a partner place has been confirmed.</p>
           </div>
-        </div>
+          ) : (
+            <div class="otk-formcard otk-formcard--contact">
+              <h3>{APPLY_INTERIM.title}</h3>
+              <p class="otk-formcard__sub">{APPLY_INTERIM.body}</p>
+              <ul class="otk-include">
+                {APPLY_INTERIM.include.map((i) => <li>{i}</li>)}
+              </ul>
+              <div class="otk-contact-actions">
+                <a class="button button--lg otk-btn otk-submit" href={applyMailHref} data-ev="one_kg_email_click">{APPLY_INTERIM.emailLabel}</a>
+                <a class="button button--lg otk-btn otk-btn--wa otk-submit" href={waHref} target="_blank" rel="noopener noreferrer" data-ev="one_kg_whatsapp_click">{APPLY_INTERIM.whatsappLabel}</a>
+              </div>
+            </div>
+          )
+        }
       </div>
     </section>
   </div>
@@ -1339,6 +1359,22 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
   .otk-submit:disabled {
     opacity: 0.7;
     cursor: progress;
+  }
+  .otk-include {
+    margin: 0 0 1.5rem;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.4rem;
+    color: var(--ink);
+    font-size: 0.95rem;
+  }
+  .otk-contact-actions {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .otk-contact-actions .button {
+    text-align: center;
+    overflow-wrap: anywhere;
   }
   .otk-sent {
     padding: 1.25rem;

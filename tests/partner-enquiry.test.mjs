@@ -38,7 +38,7 @@ const valid = {
   campaign: 'attacker',
 };
 
-function call(body, { method = 'POST', env = { PARTNER_ENQUIRY_WEBHOOK_URL: WEBHOOK }, headers } = {}) {
+function call(body, { method = 'POST', env = { PARTNER_ENQUIRY_ENABLED: 'true', PARTNER_ENQUIRY_WEBHOOK_URL: WEBHOOK }, headers } = {}) {
   const init = { method, headers: { 'content-type': 'application/json', ...headers } };
   if (method !== 'GET' && method !== 'HEAD') {
     init.body = typeof body === 'string' ? body : JSON.stringify(body);
@@ -136,7 +136,7 @@ test('rejects each missing or malformed required field by name', async () => {
 test('missing secret fails closed with 503 and does not reach Make', async () => {
   forbidMake();
   // Fresh reference: the shared one was accepted by an earlier test.
-  const res = await call({ ...valid, submission_id: 'ZPP-LXYZ12-ABC134' }, { env: {} });
+  const res = await call({ ...valid, submission_id: 'ZPP-LXYZ12-ABC134' }, { env: { PARTNER_ENQUIRY_ENABLED: 'true' } });
   assert.equal(res.status, 503);
   assert.deepEqual(await res.json(), { ok: false, error: 'not_configured' });
 });
@@ -190,7 +190,7 @@ test('the log never contains applicant details or the webhook URL', async () => 
     await call({ ...valid, submission_id: 'ZPP-LXYZ12-ABC131' });
     stubMake(() => new Response('x', { status: 500 }));
     await call({ ...valid, submission_id: 'ZPP-LXYZ12-ABC132' });
-    await call({ ...valid, submission_id: 'ZPP-LXYZ12-ABC135' }, { env: {} });
+    await call({ ...valid, submission_id: 'ZPP-LXYZ12-ABC135' }, { env: { PARTNER_ENQUIRY_ENABLED: 'true' } });
   } finally {
     console.log = realLog;
   }
@@ -249,4 +249,31 @@ test('every select option on the page is accepted by the endpoint', async () => 
       assert.equal(res.status, 200, `${organisation_type} / ${estimated_traveller_volume}`);
     }
   }
+});
+
+test('is off unless PARTNER_ENQUIRY_ENABLED is exactly "true", even with the secret set', async () => {
+  // The webhook secret is present in Production before the integration is
+  // verified. Having it must not be enough to accept applications.
+  forbidMake();
+  for (const flag of [undefined, '', 'false', '1', 'yes', 'TRUE']) {
+    const env = { PARTNER_ENQUIRY_WEBHOOK_URL: WEBHOOK };
+    if (flag !== undefined) env.PARTNER_ENQUIRY_ENABLED = flag;
+    const res = await call({ ...valid, submission_id: 'ZPP-OFF000-ABC001' }, { env });
+    assert.equal(res.status, 503, `flag ${JSON.stringify(flag)}`);
+    assert.deepEqual(await res.json(), { ok: false, error: 'not_enabled' });
+  }
+});
+
+test('when off, nothing is read, validated or forwarded, whatever the body', async () => {
+  forbidMake();
+  const env = { PARTNER_ENQUIRY_WEBHOOK_URL: WEBHOOK };
+  for (const body of ['{not json', '[]', JSON.stringify(valid), JSON.stringify({ ...valid, hp_check: 'x' }), '{}']) {
+    const res = await call(body, { env });
+    assert.equal(res.status, 503);
+  }
+});
+
+test('when off, the page offers email and WhatsApp and renders no form', async () => {
+  const data = readFileSync(new URL('../src/data/one-traveller-one-kilogram.ts', import.meta.url), 'utf8');
+  assert.match(data, /export const FORM_ENABLED = false;/);
 });
