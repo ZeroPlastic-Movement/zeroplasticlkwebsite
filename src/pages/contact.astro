@@ -14,7 +14,7 @@ const CATEGORIES = [
   { title: 'International organisations', body: 'Cross-border initiatives looking for a delivery partner in Sri Lanka.' },
   { title: 'Universities and schools', body: 'Institutions setting up ZeroPlastic clubs, research collaborations or campus campaigns.' },
   { title: 'Banks and financial institutions', body: 'Sustainability commitments, staff engagement and branch-level plastic reduction.' },
-  { title: 'Travel and tourism partners', body: 'Hotels, operators and destinations cutting plastic across the visitor experience.' },
+  { title: 'Travel and tourism partners', body: 'Hotels, operators and destinations cutting plastic across the visitor experience.', href: '/one-traveller-one-kilogram/', linkLabel: 'See the One Traveller, One Kilogram partnership' },
   { title: 'Environmental campaigns', body: 'Joint campaigns, clean-ups and public awareness work.' },
   { title: 'Research and innovation', body: 'Studies, data partnerships and work on practical plastic alternatives.' },
   { title: 'Community partnerships', body: 'Local groups and community organisations taking on plastic where they live.' },
@@ -54,6 +54,11 @@ const CATEGORIES = [
             <li>
               <h3>{cat.title}</h3>
               <p>{cat.body}</p>
+              {cat.href && (
+                <p>
+                  <a href={cat.href}>{cat.linkLabel}</a>
+                </p>
+              )}
             </li>
           ))
         }

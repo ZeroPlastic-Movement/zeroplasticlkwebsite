@@ -1,0 +1,1506 @@
+---
+/**
+ * /one-traveller-one-kilogram/: tourism partnership landing page.
+ *
+ * The audience is travel businesses (operators, DMCs, hotels), not travellers,
+ * so this is a B2B page and is not a Google Ads Final URL.
+ *
+ * Things worth knowing before editing:
+ *
+ *   1. Copy lives in src/data/one-traveller-one-kilogram.ts, tagged by where
+ *      each claim came from. The FAQ JSON-LD is generated from the same array
+ *      the page renders.
+ *
+ *   2. The programme has not started. Every sentence must keep a commitment
+ *      (created by a qualifying visit) apart from a verified removal (only
+ *      after a cleanup). It is also not carbon offsetting.
+ *
+ *   3. There is deliberately no visitor-counting, referral or tracking
+ *      feature here. The slider is an illustration of arithmetic and says so.
+ *
+ *   4. Analytics follow the self-drive page: the existing GTM container,
+ *      data-ev attributes and one delegated listener. No AW- id and no
+ *      conversion is configured from page code. The event names below are new
+ *      and do nothing until GTM has a trigger for them.
+ *
+ *   5. The form posts to /api/partner-enquiry (functions/api/), which holds
+ *      the Make webhook secret. Nothing secret is in this file.
+ *
+ *   6. No photographs have been supplied. The artwork is CSS gradient, marked
+ *      aria-hidden because it carries no information.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+import { breadcrumbSchema, organizationSchema } from '../lib/schema';
+import {
+  APPLY,
+  BENEFITS,
+  CENTER,
+  EVIDENCE,
+  EXAMPLES,
+  FAQS,
+  HERO,
+  ILLUSTRATION,
+  LINKS,
+  ORGANISATION_TYPES,
+  PAGE,
+  PARTNER_CONTACT,
+  PREVENTION,
+  PROGRAMME,
+  STEPS,
+  TRAVELLER_VOLUMES,
+  TRUST,
+} from '../data/one-traveller-one-kilogram';
+
+const BASE = (Astro.site?.href ?? SITE.url).replace(/\/$/, '');
+const pageUrl = `${BASE}${PAGE.path}`;
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+/**
+ * The page and the programme it describes. Deliberately no `offers`, no
+ * `aggregateRating` and no `award`: there is nothing published to support them,
+ * and price 0 would model a partnership as a product.
+ */
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${pageUrl}#webpage`,
+  url: pageUrl,
+  name: PAGE.title,
+  description: PAGE.description,
+  inLanguage: SITE.lang,
+  isPartOf: { '@id': `${BASE}/#website` },
+  about: { '@id': `${pageUrl}#programme` },
+  primaryImageOfPage: {
+    '@type': 'ImageObject',
+    url: `${BASE}${PAGE.ogImage}`,
+    width: PAGE.ogImageWidth,
+    height: PAGE.ogImageHeight,
+  },
+};
+
+const programmeSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': `${pageUrl}#programme`,
+  name: 'One Traveller, One Kilogram',
+  serviceType: 'Tourism partnership for plastic waste removal',
+  description:
+    'A ZeroPlastic Movement partnership with travel businesses. Each qualifying traveller who visits the ZeroPlastic Impact Center in Sigiriya through a registered partner creates a commitment to remove 1 kg of plastic waste from Sri Lanka\'s environment, primarily beaches. Programme begins 1 January 2027. Every additional 300 qualifying travellers from a registered partner triggers another dedicated cleanup removing at least 300 kg of plastic.',
+  provider: { '@id': `${BASE}/#organization` },
+  areaServed: { '@type': 'Country', name: 'Sri Lanka' },
+  audience: { '@type': 'BusinessAudience', audienceType: 'Tour operators, destination management companies and hotels' },
+  url: pageUrl,
+};
+
+const crumbs = breadcrumbSchema([
+  { name: 'Home', url: '/' },
+  { name: 'Sustainable travel', url: LINKS.sustainableTravel },
+  { name: 'One Traveller, One Kilogram', url: PAGE.path },
+]);
+
+const waHref = PARTNER_CONTACT.whatsappHref;
+const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(PARTNER_CONTACT.mailSubject)}`;
+---
+
+<BaseLayout
+  title={PAGE.title}
+  description={PAGE.description}
+  image={PAGE.ogImage}
+  schema={[organizationSchema(), webPageSchema, programmeSchema, faqSchema, crumbs]}
+>
+  <!-- Same GTM container as the other landing pages. Nothing is configured
+       here: conversions belong in GTM, not in page code. -->
+  <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=GTM-N85V5638"></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'GTM-N85V5638');
+  </script>
+
+  <div class="otk">
+    <!-- ============================= HERO ============================ -->
+    <section class="otk-hero" aria-labelledby="otk-h1">
+      <div class="container otk-hero__grid">
+        <div class="otk-hero__copy">
+          <p class="otk-eyebrow">{HERO.eyebrow}</p>
+          <h1 id="otk-h1" class="otk-h1">
+            {HERO.h1Lines.map((line, i) => (<span class:list={['otk-h1__line', { 'otk-h1__line--accent': i === 1 }]}>{line}</span>))}
+          </h1>
+          <p class="otk-hero__sub">{HERO.sub}</p>
+          <div class="otk-actions">
+            <a class="button button--lg otk-btn" href="#apply" data-ev="one_kg_apply_click">Apply as a travel partner</a>
+            <a class="button button--lg button--outline" href={waHref} target="_blank" rel="noopener noreferrer" data-ev="one_kg_whatsapp_click">WhatsApp us</a>
+          </div>
+          <ul class="otk-facts">
+            {HERO.facts.map((f) => <li>{f}</li>)}
+          </ul>
+        </div>
+        <div class="otk-hero__art" aria-hidden="true">
+          <div class="otk-art">
+            <span class="otk-art__ring otk-art__ring--1"></span>
+            <span class="otk-art__ring otk-art__ring--2"></span>
+            <span class="otk-art__ring otk-art__ring--3"></span>
+            <div class="otk-medallion">
+              <strong>{HERO.medallion.value}</strong>
+              <span>{HERO.medallion.label}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ TRUST ============================ -->
+    <section class="otk-trust" aria-label="About the movement">
+      <div class="container otk-trust__grid">
+        <p class="otk-trust__lead">{TRUST.lead}</p>
+        <ul class="otk-trust__stats">
+          {TRUST.items.map((s) => (
+            <li><strong>{s.value}</strong><span>{s.label}</span></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- =========================== BENEFITS ========================== -->
+    <section class="section" aria-labelledby="otk-benefits">
+      <div class="container">
+        <div class="otk-head">
+          <p class="eyebrow">{BENEFITS.eyebrow}</p>
+          <h2 id="otk-benefits" class="otk-title">{BENEFITS.title}</h2>
+          <p class="lede">{BENEFITS.intro}</p>
+        </div>
+        <ul class="otk-cards">
+          {BENEFITS.items.map((b, i) => (
+            <li class="otk-card">
+              <span class={`otk-card__mark otk-card__mark--${i + 1}`} aria-hidden="true"></span>
+              <h3>{b.title}</h3>
+              <p>{b.body}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================== HOW IT WORKS ======================= -->
+    <section class="section section--alt" aria-labelledby="otk-how">
+      <div class="container">
+        <div class="otk-head">
+          <p class="eyebrow">{STEPS.eyebrow}</p>
+          <h2 id="otk-how" class="otk-title">{STEPS.title}</h2>
+          <p class="lede">{STEPS.intro}</p>
+        </div>
+        <ol class="otk-steps">
+          {STEPS.items.map((s, i) => (
+            <li class="otk-step">
+              <span class="otk-step__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </li>
+          ))}
+        </ol>
+
+        <div class="otk-examples">
+          <h3>{EXAMPLES.title}</h3>
+          <p>{EXAMPLES.intro}</p>
+          <table>
+            <caption class="visually-hidden">Qualifying travellers, dedicated cleanups and cumulative removal commitment</caption>
+            <thead>
+              <tr>
+                <th scope="col">Qualifying travellers</th>
+                <th scope="col">Dedicated cleanups</th>
+                <th scope="col">Cumulative removal, once each cleanup is completed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {EXAMPLES.rows.map((r) => (
+                <tr>
+                  <th scope="row">{r.travellers}</th>
+                  <td>{r.cleanups}</td>
+                  <td>at least {r.kg} kg</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="otk-examples__note">{EXAMPLES.note}</p>
+        </div>
+
+        <div class="otk-demo" data-demo data-milestone={PROGRAMME.milestoneTravellers}>
+          <div class="otk-demo__copy">
+            <p class="eyebrow">{ILLUSTRATION.eyebrow}</p>
+            <h3>{ILLUSTRATION.title}</h3>
+            <p>{ILLUSTRATION.body}</p>
+          </div>
+          <div class="otk-demo__card">
+            <label class="otk-demo__label" for="otk-range">
+              Illustrative qualifying travellers for one partner
+              <output id="otk-travellers" for="otk-range">{ILLUSTRATION.start}</output>
+            </label>
+            <input id="otk-range" type="range" min="0" max={ILLUSTRATION.max} step={ILLUSTRATION.step} value={ILLUSTRATION.start} />
+            <div class="otk-demo__bar" aria-hidden="true"><span data-bar></span></div>
+            <p class="otk-demo__status" role="status" data-status></p>
+            <dl class="otk-demo__stats">
+              <div><dt>Cumulative commitment</dt><dd data-commitment></dd></div>
+              <div><dt>Dedicated cleanups triggered</dt><dd data-cleanups></dd></div>
+              <div><dt>Pending toward the next cleanup</dt><dd data-progress></dd></div>
+              <div><dt>Completed, verified removal</dt><dd class="otk-demo__none">None shown here</dd></div>
+            </dl>
+            <p class="otk-demo__note">{ILLUSTRATION.caption}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== IMPACT CENTER ===================== -->
+    <section class="section" aria-labelledby="otk-center">
+      <div class="container otk-split">
+        <div class="otk-photo" aria-hidden="true"><span></span></div>
+        <div>
+          <p class="eyebrow">{CENTER.eyebrow}</p>
+          <h2 id="otk-center" class="otk-title otk-title--left">{CENTER.title}</h2>
+          <p class="lede">{CENTER.body}</p>
+          <ul class="ticks otk-ticks">
+            {CENTER.points.map((p) => <li>{p}</li>)}
+          </ul>
+          <p class="otk-links">
+            <a class="button" href={LINKS.impactCenter} target="_blank" rel="noopener noreferrer" data-ev="one_kg_impact_center_click">Explore the Impact Center</a>
+            <a class="otk-textlink" href={LINKS.sustainableTravel}>More on sustainable travel with ZeroPlastic</a>
+          </p>
+          <p class="note otk-note">{CENTER.note}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ EVIDENCE ========================= -->
+    <section class="otk-dark" aria-labelledby="otk-evidence">
+      <div class="container">
+        <div class="otk-head otk-head--light">
+          <p class="otk-eyebrow">{EVIDENCE.eyebrow}</p>
+          <h2 id="otk-evidence" class="otk-title">{EVIDENCE.title}</h2>
+          <p class="otk-lede">{EVIDENCE.intro}</p>
+        </div>
+        <div class="otk-evidence">
+          <div>
+            <h3 class="otk-evidence__h">What partners receive</h3>
+            <ul class="otk-receive">
+              {EVIDENCE.receive.map((r) => (
+                <li><strong>{r.title}</strong><span>{r.body}</span></li>
+              ))}
+            </ul>
+          </div>
+          <div class="otk-claims">
+            <div>
+              <h3 class="otk-evidence__h">You can say</h3>
+              <ul>{EVIDENCE.claims.can.map((c) => <li>{c}</li>)}</ul>
+            </div>
+            <div>
+              <h3 class="otk-evidence__h">Please do not say</h3>
+              <ul>{EVIDENCE.claims.cannot.map((c) => <li>{c}</li>)}</ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================== PREVENTION ======================== -->
+    <section class="section section--alt" aria-labelledby="otk-prevent">
+      <div class="container">
+        <div class="otk-head">
+          <p class="eyebrow">{PREVENTION.eyebrow}</p>
+          <h2 id="otk-prevent" class="otk-title">{PREVENTION.title}</h2>
+          <p class="lede">{PREVENTION.intro}</p>
+        </div>
+        <ul class="otk-cards otk-cards--three">
+          {PREVENTION.items.map((p) => (
+            <li class="otk-card"><h3>{p.title}</h3><p>{p.body}</p></li>
+          ))}
+        </ul>
+        <p class="otk-center-link">
+          <a class="otk-textlink" href={PREVENTION.article.href}>{PREVENTION.article.label}</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================== FAQ ============================ -->
+    <section class="section" id="faq" aria-labelledby="otk-faq">
+      <div class="container otk-faq">
+        <div>
+          <p class="eyebrow">Questions from travel partners</p>
+          <h2 id="otk-faq" class="otk-title otk-title--left">The details, made clear</h2>
+          <p class="lede">We want partners to describe the programme accurately and never overstate it.</p>
+        </div>
+        <div class="otk-faq__list">
+          {FAQS.map((f) => (
+            <details>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== APPLY ========================== -->
+    <section class="otk-apply" id="apply" aria-labelledby="otk-apply-h">
+      <div class="container otk-apply__grid">
+        <div>
+          <p class="eyebrow">{APPLY.eyebrow}</p>
+          <h2 id="otk-apply-h" class="otk-title otk-title--left">{APPLY.title}</h2>
+          <p class="lede">{APPLY.intro}</p>
+          <p class="otk-callout">{APPLY.callout}</p>
+          <ul class="otk-contacts">
+            <li>
+              <span>Partnership email</span>
+              <a href={mailHref} data-ev="one_kg_email_click">{PARTNER_CONTACT.email}</a>
+            </li>
+            <li>
+              <span>WhatsApp</span>
+              <a href={waHref} target="_blank" rel="noopener noreferrer" data-ev="one_kg_whatsapp_click">{PARTNER_CONTACT.whatsappDisplay}</a>
+            </li>
+          </ul>
+          <p class="otk-center-link otk-center-link--left">
+            <a class="button button--lg otk-btn otk-btn--wa" href={waHref} target="_blank" rel="noopener noreferrer" data-ev="one_kg_whatsapp_click">Ask a question on WhatsApp</a>
+          </p>
+        </div>
+
+        <div class="otk-formcard">
+          <h3>{APPLY.formTitle}</h3>
+          <p class="otk-formcard__sub">Fields marked with an asterisk are required.</p>
+
+          <form id="otk-form" novalidate data-wa={waHref}>
+            <div class="otk-grid">
+              <div class="otk-field otk-field--full">
+                <label for="company">Company or organisation name *</label>
+                <input id="company" name="company" required maxlength="120" autocomplete="organization" />
+                <p class="otk-err" data-err-for="company" hidden></p>
+              </div>
+              <div class="otk-field">
+                <label for="organisation_type">Type of organisation *</label>
+                <select id="organisation_type" name="organisation_type" required>
+                  <option value="">Select one</option>
+                  {ORGANISATION_TYPES.map((t) => <option value={t}>{t}</option>)}
+                </select>
+                <p class="otk-err" data-err-for="organisation_type" hidden></p>
+              </div>
+              <div class="otk-field">
+                <label for="country">Country *</label>
+                <input id="country" name="country" required maxlength="80" autocomplete="country-name" />
+                <p class="otk-err" data-err-for="country" hidden></p>
+              </div>
+              <div class="otk-field">
+                <label for="contact_name">Contact name *</label>
+                <input id="contact_name" name="contact_name" required maxlength="100" autocomplete="name" />
+                <p class="otk-err" data-err-for="contact_name" hidden></p>
+              </div>
+              <div class="otk-field">
+                <label for="email">Business email *</label>
+                <input id="email" name="email" type="email" required maxlength="160" autocomplete="email" inputmode="email" />
+                <p class="otk-err" data-err-for="email" hidden></p>
+              </div>
+              <div class="otk-field">
+                <label for="whatsapp">WhatsApp number *</label>
+                <input id="whatsapp" name="whatsapp" type="tel" required maxlength="40" autocomplete="tel" inputmode="tel" aria-describedby="whatsapp-hint" />
+                <p class="otk-hint" id="whatsapp-hint">Include the country code.</p>
+                <p class="otk-err" data-err-for="whatsapp" hidden></p>
+              </div>
+              <div class="otk-field">
+                <label for="website">Company website</label>
+                <input id="website" name="website" maxlength="200" autocomplete="url" inputmode="url" />
+                <p class="otk-err" data-err-for="website" hidden></p>
+              </div>
+              <div class="otk-field otk-field--full">
+                <label for="estimated_traveller_volume">Estimated travellers to Sri Lanka each year *</label>
+                <select id="estimated_traveller_volume" name="estimated_traveller_volume" required>
+                  <option value="">Select an approximate band</option>
+                  {TRAVELLER_VOLUMES.map((v) => <option value={v}>{v}</option>)}
+                </select>
+                <p class="otk-err" data-err-for="estimated_traveller_volume" hidden></p>
+              </div>
+              <div class="otk-field otk-field--full">
+                <label for="message">Anything you would like us to know</label>
+                <textarea id="message" name="message" rows="4" maxlength="1500"></textarea>
+              </div>
+
+              <!-- Honeypot. Off-screen rather than display:none, which many
+                   bots skip. Real visitors and assistive tech never reach it. -->
+              <div class="otk-trap" aria-hidden="true">
+                <label for="hp_check">Leave this field empty</label>
+                <input id="hp_check" name="hp_check" type="text" tabindex="-1" autocomplete="off" autocorrect="off" spellcheck="false" />
+              </div>
+            </div>
+
+            <div class="otk-consent">
+              <input id="consent_contact" name="consent_contact" type="checkbox" required />
+              <label for="consent_contact">
+                {APPLY.consent} <a href={LINKS.privacy}>Privacy policy</a>. *
+              </label>
+              <p class="otk-err" data-err-for="consent_contact" hidden></p>
+            </div>
+
+            <div class="otk-alert" role="alert" tabindex="-1" data-alert hidden></div>
+
+            <button class="button button--lg otk-btn otk-submit" type="submit" data-submit>Send partnership enquiry</button>
+          </form>
+
+          <div class="otk-sent" data-sent tabindex="-1" hidden>
+            <h3>Thank you. Your enquiry has been received.</h3>
+            <p>Our team reviews every application personally and will reply to the email address you gave. Your reference is <strong data-ref></strong>.</p>
+            <p>Receiving this enquiry does not mean a partner place has been confirmed.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Palette is local to this page. global.css is shared by every route, so
+     nothing here changes a site-wide token. */
+  .otk {
+    --deep: #083c38;
+    --deeper: #062c2b;
+    --forest: #0f6b5d;
+    --mint: #b5edd4;
+    --orange: #ff9b63;
+    --orange-strong: #f4743e;
+    --ink: #153731;
+    --muted: #4f625a;
+    color: var(--ink);
+  }
+
+  .otk :global(h1),
+  .otk :global(h2),
+  .otk :global(h3) {
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+  }
+
+  /* The shared .eyebrow green is 3.3:1 on white, short of AA for small text.
+     Darkened here only, as CLAUDE.md asks for page-level contrast fixes. */
+  .otk :global(.eyebrow) {
+    color: #3f6b12;
+  }
+
+  .otk-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-size: 0.78rem;
+    font-weight: 750;
+    color: var(--mint);
+    margin: 0 0 1rem;
+  }
+
+  /* ----- hero ----- */
+  .otk-hero {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background:
+      radial-gradient(ellipse at 78% 35%, #1f6f5e 0, transparent 46%),
+      linear-gradient(150deg, #104238, var(--deeper) 68%);
+  }
+  .otk-hero__grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
+    padding-block: clamp(2.75rem, 7vw, 5.5rem);
+  }
+  .otk-h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.4rem, 1.4rem + 4.6vw, 4.6rem);
+    font-weight: 850;
+    letter-spacing: -0.035em;
+    color: #fff;
+  }
+  .otk-h1__line {
+    display: block;
+  }
+  .otk-h1__line--accent {
+    color: var(--orange);
+  }
+  .otk-hero__sub {
+    max-width: 38rem;
+    font-size: clamp(1.02rem, 0.95rem + 0.4vw, 1.2rem);
+    color: rgb(255 255 255 / 86%);
+    margin: 0 0 1.75rem;
+  }
+  .otk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  /* Orange on deep green: the one warm note on the page, kept for the
+     primary action. Dark text keeps the label well past AA. */
+  .otk-btn {
+    background: var(--orange);
+    color: var(--deeper);
+    font-weight: 750;
+  }
+  .otk-btn:hover {
+    background: #ffb184;
+    color: var(--deeper);
+  }
+  .otk-btn--wa {
+    background: var(--deep);
+    color: #fff;
+  }
+  .otk-btn--wa:hover {
+    background: var(--forest);
+    color: #fff;
+  }
+  .otk-hero .button,
+  .otk-apply .button--lg {
+    min-height: 2.75rem;
+  }
+  .otk-facts {
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--mint);
+  }
+  .otk-facts li::before {
+    content: '';
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    margin-right: 0.55rem;
+    border-radius: 50%;
+    background: var(--orange);
+  }
+
+  .otk-art {
+    position: relative;
+    aspect-ratio: 1;
+    max-width: 26rem;
+    margin-inline: auto;
+    display: grid;
+    place-items: center;
+  }
+  .otk-art__ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgb(181 237 212 / 28%);
+    inset: 0;
+  }
+  .otk-art__ring--2 {
+    inset: 12%;
+  }
+  .otk-art__ring--3 {
+    inset: 26%;
+    background: radial-gradient(circle, rgb(31 111 94 / 55%), transparent 70%);
+  }
+  .otk-medallion {
+    position: relative;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    width: 52%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--orange);
+    color: var(--deeper);
+    box-shadow:
+      0 0 0 0.7rem rgb(255 155 99 / 18%),
+      0 1.5rem 3rem rgb(0 0 0 / 28%);
+    padding: 1rem;
+  }
+  .otk-medallion strong {
+    font-size: clamp(2rem, 1.4rem + 2.2vw, 3.2rem);
+    line-height: 1;
+    font-weight: 850;
+  }
+  .otk-medallion span {
+    font-size: 0.78rem;
+    font-weight: 650;
+    line-height: 1.25;
+    margin-top: 0.4rem;
+  }
+
+  /* ----- trust ----- */
+  .otk-trust {
+    background: #e8f2e9;
+    border-bottom: 1px solid #d5e4d6;
+  }
+  .otk-trust__grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2.5rem;
+    padding-block: 1.5rem;
+  }
+  .otk-trust__lead {
+    margin: 0;
+    max-width: 19rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #3f6554;
+  }
+  .otk-trust__stats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+  }
+  .otk-trust__stats li {
+    display: grid;
+  }
+  .otk-trust__stats strong {
+    font-size: 1.55rem;
+    line-height: 1.1;
+    color: var(--deep);
+  }
+  .otk-trust__stats span {
+    font-size: 0.86rem;
+    color: var(--muted);
+  }
+
+  /* ----- shared headings ----- */
+  .otk-head {
+    max-width: 46rem;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+  }
+  .otk-head .lede {
+    margin-inline: auto;
+  }
+  .otk-title {
+    margin: 0 0 0.9rem;
+    font-size: clamp(1.7rem, 1.2rem + 2vw, 2.65rem);
+    font-weight: 820;
+    color: var(--deep);
+  }
+  .otk-title--left {
+    text-align: left;
+  }
+  .otk-lede {
+    color: rgb(255 255 255 / 82%);
+    font-size: 1.08rem;
+    margin: 0;
+  }
+
+  /* ----- benefit and prevention cards ----- */
+  .otk-cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .otk-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .otk-card h3 {
+    margin: 0.9rem 0 0.4rem;
+    font-size: 1.12rem;
+    color: var(--deep);
+  }
+  .otk-card p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .otk-card__mark {
+    display: block;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.8rem;
+    background: linear-gradient(135deg, var(--mint), #8fd9b8);
+    position: relative;
+  }
+  .otk-card__mark::after {
+    content: '';
+    position: absolute;
+    inset: 0.72rem;
+    border-radius: 50%;
+    border: 3px solid var(--forest);
+  }
+  .otk-card__mark--2::after {
+    border-radius: 0.3rem;
+    transform: rotate(45deg);
+  }
+  .otk-card__mark--3 {
+    background: linear-gradient(135deg, #ffe0cc, var(--orange));
+  }
+  .otk-card__mark--3::after {
+    border-radius: 0.2rem;
+    border-color: var(--deeper);
+  }
+  .otk-card__mark--4::after {
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+  }
+
+  /* ----- steps ----- */
+  .otk-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr));
+  }
+  .otk-step__n {
+    display: block;
+    font-size: 3rem;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: -0.05em;
+    color: #9fbfae;
+  }
+  .otk-step h3 {
+    margin: 0.5rem 0 0.35rem;
+    font-size: 1.1rem;
+    color: var(--deep);
+  }
+  .otk-step p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  /* ----- illustration ----- */
+  .otk-demo {
+    margin-top: 3rem;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    box-shadow: var(--shadow);
+  }
+  .otk-demo__copy h3 {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+    color: var(--deep);
+  }
+  .otk-demo__copy p:not(.eyebrow) {
+    color: var(--muted);
+    margin: 0;
+  }
+  .otk-demo__card {
+    background: linear-gradient(150deg, #f1f8f2, #fbf6ea);
+    border-radius: 1.1rem;
+    padding: 1.4rem;
+  }
+  .otk-demo__label {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-weight: 700;
+    font-size: 0.92rem;
+  }
+  .otk-demo__label output {
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--forest);
+  }
+  #otk-range {
+    width: 100%;
+    margin: 0.9rem 0 0.4rem;
+    accent-color: var(--forest);
+    min-height: 2.75rem;
+  }
+  .otk-demo__bar {
+    height: 0.6rem;
+    background: #d6e6da;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .otk-demo__bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--forest), var(--orange));
+    border-radius: 999px;
+    transition: width 0.15s ease;
+  }
+  .otk-demo__status {
+    margin: 0.75rem 0;
+    font-weight: 650;
+    color: var(--deep);
+    min-height: 3em;
+  }
+  .otk-demo__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  .otk-demo__stats div {
+    background: #fff;
+    border-radius: 0.8rem;
+    padding: 0.8rem;
+  }
+  .otk-demo__stats dt {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .otk-demo__stats dd {
+    margin: 0.15rem 0 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--deep);
+  }
+  .otk-demo__none {
+    font-size: 0.95rem !important;
+    font-weight: 650 !important;
+    color: var(--muted) !important;
+  }
+  .otk-examples {
+    margin: 2.5rem auto 0;
+    max-width: 46rem;
+    text-align: center;
+  }
+  .otk-examples h3 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.7rem);
+    color: var(--deep);
+  }
+  .otk-examples > p {
+    margin: 0 0 1.25rem;
+    color: var(--muted);
+  }
+  .otk-examples table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    text-align: left;
+  }
+  .otk-examples th,
+  .otk-examples td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+  }
+  .otk-examples thead th {
+    background: var(--deep);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+  .otk-examples tbody th {
+    font-size: 1.15rem;
+    color: var(--deep);
+  }
+  .otk-examples td:last-child {
+    font-weight: 750;
+    color: var(--forest);
+  }
+  .otk-examples tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+  .otk-examples__note {
+    margin: 1rem 0 0 !important;
+    font-size: 0.9rem;
+  }
+
+  .otk-demo__note {
+    margin: 0.9rem 0 0;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  /* ----- impact center ----- */
+  .otk-split {
+    display: grid;
+    gap: clamp(1.75rem, 5vw, 4rem);
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+  }
+  /* Gradient stands in for a photograph that has not been supplied. */
+  .otk-photo {
+    min-height: 26rem;
+    border-radius: 1.6rem;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 30% 25%, rgb(255 155 99 / 55%), transparent 38%),
+      radial-gradient(circle at 75% 80%, rgb(181 237 212 / 40%), transparent 45%),
+      linear-gradient(160deg, #1a6b59, var(--deeper));
+  }
+  .otk-photo span {
+    position: absolute;
+    inset: 10% 14%;
+    border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+    border: 1px solid rgb(255 255 255 / 25%);
+  }
+  .otk-ticks {
+    grid-template-columns: 1fr;
+  }
+  .otk-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin: 1.75rem 0 0;
+  }
+  .otk-note {
+    margin-top: 1.25rem;
+  }
+  .otk-textlink {
+    color: var(--forest);
+    font-weight: 650;
+    text-underline-offset: 0.2em;
+  }
+
+  /* ----- evidence ----- */
+  .otk-dark {
+    background:
+      radial-gradient(ellipse at 100% 0, #20695a 0, transparent 55%),
+      var(--deep);
+    color: #fff;
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+  }
+  .otk-dark .otk-title {
+    color: #fff;
+  }
+  .otk-evidence {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+  .otk-evidence__h {
+    margin: 0 0 1rem;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mint);
+  }
+  .otk-receive {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .otk-receive li {
+    display: grid;
+    gap: 0.15rem;
+    padding: 1rem 1.1rem;
+    border-radius: 1rem;
+    background: rgb(255 255 255 / 7%);
+    border: 1px solid rgb(255 255 255 / 12%);
+  }
+  .otk-receive strong {
+    font-size: 1.02rem;
+  }
+  .otk-receive span {
+    font-size: 0.93rem;
+    color: rgb(255 255 255 / 80%);
+  }
+  .otk-claims {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+  .otk-claims ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.6rem;
+    color: rgb(255 255 255 / 88%);
+    font-size: 0.95rem;
+  }
+
+  /* ----- prevention ----- */
+  .otk-cards--three {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+  .otk-cards--three .otk-card h3 {
+    margin-top: 0;
+  }
+  .otk-center-link {
+    text-align: center;
+    margin: 2rem 0 0;
+  }
+  .otk-center-link--left {
+    text-align: left;
+    margin-top: 1.25rem;
+  }
+
+  /* ----- faq ----- */
+  .otk-faq {
+    display: grid;
+    gap: clamp(1.75rem, 5vw, 4.5rem);
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+  .otk-faq__list details {
+    border-bottom: 1px solid var(--border);
+    padding: 0.2rem 0;
+  }
+  .otk-faq__list summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    min-height: 2.75rem;
+    padding: 0.7rem 0;
+    font-weight: 750;
+    color: var(--deep);
+  }
+  .otk-faq__list summary::-webkit-details-marker {
+    display: none;
+  }
+  .otk-faq__list summary::after {
+    content: '+';
+    flex: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--forest);
+  }
+  .otk-faq__list details[open] summary::after {
+    content: '\2212';
+  }
+  .otk-faq__list details p {
+    margin: 0 0 1rem;
+    color: var(--muted);
+  }
+
+  /* ----- apply ----- */
+  .otk-apply {
+    background: linear-gradient(145deg, #e6f3e9, #faf4e6);
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    scroll-margin-top: 4.5rem;
+  }
+  #faq {
+    scroll-margin-top: 4.5rem;
+  }
+  .otk-apply__grid {
+    display: grid;
+    gap: clamp(1.75rem, 5vw, 4rem);
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: start;
+  }
+  .otk-callout {
+    margin: 1.25rem 0;
+    padding: 1rem 1.15rem;
+    border-radius: 1rem;
+    background: #fff;
+    border-left: 5px solid var(--orange-strong);
+    color: var(--ink);
+    font-size: 0.95rem;
+  }
+  .otk-contacts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .otk-contacts span {
+    display: block;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+  }
+  .otk-contacts a {
+    font-weight: 700;
+    color: var(--deep);
+    overflow-wrap: anywhere;
+  }
+  .otk-formcard {
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: clamp(1.25rem, 3.5vw, 2.25rem);
+    box-shadow: 0 1.2rem 3.4rem rgb(12 57 49 / 14%);
+  }
+  .otk-formcard h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
+    color: var(--deep);
+  }
+  .otk-formcard__sub {
+    margin: 0 0 1.25rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .otk-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+  }
+  .otk-field--full {
+    grid-column: 1 / -1;
+  }
+  .otk-field label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+  .otk-field input,
+  .otk-field select,
+  .otk-field textarea {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.6rem 0.8rem;
+    font: inherit;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid #6b8276;
+    border-radius: 0.7rem;
+  }
+  .otk-field textarea {
+    resize: vertical;
+  }
+  .otk-field [aria-invalid='true'],
+  .otk-consent [aria-invalid='true'] {
+    border-color: #b42318;
+    outline: 2px solid #b42318;
+    outline-offset: 0;
+  }
+  .otk-hint {
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .otk-err {
+    margin: 0.3rem 0 0;
+    font-size: 0.84rem;
+    font-weight: 650;
+    color: #b42318;
+  }
+  .otk-trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .otk-consent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.2rem 0.75rem;
+    margin: 1.1rem 0;
+    font-size: 0.9rem;
+  }
+  .otk-consent input {
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.15rem;
+    accent-color: var(--forest);
+  }
+  .otk-consent .otk-err {
+    grid-column: 2;
+  }
+  .otk-alert {
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.8rem;
+    background: #fdecea;
+    border: 1px solid #b42318;
+    color: #6b1410;
+    font-size: 0.93rem;
+  }
+  .otk-alert a {
+    color: inherit;
+    font-weight: 700;
+  }
+  .otk-submit {
+    width: 100%;
+    font: inherit;
+    font-weight: 750;
+    border: 0;
+    cursor: pointer;
+  }
+  .otk-submit:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  .otk-sent {
+    padding: 1.25rem;
+    border-radius: 1rem;
+    background: #eef8f0;
+    border: 1px solid #bcd9c3;
+  }
+  .otk-sent h3 {
+    font-size: 1.3rem;
+  }
+
+  @media (max-width: 62rem) {
+    .otk-hero__grid,
+    .otk-demo,
+    .otk-split,
+    .otk-evidence,
+    .otk-faq,
+    .otk-apply__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .otk-art {
+      max-width: 15rem;
+    }
+    .otk-photo {
+      min-height: 15rem;
+    }
+  }
+  @media (max-width: 36rem) {
+    .otk-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .otk-actions .button {
+      flex: 1 1 100%;
+      text-align: center;
+    }
+    .otk-demo__stats {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .otk-demo__bar span {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Analytics, the illustration and the form.
+   *
+   * The tracker mirrors the helper in self-drive-sri-lanka.astro and the
+   * volunteer landing page: gtag when present, dataLayer otherwise, and never
+   * throws, because a blocked analytics script must not break the page. No
+   * name, email, number or free text is ever placed in an event.
+   */
+  (() => {
+    const root = document.querySelector('.otk');
+    if (!root) return;
+
+    function track(name: string, params?: Record<string, unknown>) {
+      try {
+        const w = window as unknown as {
+          gtag?: (...a: unknown[]) => void;
+          dataLayer?: Record<string, unknown>[];
+        };
+        if (typeof w.gtag === 'function') w.gtag('event', name, params || {});
+        else if (w.dataLayer) w.dataLayer.push(Object.assign({ event: name }, params || {}));
+      } catch {
+        /* analytics must never break the page */
+      }
+    }
+
+    track('one_kg_page_view', { page_location: location.pathname });
+
+    root.addEventListener('click', (e) => {
+      const el = (e.target as HTMLElement)?.closest?.('[data-ev]') as HTMLElement | null;
+      const name = el?.dataset.ev;
+      if (name) track(name, { link_text: (el?.textContent || '').trim().slice(0, 80) });
+    });
+
+    /* ---------------- illustration ---------------- */
+    const demo = root.querySelector<HTMLElement>('[data-demo]');
+    if (demo) {
+      const range = demo.querySelector<HTMLInputElement>('#otk-range')!;
+      const out = demo.querySelector<HTMLOutputElement>('#otk-travellers')!;
+      const bar = demo.querySelector<HTMLElement>('[data-bar]')!;
+      const status = demo.querySelector<HTMLElement>('[data-status]')!;
+      const commitment = demo.querySelector<HTMLElement>('[data-commitment]')!;
+      const progress = demo.querySelector<HTMLElement>('[data-progress]')!;
+      const cleanups = demo.querySelector<HTMLElement>('[data-cleanups]')!;
+      const milestone = Number(demo.dataset.milestone) || 300;
+
+      // Each block of `milestone` travellers is one cleanup, so the kilograms
+      // pending toward the next one are only the remainder. A traveller is in
+      // exactly one block, which is what stops anything being counted twice.
+      const render = () => {
+        const n = Number(range.value);
+        const done = Math.floor(n / milestone);
+        const rem = n % milestone;
+        out.textContent = n.toLocaleString('en');
+        bar.style.width = `${((rem === 0 && n > 0 ? milestone : rem) / milestone) * 100}%`;
+        commitment.textContent = `${n.toLocaleString('en')} kg`;
+        cleanups.textContent = String(done);
+        progress.textContent = `${rem} of ${milestone}`;
+        const noun = done === 1 ? 'cleanup' : 'cleanups';
+        status.textContent =
+          n === 0
+            ? `No qualifying travellers yet. The first dedicated cleanup follows the first ${milestone}.`
+            : done === 0
+              ? `${milestone - n} more qualifying travellers until the first dedicated cleanup of at least ${milestone} kg. These ${n} kg are a pending commitment, not removed plastic.`
+              : `${done} dedicated ${noun} triggered: at least ${(done * milestone).toLocaleString('en')} kg to be removed, and reported once each cleanup is completed.${rem ? ` The other ${rem} kg stays pending until the next ${milestone}.` : ''}`;
+      };
+      range.addEventListener('input', render);
+      render();
+    }
+
+    /* ---------------- form ---------------- */
+    const form = root.querySelector<HTMLFormElement>('#otk-form');
+    if (!form) return;
+
+    // One reference per page load. Reusing it across a double click or a retry
+    // is the point: the endpoint and the Make scenario both key duplicate
+    // protection on it. The server re-checks its shape and issues its own if
+    // it is missing or odd.
+    const SUBMISSION_ID = (() => {
+      const stamp = Date.now().toString(36).toUpperCase();
+      const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+      return `ZPP-${stamp}-${rand}`;
+    })();
+    const opened = Date.now();
+
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const alertBox = form.querySelector<HTMLElement>('[data-alert]')!;
+    const sent = root.querySelector<HTMLElement>('[data-sent]')!;
+    const mail = 'impactcenter@zeroplastic.lk';
+
+    const MESSAGES: Record<string, string> = {
+      company: 'Enter your company or organisation name.',
+      organisation_type: 'Choose the type of organisation.',
+      country: 'Enter your country.',
+      contact_name: 'Enter a contact name.',
+      email: 'Enter a valid email address.',
+      whatsapp: 'Enter a WhatsApp number with its country code.',
+      website: 'Enter a valid website address, or leave this blank.',
+      estimated_traveller_volume: 'Choose an approximate band.',
+      consent_contact: 'Please tick this box so we can reply to you.',
+    };
+
+    const control = (name: string) =>
+      form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
+
+    function setError(name: string, on: boolean) {
+      const el = control(name);
+      const msg = form!.querySelector<HTMLElement>(`[data-err-for="${name}"]`);
+      if (!el || !msg) return;
+      if (on) {
+        el.setAttribute('aria-invalid', 'true');
+        el.setAttribute('aria-describedby', [el.getAttribute('aria-describedby'), msg.id || (msg.id = `err-${name}`)]
+          .filter((v, i, a) => v && a.indexOf(v) === i).join(' '));
+        msg.textContent = MESSAGES[name] || 'Please check this field.';
+        msg.hidden = false;
+      } else {
+        el.removeAttribute('aria-invalid');
+        msg.hidden = true;
+        msg.textContent = '';
+      }
+    }
+
+    function invalidFields(): string[] {
+      const bad: string[] = [];
+      const val = (n: string) => (control(n)?.value || '').trim();
+      for (const n of ['company', 'country', 'contact_name', 'organisation_type', 'estimated_traveller_volume']) {
+        if (!val(n)) bad.push(n);
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('email'))) bad.push('email');
+      const digits = val('whatsapp').replace(/\D/g, '');
+      if (digits.length < 8 || digits.length > 15) bad.push('whatsapp');
+      if (!(control('consent_contact') as HTMLInputElement).checked) bad.push('consent_contact');
+      return bad;
+    }
+
+    function showAlert(html: string) {
+      alertBox.innerHTML = html;
+      alertBox.hidden = false;
+      alertBox.focus();
+    }
+
+    const wa = form.dataset.wa || '';
+    const fallback = `You can also email <a href="mailto:${mail}">${mail}</a> or <a href="${wa}" target="_blank" rel="noopener noreferrer">message us on WhatsApp</a>.`;
+
+    let inFlight = false;
+
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      alertBox.hidden = true;
+      if (inFlight) return;
+
+      const all = Object.keys(MESSAGES);
+      const bad = invalidFields();
+      all.forEach((n) => setError(n, bad.includes(n)));
+      if (bad.length) {
+        showAlert(`Please check ${bad.length === 1 ? 'the highlighted field' : 'the highlighted fields'} and try again.`);
+        control(bad[0])?.focus();
+        return;
+      }
+
+      const body: Record<string, string> = { submission_id: SUBMISSION_ID };
+      for (const el of Array.from(form.elements) as HTMLInputElement[]) {
+        if (!el.name) continue;
+        body[el.name] = el.type === 'checkbox' ? (el.checked ? 'true' : 'false') : el.value;
+      }
+      body.seconds_on_page = String(Math.round((Date.now() - opened) / 1000));
+      body.page_url = location.origin + location.pathname;
+      body.referrer = document.referrer;
+      const q = new URLSearchParams(location.search);
+      for (const k of ['utm_source', 'utm_medium', 'utm_campaign']) body[k] = q.get(k) || '';
+
+      inFlight = true;
+      submit.disabled = true;
+      submit.textContent = 'Sending';
+
+      try {
+        const res = await fetch('/api/partner-enquiry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const json = await res.json().catch(() => null);
+
+        if (res.ok && json && json.ok === true && json.submission_id) {
+          // Only fixed-list choices are reported, never anything typed.
+          track('one_kg_enquiry_submitted', {
+            organisation_type: body.organisation_type,
+            traveller_volume: body.estimated_traveller_volume,
+          });
+          form.hidden = true;
+          sent.querySelector('[data-ref]')!.textContent = json.submission_id;
+          sent.hidden = false;
+          sent.focus();
+          return;
+        }
+
+        if (res.status === 400 && json && Array.isArray(json.fields)) {
+          all.forEach((n) => setError(n, json.fields.includes(n)));
+          showAlert('Some details need another look. Please check the highlighted fields.');
+          const first = json.fields.find((n: string) => control(n));
+          if (first) control(first)?.focus();
+        } else if (res.status === 503) {
+          // The endpoint exists but is not wired to Make. Say so plainly
+          // rather than claiming the enquiry was received.
+          showAlert(`Online applications are not available at the moment, and nothing was sent. ${fallback}`);
+        } else {
+          showAlert(`We could not send your enquiry. Nothing has been recorded, so please try again, or ${fallback.charAt(0).toLowerCase()}${fallback.slice(1)}`);
+        }
+      } catch {
+        showAlert(`We could not reach the server. Nothing has been recorded. ${fallback}`);
+      }
+      inFlight = false;
+      submit.disabled = false;
+      submit.textContent = 'Send partnership enquiry';
+    });
+  })();
+</script>
