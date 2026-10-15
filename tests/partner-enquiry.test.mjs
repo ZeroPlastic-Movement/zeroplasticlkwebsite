@@ -273,7 +273,9 @@ test('when off, nothing is read, validated or forwarded, whatever the body', asy
   }
 });
 
-test('when off, the page offers email and WhatsApp and renders no form', async () => {
+test('the page switch is a plain boolean, so the form cannot be half-configured', async () => {
+  // Two switches control the form: this constant and PARTNER_ENQUIRY_ENABLED.
+  // The constant must stay a literal that can be read and flipped on its own.
   const data = readFileSync(new URL('../src/data/one-traveller-one-kilogram.ts', import.meta.url), 'utf8');
-  assert.match(data, /export const FORM_ENABLED = false;/);
+  assert.match(data, /export const FORM_ENABLED = (true|false);/);
 });

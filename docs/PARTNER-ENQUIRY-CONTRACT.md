@@ -3,12 +3,12 @@
 Applies to `POST /api/partner-enquiry` (`functions/api/partner-enquiry.js`),
 the form on `/one-traveller-one-kilogram/`.
 
-**Status at release: the online form is switched off.** The scenario exists but has not passed end-to-end testing, so visitors apply by email or WhatsApp. (Earlier drafts of this note said the scenario did not exist yet.)
-
-**Original status note: the Make scenario does not exist yet.** The function is written and
-tested against a mock. Nothing here has reached a real Make scenario, a CRM
-record or a mailbox. Do not describe the form as live until the acceptance
-test at the bottom has been run and passed.
+**Status: the online form is live.** Make scenario `9981651` has been activated
+and the page shows the form. Two switches control it, and both must be on (see
+"Activating the form" at the end): `FORM_ENABLED` in
+`src/data/one-traveller-one-kilogram.ts`, and `PARTNER_ENQUIRY_ENABLED` set to
+`"true"` on the Cloudflare Pages project. The form was first released switched
+off, with email and WhatsApp offered instead, until the scenario was ready.
 
 ## Isolation rules
 
@@ -168,17 +168,20 @@ The secret is read only by `functions/api/partner-enquiry.js`. It is never in
 source, logs or the browser. `VOLUNTEER_FORM_WEBHOOK_URL` is a separate secret
 and is not touched.
 
-## Activating the form (not done at release)
+## Activating, or switching off, the form
 
-The form is built but off, in two places, so having the Production webhook
-secret is not enough to start accepting applications:
+The form is controlled in two places, so having the Production webhook secret
+is not enough to accept applications:
 
-1. `FORM_ENABLED` in `src/data/one-traveller-one-kilogram.ts` is `false`, so the
+1. `FORM_ENABLED` in `src/data/one-traveller-one-kilogram.ts`. When `false` the
    page shows email and WhatsApp buttons instead of the form.
 2. `functions/api/partner-enquiry.js` answers 503 `not_enabled` to everything
    unless `PARTNER_ENQUIRY_ENABLED` is exactly `"true"` on the Pages project.
 
-Turn both on only after the acceptance test above has passed: a recorded
-Monday lead, the email and Slack notifications, and no second lead or
-notification on a replayed `submission_id`. Set `FORM_ENABLED` to `true`,
-deploy, then set `PARTNER_ENQUIRY_ENABLED` to `"true"`.
+Turn both on only once the scenario records a Monday lead, sends the email and
+Slack notifications, and creates nothing new for a replayed `submission_id`.
+Cloudflare applies a changed variable on the next deployment, so set
+`PARTNER_ENQUIRY_ENABLED` before deploying, or redeploy afterwards. To switch
+the form off, set `FORM_ENABLED` to `false` and deploy; setting
+`PARTNER_ENQUIRY_ENABLED` to anything but `"true"` also stops the endpoint
+forwarding.
