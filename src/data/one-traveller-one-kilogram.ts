@@ -36,11 +36,11 @@ export const PAGE = {
   title: 'One Traveller, One Kilogram: ZeroPlastic Tourism Partnership',
   description:
     'A free partnership for tour operators, DMCs and hotels: each qualifying traveller to the ZeroPlastic Impact Center creates a 1 kg plastic removal commitment. Starts 1 January 2027.',
-  ogImage: '/images/one-kg-social.png',
+  ogImage: '/images/one-kg-social.jpg',
   ogImageWidth: 1200,
   ogImageHeight: 630,
   ogImageAlt:
-    'One Traveller. One Kilogram. One Movement. A ZeroPlastic Movement graphic with a 1 kg marker.',
+    'One Traveller. One Kilogram. One Movement. ZeroPlastic volunteers and visitors at a cleanup, with a 1 kg marker.',
 } as const;
 
 /** CONFIRMED. Launch date and the size of the founding cohort. */
@@ -325,11 +325,33 @@ export const LINKS = {
 } as const;
 
 /**
- * OMITTED until supplied. Nothing on the page implies these exist.
- *   - Hero: a beach cleanup photograph (portrait).
- *   - Impact Center: visitors and artisans at the Impact Center.
- *   - Evidence: a real cleanup in progress, with collected bags.
- * When they arrive, add scripts/build-one-kg-images.mjs following
- * scripts/build-self-drive-images.mjs, and swap the gradient art for Figure.
+ * Photographs. All three are authentic ZeroPlastic images supplied by the
+ * owner; none is stock or generated. Originals are in assets/source/one-kg/
+ * and are encoded by scripts/build-one-kg-images.mjs.
+ *
+ * The programme has not started, so the hero and evidence photographs are
+ * from earlier ZeroPlastic cleanups and say so in their captions. They must
+ * never be presented as results of this programme.
+ *
+ * Alt text describes only what is visible. It does not name individuals.
  */
-export const PHOTO_SLOTS = ['hero-cleanup', 'impact-center-visitors', 'cleanup-collection'] as const;
+export const PHOTOS = {
+  hero: {
+    width: 1600,
+    height: 1066,
+    alt: 'A large group of ZeroPlastic volunteers and international visitors posing together beside piles of black bags of collected plastic, one person holding an "I support #ZeroPlasticMovement" sign.',
+    caption: 'From a past ZeroPlastic cleanup',
+  },
+  center: {
+    width: 1200,
+    height: 1600,
+    alt: 'Smiling visitors sitting at a long wooden workbench trying a hands-on coconut-shell craft at the Impact Center in Sigiriya, while a team member looks on.',
+    caption: 'Hands-on craft at the Impact Center',
+  },
+  weighing: {
+    width: 1200,
+    height: 1798,
+    alt: 'A hand holding a hanging scale with a clear bag of collected plastic waste attached, while a volunteer in a white cap and blue gloves gathers more plastic behind it.',
+    caption: 'Weighing collected plastic at a past ZeroPlastic cleanup',
+  },
+} as const;

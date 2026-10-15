@@ -29,6 +29,7 @@
  *   6. No photographs have been supplied. The artwork is CSS gradient, marked
  *      aria-hidden because it carries no information.
  */
+import Figure from '../components/Figure.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../consts';
 import { breadcrumbSchema, organizationSchema } from '../lib/schema';
@@ -44,6 +45,7 @@ import {
   LINKS,
   ORGANISATION_TYPES,
   PAGE,
+  PHOTOS,
   PARTNER_CONTACT,
   PREVENTION,
   PROGRAMME,
@@ -108,6 +110,10 @@ const crumbs = breadcrumbSchema([
   { name: 'One Traveller, One Kilogram', url: PAGE.path },
 ]);
 
+/** Hero srcset, matching the hero widths scripts/build-one-kg-images.mjs writes. */
+const heroSrcset = (ext: string) =>
+  [640, 960, 1280, 1600].map((w) => `/images/otk-hero-cleanup-${w}.${ext} ${w}w`).join(', ');
+
 const waHref = PARTNER_CONTACT.whatsappHref;
 const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(PARTNER_CONTACT.mailSubject)}`;
 ---
@@ -146,17 +152,32 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
             {HERO.facts.map((f) => <li>{f}</li>)}
           </ul>
         </div>
-        <div class="otk-hero__art" aria-hidden="true">
+        <figure class="otk-hero__art">
           <div class="otk-art">
-            <span class="otk-art__ring otk-art__ring--1"></span>
-            <span class="otk-art__ring otk-art__ring--2"></span>
-            <span class="otk-art__ring otk-art__ring--3"></span>
-            <div class="otk-medallion">
+            <span class="otk-art__ring otk-art__ring--1" aria-hidden="true"></span>
+            <span class="otk-art__ring otk-art__ring--2" aria-hidden="true"></span>
+            <div class="otk-art__frame">
+              <picture>
+                <source type="image/avif" srcset={heroSrcset('avif')} sizes="(max-width: 62rem) 90vw, 30rem" />
+                <source type="image/webp" srcset={heroSrcset('webp')} sizes="(max-width: 62rem) 90vw, 30rem" />
+                <img
+                  src="/images/otk-hero-cleanup-960.jpg"
+                  width={PHOTOS.hero.width}
+                  height={PHOTOS.hero.height}
+                  alt={PHOTOS.hero.alt}
+                  loading="eager"
+                  decoding="sync"
+                  fetchpriority="high"
+                />
+              </picture>
+            </div>
+            <div class="otk-medallion" aria-hidden="true">
               <strong>{HERO.medallion.value}</strong>
               <span>{HERO.medallion.label}</span>
             </div>
           </div>
-        </div>
+          <figcaption class="otk-caption otk-caption--light">{PHOTOS.hero.caption}</figcaption>
+        </figure>
       </div>
     </section>
 
@@ -264,7 +285,16 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
     <!-- =========================== IMPACT CENTER ===================== -->
     <section class="section" aria-labelledby="otk-center">
       <div class="container otk-split">
-        <div class="otk-photo" aria-hidden="true"><span></span></div>
+        <figure class="otk-photo">
+          <Figure
+            name="otk-impact-center"
+            alt={PHOTOS.center.alt}
+            width={PHOTOS.center.width}
+            height={PHOTOS.center.height}
+            sizes="(max-width: 62rem) 90vw, 30rem"
+          />
+          <figcaption class="otk-caption">{PHOTOS.center.caption}</figcaption>
+        </figure>
         <div>
           <p class="eyebrow">{CENTER.eyebrow}</p>
           <h2 id="otk-center" class="otk-title otk-title--left">{CENTER.title}</h2>
@@ -290,24 +320,36 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
           <p class="otk-lede">{EVIDENCE.intro}</p>
         </div>
         <div class="otk-evidence">
-          <div>
-            <h3 class="otk-evidence__h">What partners receive</h3>
-            <ul class="otk-receive">
-              {EVIDENCE.receive.map((r) => (
-                <li><strong>{r.title}</strong><span>{r.body}</span></li>
-              ))}
-            </ul>
-          </div>
-          <div class="otk-claims">
+          <div class="otk-evidence__main">
             <div>
-              <h3 class="otk-evidence__h">You can say</h3>
-              <ul>{EVIDENCE.claims.can.map((c) => <li>{c}</li>)}</ul>
+              <h3 class="otk-evidence__h">What partners receive</h3>
+              <ul class="otk-receive">
+                {EVIDENCE.receive.map((r) => (
+                  <li><strong>{r.title}</strong><span>{r.body}</span></li>
+                ))}
+              </ul>
             </div>
-            <div>
-              <h3 class="otk-evidence__h">Please do not say</h3>
-              <ul>{EVIDENCE.claims.cannot.map((c) => <li>{c}</li>)}</ul>
+            <div class="otk-claims">
+              <div>
+                <h3 class="otk-evidence__h">You can say</h3>
+                <ul>{EVIDENCE.claims.can.map((c) => <li>{c}</li>)}</ul>
+              </div>
+              <div>
+                <h3 class="otk-evidence__h">Please do not say</h3>
+                <ul>{EVIDENCE.claims.cannot.map((c) => <li>{c}</li>)}</ul>
+              </div>
             </div>
           </div>
+          <figure class="otk-proof">
+            <Figure
+              name="otk-cleanup-weighing"
+              alt={PHOTOS.weighing.alt}
+              width={PHOTOS.weighing.width}
+              height={PHOTOS.weighing.height}
+              sizes="(max-width: 62rem) 90vw, 26rem"
+            />
+            <figcaption class="otk-caption otk-caption--light">{PHOTOS.weighing.caption}</figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -584,52 +626,83 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
     background: var(--orange);
   }
 
+  .otk-hero__art {
+    margin: 0;
+  }
   .otk-art {
     position: relative;
-    aspect-ratio: 1;
-    max-width: 26rem;
+    max-width: 27rem;
     margin-inline: auto;
-    display: grid;
-    place-items: center;
   }
+  /* Rings are kept from the artwork this photograph replaced, so the hero
+     keeps its concentric motif behind the frame. */
   .otk-art__ring {
     position: absolute;
     border-radius: 50%;
-    border: 1px solid rgb(181 237 212 / 28%);
-    inset: 0;
+    border: 1px solid rgb(181 237 212 / 24%);
+    inset: -14%;
+    pointer-events: none;
   }
   .otk-art__ring--2 {
-    inset: 12%;
+    inset: -28%;
+    border-color: rgb(181 237 212 / 14%);
   }
-  .otk-art__ring--3 {
-    inset: 26%;
-    background: radial-gradient(circle, rgb(31 111 94 / 55%), transparent 70%);
+  .otk-art__frame {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 1.6rem;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 20%);
+    box-shadow: 0 1.5rem 3.5rem rgb(0 0 0 / 35%);
+    background: var(--deeper);
+  }
+  .otk-art__frame picture {
+    display: block;
+    height: 100%;
+  }
+  .otk-art__frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Sign and faces sit left of centre, the bags on the right. */
+    object-position: 60% 40%;
   }
   .otk-medallion {
-    position: relative;
+    position: absolute;
+    left: -6%;
+    bottom: -7%;
     display: grid;
     place-content: center;
     text-align: center;
-    width: 52%;
+    width: clamp(7.6rem, 34%, 10.5rem);
     aspect-ratio: 1;
     border-radius: 50%;
     background: var(--orange);
     color: var(--deeper);
     box-shadow:
-      0 0 0 0.7rem rgb(255 155 99 / 18%),
-      0 1.5rem 3rem rgb(0 0 0 / 28%);
-    padding: 1rem;
+      0 0 0 0.45rem rgb(255 155 99 / 22%),
+      0 1rem 2rem rgb(0 0 0 / 30%);
+    padding: 0.6rem;
   }
   .otk-medallion strong {
-    font-size: clamp(2rem, 1.4rem + 2.2vw, 3.2rem);
+    font-size: clamp(1.6rem, 1.2rem + 1vw, 2.2rem);
     line-height: 1;
     font-weight: 850;
   }
   .otk-medallion span {
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     font-weight: 650;
-    line-height: 1.25;
-    margin-top: 0.4rem;
+    line-height: 1.22;
+    margin-top: 0.3rem;
+  }
+  .otk-caption {
+    margin: 0.7rem 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .otk-caption--light {
+    color: rgb(255 255 255 / 76%);
+    text-align: right;
   }
 
   /* ----- trust ----- */
@@ -941,20 +1014,22 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
   }
   /* Gradient stands in for a photograph that has not been supplied. */
   .otk-photo {
-    min-height: 26rem;
-    border-radius: 1.6rem;
-    position: relative;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at 30% 25%, rgb(255 155 99 / 55%), transparent 38%),
-      radial-gradient(circle at 75% 80%, rgb(181 237 212 / 40%), transparent 45%),
-      linear-gradient(160deg, #1a6b59, var(--deeper));
+    margin: 0;
   }
-  .otk-photo span {
-    position: absolute;
-    inset: 10% 14%;
-    border-radius: 50% 50% 0 0 / 60% 60% 0 0;
-    border: 1px solid rgb(255 255 255 / 25%);
+  .otk-photo :global(picture) {
+    display: block;
+    aspect-ratio: 1.13;
+    border-radius: 1.6rem;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background: var(--deeper);
+  }
+  .otk-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Portrait original: keep the faces and the hands at the workbench. */
+    object-position: 50% 36%;
   }
   .otk-ticks {
     grid-template-columns: 1fr;
@@ -1019,6 +1094,29 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
   .otk-receive span {
     font-size: 0.93rem;
     color: rgb(255 255 255 / 80%);
+  }
+  .otk-evidence__main {
+    display: grid;
+    gap: 2rem;
+    align-content: start;
+  }
+  .otk-proof {
+    margin: 0;
+  }
+  .otk-proof :global(picture) {
+    display: block;
+    aspect-ratio: 4 / 5;
+    border-radius: 1.2rem;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 18%);
+    box-shadow: 0 1.2rem 2.6rem rgb(0 0 0 / 30%);
+  }
+  .otk-proof :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Portrait original: keep the hand, the scale and the top of the bag. */
+    object-position: 50% 0%;
   }
   .otk-claims {
     display: grid;
@@ -1262,10 +1360,23 @@ const mailHref = `mailto:${PARTNER_CONTACT.email}?subject=${encodeURIComponent(P
       grid-template-columns: minmax(0, 1fr);
     }
     .otk-art {
-      max-width: 15rem;
+      max-width: 30rem;
+    }
+    .otk-art__frame {
+      aspect-ratio: 4 / 3;
     }
     .otk-photo {
-      min-height: 15rem;
+      max-width: 30rem;
+      margin-inline: auto;
+    }
+    .otk-photo :global(picture) {
+      aspect-ratio: 4 / 3;
+    }
+    .otk-proof {
+      max-width: 30rem;
+    }
+    .otk-proof :global(picture) {
+      aspect-ratio: 1;
     }
   }
   @media (max-width: 36rem) {
