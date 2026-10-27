@@ -2195,7 +2195,7 @@ body.has-sticky{padding-bottom:4.75rem}
     submitBtn.textContent = 'Submit My Volunteer Application';
   }
 
-  function reportConversion(){
+  function reportConversion(reference){
     if (!ADS_CONVERSION) return;
     // A honeypot hit or a form filled faster than a person can read it is
     // answered with a plausible success, so a bot learns nothing from the
@@ -2207,19 +2207,20 @@ body.has-sticky{padding-bottom:4.75rem}
     if (Number(document.getElementById('secondsOnPage').value || '0') < 3) return;
     try{
       if (typeof gtag !== 'function') return;
-      gtag('event', 'conversion', { send_to: ADS_CONVERSION });
+      gtag('event', 'conversion', { send_to: ADS_CONVERSION, transaction_id: reference });
     }catch(e){ /* ignore */ }
   }
 
   // Only the programme and duration choices are reported, both picked from
-  // fixed lists. No name, email, number, dates or free text ever goes to
-  // analytics, and neither does the submission reference.
+  // fixed lists. No name, email, number, dates or free text goes to analytics.
+  // The server-accepted submission reference is used only as the Google Ads
+  // transaction ID to deduplicate repeat tracking of one application.
   function showSent(reference){
     track('volunteer_application_submitted', {
       programme: programme.value,
       duration: document.getElementById('duration').value
     });
-    reportConversion();
+    reportConversion(reference);
     document.getElementById('sentRef').textContent = reference;
     document.getElementById('formLive').style.display = 'none';
     document.getElementById('sentMsg').classList.add('is-on');
