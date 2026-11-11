@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!-- BUILD 2026-11-11 reservation-redesign · endpoint unchanged: hook.eu2.make.com/bi46r4s1z48en9sfoywprm96r53isj8w -->
+<!-- BUILD 2026-11-11 embedded-booking: reservation form replaced by the book.zeroplastic.lk widget, local test only, not yet deployed -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Things to Do in Sigiriya | ZeroPlastic Impact Center</title>
 <meta name="description" content="Discover ZeroPlastic Impact Center in Sigiriya, Sri Lanka. Free entry, local artisans, creative displays and optional hands-on craft workshops in the Cultural Triangle.">
@@ -487,6 +487,10 @@ img{font-family:var(--mono);font-size:.7rem;line-height:1.4;color:rgba(233,232,2
 
 .panel{background:var(--chalk);color:var(--ink);border-radius:3px;overflow:hidden}
 .panel-in{padding:clamp(1.5rem,3vw,2.6rem)}
+/* Wrapper only: widget.js owns everything inside .zp-booking-widget, including its
+   own iframe sizing and auto-resize. Same convention as
+   coconut-shell-lamp-workshop-sigiriya/index.html's embed. */
+.zp-booking-widget{width:100%}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.05rem}
 .f-full{grid-column:1/-1}
 @media(max-width:560px){.fgrid{grid-template-columns:1fr}}
@@ -974,81 +978,16 @@ A wonderful collection of locally made items to purchase.  A great place to visi
         </div>
 
         <div class="panel rise">
-          <div class="panel-in" id="formWrap">
-            <form id="visitForm" action="https://hook.eu2.make.com/bi46r4s1z48en9sfoywprm96r53isj8w" method="POST" novalidate>
-              <div class="fgrid">
-                <div class="field f-full">
-                  <label for="name">Full name</label>
-                  <input id="name" name="name" type="text" autocomplete="name" required>
-                </div>
-                <div class="field" id="fieldPhone">
-                  <label for="phone">WhatsApp <span class="lbl-note">— quickest way to reach you</span></label>
-                  <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+94 77 000 1234">
-                </div>
-                <div class="field" id="fieldEmail">
-                  <label for="email">Email</label>
-                  <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
-                </div>
-                <p class="contact-hint" id="contactHint">Either one is fine — we just need one way to get back to you.</p>
-                <div class="field">
-                  <label for="country">Country</label>
-                  <input id="country" name="country" type="text" autocomplete="country-name" placeholder="e.g. United Kingdom">
-                </div>
-                <div class="field">
-                  <label for="date">Preferred date</label>
-                  <input id="date" name="date" type="date">
-                </div>
-                <div class="field">
-                  <label for="time">Preferred time</label>
-                  <input id="time" name="time" type="time" min="07:30" max="18:30">
-                </div>
-                <div class="field">
-                  <label for="people">Number of visitors</label>
-                  <input id="people" name="people" type="number" min="1" placeholder="2">
-                </div>
-                <div class="field f-full">
-                  <label for="interest">Experience type</label>
-                  <select id="interest" name="interest" required>
-                    <option value="" selected disabled>Choose one</option>
-                    <option>Free visit — explore the full center</option>
-                    <option>Free visit — meet the elephant</option>
-                    <option>Free demonstration — bottle lid to ornament</option>
-                    <option>Free observation — watch artisans at work</option>
-                    <option>Paid hands-on craft experience</option>
-                    <option>Paid Tree of Life storytelling experience</option>
-                  </select>
-                </div>
-                <div class="field f-full">
-                  <label for="msg">Notes / special requests <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
-                  <textarea id="msg" name="message" placeholder="Arriving by tuk-tuk, travelling with kids, short on time — whatever helps."></textarea>
-                </div>
-              </div>
-              <!-- Bot trap. Deliberately NOT named company/website/address, or
-                   browser autofill fills it in for real people. -->
-              <div class="hp" aria-hidden="true">
-                <label for="hp_check">Leave this field empty</label>
-                <input id="hp_check" name="hp_check" type="text" tabindex="-1"
-                       autocomplete="off" autocorrect="off" spellcheck="false">
-              </div>
-              <input type="hidden" name="form_source" value="impact-center-premium">
-              <input type="hidden" name="page_url" id="pageUrl" value="">
-              <input type="hidden" name="seconds_on_page" id="secondsOnPage" value="">
-
-              <div class="form-foot">
-                <button class="btn btn--primary" type="submit">RESERVE NOW</button>
-                <span class="fine">Submitting this form does not require payment. If you request a paid experience, our team will confirm availability, pricing and payment arrangements before your visit.</span>
-              </div>
-              <p class="form-error" id="formError" role="alert">
-                That didn't send. Please try once more — or message us on WhatsApp at
-                <a href="https://wa.me/94716901094">+94 71 690 1094</a> and we'll sort out a time that way.
-              </p>
-            </form>
-          </div>
-
-          <div class="sent" id="sentMsg">
-            <span class="eyebrow" style="color:var(--sea)">Reservation request sent</span>
-            <h3 class="h3">Thanks — we'll be in touch within a day.</h3>
-            <p>Someone from the studio will reply on whichever you gave us — WhatsApp or email — with a time. If you don't hear back, just come by anyway during opening hours; the elephant is always there.</p>
+          <!-- Embedded booking engine (book.zeroplastic.lk), replacing the previous Make.com
+               reservation form. No `data-experience`, so this shows the full, live experience
+               catalogue (free visit through paid workshops), not one preselected activity.
+               widget.js builds the iframe, handles auto-resize, and on a successful booking
+               pushes a booking_request_submitted event straight onto this page's own
+               dataLayer, which GTM-N85V5638 (already loaded above) already turns into the
+               existing Google Ads conversion. Visitors never leave www.zeroplastic.lk;
+               everything happens inside this iframe. -->
+          <div class="panel-in">
+            <div class="zp-booking-widget"></div>
           </div>
         </div>
 
@@ -1157,30 +1096,9 @@ A wonderful collection of locally made items to purchase.  A great place to visi
   </div>
 </footer>
 
+<script src="https://book.zeroplastic.lk/widget.js" defer></script>
 <script>
 (function(){
-  // ---- Google Ads conversion -------------------------------------------
-  // Paste the label from Google Ads > Conversions > Visit request submitted
-  // > Tag setup > Install the tag yourself. It is the part AFTER the slash:
-  //   gtag('event','conversion',{'send_to':'AW-17612444693/THIS_BIT'});
-  var ADS_CONVERSION = 'AW-17612444693/ioVgCNSlpdgcEJWoos5B';
-
-  // Fired only when a lead actually reaches Make. Wrapped so that a blocked
-  // or slow gtag can never stop the form working.
-  function reportConversion(){
-    try {
-      if (typeof gtag !== 'function') {
-        console.warn('[impact-center] gtag unavailable (ad blocker?) \u2014 conversion not sent');
-        return;
-      }
-      gtag('event', 'conversion', { send_to: ADS_CONVERSION });
-      console.log('[impact-center] conversion sent to Google Ads');
-    } catch (e) {
-      console.warn('[impact-center] conversion failed, ignoring:', e);
-    }
-  }
-  // ----------------------------------------------------------------------
-
   var hdr = document.getElementById('hdr');
   var onScroll = function(){ hdr.classList.toggle('is-stuck', window.scrollY > 40); };
   onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
@@ -1212,71 +1130,6 @@ A wonderful collection of locally made items to purchase.  A great place to visi
       });
     }, {rootMargin:'0px 0px -12% 0px', threshold:0.08});
     risers.forEach(function(el){ io.observe(el); });
-  }
-
-  // ---- visit request -> Make.com webhook ----
-  var form   = document.getElementById('visitForm');
-  var errBox = document.getElementById('formError');
-  var opened = Date.now();
-  document.getElementById('pageUrl').value = location.href;
-
-  // Email and WhatsApp are both optional, but we need at least one of them —
-  // otherwise there is no way to reply and the lead is worthless.
-  var hint = document.getElementById('contactHint');
-  var fEmail = document.getElementById('fieldEmail');
-  var fPhone = document.getElementById('fieldPhone');
-  function haveContact(){
-    return form.email.value.trim() !== '' || form.phone.value.trim() !== '';
-  }
-  function clearContactError(){
-    hint.classList.remove('is-bad');
-    hint.textContent = 'Either one is fine \u2014 we just need one way to get back to you.';
-    fEmail.classList.remove('is-bad');
-    fPhone.classList.remove('is-bad');
-  }
-  form.email.addEventListener('input', function(){ if (haveContact()) clearContactError(); });
-  form.phone.addEventListener('input', function(){ if (haveContact()) clearContactError(); });
-
-  console.log('[impact-center] build 2026-11-11-reservation ready. endpoint:', form.action);
-
-  form.addEventListener('submit', function(ev){
-    ev.preventDefault();
-    console.log('[impact-center] submit fired');
-    if (!form.reportValidity()) { console.log('[impact-center] blocked: a required field is invalid'); return; }
-
-    if (!haveContact()) {
-      hint.classList.add('is-bad');
-      hint.textContent = 'Please add a WhatsApp number or an email so we can reply.';
-      fEmail.classList.add('is-bad');
-      fPhone.classList.add('is-bad');
-      form.phone.focus();
-      return;
-    }
-
-    document.getElementById('secondsOnPage').value =
-      Math.round((Date.now() - opened) / 1000);
-
-    var btn = form.querySelector('button[type=submit]');
-    btn.disabled = true; btn.textContent = 'Sending…';
-    errBox.classList.remove('is-on');
-
-    // FormData, no custom headers: a "simple" request, so the browser sends it
-    // straight through without a CORS preflight that Make would have to answer.
-    fetch(form.action, {method:'POST', body:new FormData(form)})
-      .then(function(r){ if(!r.ok) throw new Error(r.status); showSent(); })
-      .catch(function(err){
-        console.error('[impact-center] send failed:', err);
-        btn.disabled = false; btn.textContent = 'RESERVE NOW';
-        errBox.classList.add('is-on');
-        errBox.scrollIntoView({block:'center', behavior:'smooth'});
-      });
-  });
-
-  function showSent(){
-    reportConversion();
-    document.getElementById('formWrap').classList.add('is-off');
-    document.getElementById('sentMsg').classList.add('is-on');
-    document.getElementById('sentMsg').scrollIntoView({block:'center', behavior:'smooth'});
   }
 
   // ---- Google rating and reviews ----------------------------------------

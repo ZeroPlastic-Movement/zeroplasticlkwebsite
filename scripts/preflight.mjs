@@ -131,10 +131,15 @@ const adsExists = existsSync(ads);
 const adsBody = adsExists ? read(ads) : '';
 const adsParts = [
   ['page present', adsExists],
-  ['Ads conversion label', adsBody.includes('AW-17612444693/ioVgCNSlpdgcEJWoos5B')],
   ['GTM container', adsBody.includes('GTM-N85V5638')],
-  ['enquiry form posts to its endpoint', /<form[^>]+id="visitForm"[^>]+action="https:\/\/hook\.[^"]+"/.test(adsBody)],
-  ['conversion fires on a sent enquiry', /function showSent\(\)\{\s*reportConversion\(\);/.test(adsBody)],
+  // Embedded Booking Integration: the reservation form is now the book.zeroplastic.lk
+  // widget, not the old Make.com form. The conversion itself lives in GTM config (the
+  // widget's own dataLayer push triggers it), never a hardcoded gtag() call in page code —
+  // see the Google Ads account reset note in the implementation report.
+  ['embedded booking widget script present', adsBody.includes('https://book.zeroplastic.lk/widget.js')],
+  ['embedded booking widget container present', /<div class="zp-booking-widget">/.test(adsBody)],
+  ['legacy Make.com reservation form removed', !/id="visitForm"/.test(adsBody)],
+  ['no hardcoded Ads conversion call in page code', !/gtag\(\s*['"]event['"]\s*,\s*['"]conversion['"]/.test(adsBody)],
 ];
 const adsMissing = adsParts.filter(([, ok]) => !ok).map(([name]) => name);
 check(
