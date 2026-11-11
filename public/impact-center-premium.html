@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!-- BUILD 2026-07-27e · endpoint hook.eu2.make.com/bi46r4s1z48en9sfoywprm96r53isj8w -->
+<!-- BUILD 2026-11-11 reservation-redesign · endpoint unchanged: hook.eu2.make.com/bi46r4s1z48en9sfoywprm96r53isj8w -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Things to Do in Sigiriya | ZeroPlastic Impact Center</title>
 <meta name="description" content="Discover ZeroPlastic Impact Center in Sigiriya, Sri Lanka. Free entry, local artisans, creative displays and optional hands-on craft workshops in the Cultural Triangle.">
@@ -12,7 +12,7 @@
 <meta property="og:url" content="https://www.zeroplastic.lk/impact-center-premium.html">
 <meta property="og:title" content="Things to Do in Sigiriya | ZeroPlastic Impact Center">
 <meta property="og:description" content="A free place to visit about 5 km before Sigiriya Rock. Meet local artisans, see the salvaged-plastic elephant, browse 1,000+ plastic-free products. Open daily.">
-<meta property="og:image" content="https://www.zeroplastic.lk/htmlimages/ic-hero-ic-1600.webp">
+<meta property="og:image" content="https://www.zeroplastic.lk/htmlimages/ic-hero-reservation-960.webp">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="https://impactcenter.zeroplastic.lk/wp-content/uploads/2026/02/cropped-cropped-c5f91785-9074-4458-a937-2997f60e96c9-182x70.png">
 <!-- Google tag (gtag.js) -->
@@ -24,8 +24,8 @@
   gtag('config', 'GTM-N85V5638');
 </script>
 
-<link rel="preload" as="image" href="htmlimages/ic-hero-ic-800.webp" fetchpriority="high" media="(max-width:768px)">
-<link rel="preload" as="image" href="htmlimages/ic-hero-ic-1600.webp" fetchpriority="high" media="(min-width:769px)">
+<link rel="preload" as="image" href="htmlimages/ic-hero-reservation-640.webp" fetchpriority="high" media="(max-width:768px)">
+<link rel="preload" as="image" href="htmlimages/ic-hero-reservation-960.webp" fetchpriority="high" media="(min-width:769px)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -242,6 +242,9 @@ img{font-family:var(--mono);font-size:.7rem;line-height:1.4;color:rgba(233,232,2
 .btn--ghost:hover{background:var(--ink);border-color:var(--ink);color:var(--bone);box-shadow:none}
 .btn--light{background:var(--bone);border-color:var(--bone);color:var(--ink)}
 .btn--light:hover{background:var(--signal);border-color:var(--signal);color:#fff}
+/* the one conversion action on the page: solid, warm, unmistakably "go" */
+.btn--primary{background:var(--signal);border-color:var(--signal);color:#fff;box-shadow:0 14px 32px -10px rgba(228,85,43,.55)}
+.btn--primary:hover{background:#c8481f;border-color:#c8481f;color:#fff;transform:translateY(-2px);box-shadow:0 18px 38px -10px rgba(228,85,43,.62)}
 
 /* header button follows the bar: outlined-light over the hero, solid once stuck */
 .hdr .btn{background:transparent;border-color:rgba(233,232,226,.5);color:var(--bone)}
@@ -581,7 +584,7 @@ img{font-family:var(--mono);font-size:.7rem;line-height:1.4;color:rgba(233,232,2
    "name": "ZeroPlastic Impact Center, Sigiriya",
    "description": "A free-to-visit craft and environmental education centre on the main Sigiriya road, about 5 km before Sigiriya Rock. See a life-size elephant built from salvaged plastic, watch local Sri Lankan artisans at work and browse more than 1,000 plastic-free products. Entry is free; hands-on craft workshops and the Tree of Life experience are paid.",
    "url": "https://www.zeroplastic.lk/impact-center-premium.html",
-   "image": "https://www.zeroplastic.lk/htmlimages/ic-hero-ic-1600.webp",
+   "image": "https://www.zeroplastic.lk/htmlimages/ic-hero-reservation-960.webp",
    "isAccessibleForFree": true,
    "publicAccess": true,
    "address": {
@@ -720,7 +723,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="#makers">The makers</a>
     <a href="#faq">FAQ</a>
     <a href="#visit">Getting here</a>
-    <a class="btn" href="#plan">Plan a visit</a>
+    <a class="btn" href="#plan">Reserve Now</a>
   </nav>
   <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navPanel" aria-label="Open menu">
     <span></span><span></span>
@@ -733,7 +736,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <a href="#makers">The makers</a>
   <a href="#faq">FAQ</a>
   <a href="#visit">Getting here</a>
-  <a href="#plan">Plan a visit →</a>
+  <a href="#plan">Reserve Your Experience →</a>
 </div>
 
 <main id="top">
@@ -742,9 +745,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <section class="hero">
     <div class="hero-bg">
       <picture>
-        <source media="(max-width:768px)" srcset="htmlimages/ic-hero-ic-800.webp" type="image/webp">
-        <source srcset="htmlimages/ic-hero-ic-1600.webp" type="image/webp">
-        <img src="htmlimages/ic-hero-studio-dusk.jpg" width="1800" height="950" decoding="async" fetchpriority="high" alt="The ZeroPlastic Impact Center studio at dusk, lit warm under the trees beside the Sigiriya road, about 5 km before Sigiriya Rock.">
+        <source media="(max-width:768px)" srcset="htmlimages/ic-hero-reservation-640.webp" type="image/webp">
+        <source srcset="htmlimages/ic-hero-reservation-960.webp" type="image/webp">
+        <img src="htmlimages/ic-hero-reservation.jpg" width="1024" height="536" decoding="async" fetchpriority="high" alt="The ZeroPlastic Impact Center studio lit warm at dusk, lanterns lit along the open-sided workshop beside the Sigiriya road, about 5 km before Sigiriya Rock.">
       </picture>
     </div>
     <div class="hero-copy">
@@ -763,7 +766,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span>The centre sits on the main Sigiriya road, roughly 5 km before the Lion Rock, so it works as a stop on the way in or out — and as an easy half-hour for families, couples and anyone with time between Dambulla, Habarana and Sigiriya. Walk in free, look around, and leave. No ticket, no booking, nothing to commit to.</span>
       </div>
       <div class="hero-actions">
-        <a class="btn btn--light" href="#plan">Plan a visit</a>
+        <a class="btn btn--primary" href="#plan">Reserve Your Experience</a>
         <a class="btn btn--ghost" href="#see" style="color:var(--bone);border-color:rgba(233,232,226,.45)">What there is to do</a>
       </div>
       <p class="hero-clarify"><strong>Free to visit and explore.</strong> Walk in to meet the elephant, observe artisans at work and discover more than 1,000 plastic-free products. Products and hands-on craft experiences are paid. The complete Tree of Life storytelling experience requires advance booking.</p>
@@ -890,31 +893,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
-  <!-- FITS YOUR SIGIRIYA TRIP -->
-  <section class="sec" id="around">
-    <div class="wrap">
-      <div class="rise">
-        <span class="eyebrow">Planning your trip</span>
-        <h2 class="h2">How it fits a day in Sigiriya.</h2>
-        <p class="lede" style="margin-top:.9rem;max-width:62ch">Exploring Sri Lanka's Cultural Triangle? Make the ZeroPlastic Impact Center part of your Sigiriya visit. Discover local crafts, meet artisans and explore creative alternatives to plastic. Entry is free, no ticket is required, and optional hands-on workshops can be booked in advance.</p>
-      </div>
-
-      <div class="visit-facts-grid rise" style="margin-top:2.2rem">
-        <dl class="visit-facts">
-          <div><dt>Coming to climb Sigiriya Rock</dt><dd>We're about 5 km before the Rock on the main road. Thirty minutes here before or after the climb, while it's too hot to be on the steps.</dd></div>
-          <div><dt>Staying in Dambulla or Habarana</dt><dd>Both are a short drive away. The centre sits on the route most people already take between Dambulla, Habarana and Sigiriya, so it slots into a Cultural Triangle day without a detour.</dd></div>
-          <div><dt>Travelling with children</dt><dd>Children are welcome and there's nothing to keep quiet for. As family activities in Sigiriya go, it is an unfussy one: they can get close to the elephant sculpture, watch carving happen and handle finished pieces. Entry is free, so a short visit costs nothing if they lose interest.</dd></div>
-          <div><dt>Looking for something calmer as a couple</dt><dd>It's an unhurried place to walk around, talk to the artisans and see how the work is made. No queue, no timed entry.</dd></div>
-          <div><dt>Interested in sustainable travel</dt><dd>The centre exists because plastic waste cost people their traditional livelihoods. Everything on the shelves is a plastic-free alternative made by local artisans. Walking around and understanding that is free; buying something or booking a workshop is how it's funded.</dd></div>
-          <div><dt>Short on time</dt><dd>Twenty minutes is enough to see the elephant, walk the shelves and meet whoever is working that day.</dd></div>
-        </dl>
-      </div>
-
-      <p class="visit-note rise" style="margin-top:1.8rem;max-width:68ch">If it's specifically the hands-on making you're after — coconut shell carving, mask painting, recycled plastic craft — those are paid workshops with their own page: <a href="/craft-experiences-sigiriya.html">craft workshops in Sigiriya</a>.</p>
-    </div>
-  </section>
-
-
   <!-- MAKERS -->
   <section class="sec makers" id="makers">
     <div class="wrap">
@@ -936,68 +914,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li><i style="background:var(--signal)" aria-hidden="true"></i><div><b>A partnership with the local blind community</b><span>ZeroPlastic also works with a nearby centre for the local blind community. Floor mats and incense sticks made by blind artisans are among the plastic-free pieces on the shelves.</span></div></li>
           <li><i style="background:var(--bone)" aria-hidden="true"></i><div><b>Turning up is what keeps it going</b><span>The centre is run by ZeroPlastic Movement, a Sri Lankan nonprofit and the largest volunteer environmental movement in the country. Visitors are the reason it can keep doing the work.</span></div></li>
         </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- PLEDGE -->
-  <div class="seam" aria-hidden="true"></div>
-  <section class="pledge">
-    <div class="pledge-in rise">
-      <span class="eyebrow">Before you leave</span>
-      <h2 class="h2">Scan the code. Add your voice.</h2>
-      <p>There's a QR code by the door. Scan it and you make a pledge: to cut the single-use plastic you carry, and to say something when you see it thrown away. It takes a minute and it costs nothing.</p>
-      <p>It is also the part of the visit that goes home with you. Sri Lanka's beaches, its scrub and its elephants are up against a problem that no clean-up on its own will fix. What changes it is enough people refusing the thing in the first place, and being loud about it.</p>
-      <a class="btn" href="#plan">Plan a visit</a>
-    </div>
-  </section>
-  <div class="seam" aria-hidden="true"></div>
-
-  <!-- COLLAGE -->
-  <section class="sec">
-    <div class="wrap">
-      <div class="sec-head rise">
-        <span class="eyebrow">On an ordinary day</span>
-        <h2 class="h2">What it actually looks like.</h2>
-        <p>No staging, no stock photography. This is the bench, the elephant and the light in the late afternoon.</p>
-      </div>
-      <div class="collage rise">
-        <figure><img src="htmlimages/ic-evening-bench.jpg" width="900" height="675" decoding="async" loading="lazy" alt="Visitors seated around the long bench in the evening, lamps lit, jungle behind."><figcaption>The bench, most evenings</figcaption></figure>
-        <figure><img src="htmlimages/ic-hands-teaching.jpg" width="700" height="933" decoding="async" loading="lazy" alt="An artisan guiding a visitor's hands as he carves a coconut shell."><figcaption>Hands on, not hands off</figcaption></figure>
-        <figure><img src="htmlimages/ic-elephant-sun.jpg" width="800" height="800" decoding="async" loading="lazy" alt="A visitor standing beside the plastic elephant in the morning sun."><figcaption>Built entirely from what the village threw out</figcaption></figure>
-        <figure><img src="htmlimages/ic-carving-pair.jpg" width="700" height="933" decoding="async" loading="lazy" alt="Two visitors shaping coconut shells with hand tools at the workbench."><figcaption>Coconut shell, hand tools, no rush</figcaption></figure>
-        <figure><img src="htmlimages/ic-earrings-rack.jpg" width="700" height="933" decoding="async" loading="lazy" alt="A visitor laughing while working a coconut shell beside a rack of finished earrings."><figcaption>Over a hundred pieces, not one of them plastic</figcaption></figure>
-        <figure><img src="htmlimages/ic-elephant-touch.jpg" width="700" height="933" decoding="async" loading="lazy" alt="A visitor reaching out to touch the plastic elephant among the trees."><figcaption>Its belly is open on purpose</figcaption></figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- PLAN A VISIT -->
-
-  <!-- FAQ -->
-  <section class="sec" id="faq">
-    <div class="wrap">
-      <div class="rise">
-        <span class="eyebrow">Before you come</span>
-        <h2 class="h2">Questions we get asked.</h2>
-      </div>
-      <div class="faq rise" style="margin-top:2rem;max-width:74ch">
-        <details><summary><b>What is the ZeroPlastic Impact Center in Sigiriya?</b></summary>
-          <p>It's a working craft and environmental education centre run by ZeroPlastic Movement, a Sri Lankan nonprofit, on the main road in Sigiriya. You can see a life-size elephant built from salvaged plastic, watch local artisans working, and browse more than 1,000 plastic-free products made by 249 artisan families.</p></details>
-        <details><summary><b>Is it free to visit?</b></summary>
-          <p>Yes. Entry and looking around are free, every day. There's no ticket and no booking. Products are for sale and hands-on craft workshops are paid, but neither is required — plenty of people walk in, look around and leave.</p></details>
-        <details><summary><b>Do I need to book?</b></summary>
-          <p>Not for a normal visit — just turn up during opening hours. Booking ahead only applies to paid experiences: hands-on craft workshops, and the Tree of Life experience, which requires advance booking.</p></details>
-        <details><summary><b>Where exactly is it?</b></summary>
-          <p>Impact Center Sigiriya is on the main Sigiriya road, about 5 km before Sigiriya Rock, in Sigiriya, Central Province. It's an easy stop from Dambulla or Habarana.</p></details>
-        <details><summary><b>What are the opening hours?</b></summary>
-          <p>Open every day, 7:30 to 18:30.</p></details>
-        <details><summary><b>Is it suitable for children?</b></summary>
-          <p>Children are welcome. They can get close to the sculpture, watch artisans carve and handle finished work. Since entry is free, a short visit costs nothing if they've had enough.</p></details>
-        <details><summary><b>How long does a visit take?</b></summary>
-          <p>Twenty to thirty minutes is typical for a free walk-in visit. A paid hands-on workshop takes longer and is arranged separately.</p></details>
-        <details><summary><b>Is this the same as the craft workshops?</b></summary>
-          <p>No. The free visit is looking around. The hands-on craft workshops are a paid, separate activity where you make something yourself — see <a href="/craft-experiences-sigiriya.html">craft workshops in Sigiriya</a> for those.</p></details>
       </div>
     </div>
   </section>
@@ -1046,9 +962,9 @@ A wonderful collection of locally made items to purchase.  A great place to visi
       <div class="visit-grid">
 
         <div class="rise" id="visit">
-          <span class="eyebrow">Plan a visit</span>
-          <h2 class="h2" style="margin-top:1rem">Plan your visit or request an experience.</h2>
-          <p class="visit-note">Tell us you're coming for a free walk-in visit, or send an enquiry to book the Tree of Life experience or a hands-on craft session. This is a request, not an automatic booking — our team will reply within a day to confirm availability and, for paid experiences, the pricing.</p>
+          <span class="eyebrow">Reserve now</span>
+          <h2 class="h2" style="margin-top:1rem">Reserve your experience at the Impact Center.</h2>
+          <p class="visit-note">Reserve your spot for a free walk-in visit, or request the Tree of Life experience or a hands-on craft session below. This is a reservation request, not an instant booking: our team will reply within a day to confirm availability and, for paid experiences, the pricing.</p>
           <p class="visit-note" style="margin-top:.6rem">Whether you are choosing between activities in Sigiriya or just adding one more of the places to visit near the Rock, you are welcome to walk in during opening hours — no reply from us needed first.</p>
           <dl class="visit-facts">
             <div><dt>Where</dt><dd>Sigiriya, Central Province, Sri Lanka — about 5 km before Sigiriya Rock</dd></div>
@@ -1062,7 +978,7 @@ A wonderful collection of locally made items to purchase.  A great place to visi
             <form id="visitForm" action="https://hook.eu2.make.com/bi46r4s1z48en9sfoywprm96r53isj8w" method="POST" novalidate>
               <div class="fgrid">
                 <div class="field f-full">
-                  <label for="name">Your name</label>
+                  <label for="name">Full name</label>
                   <input id="name" name="name" type="text" autocomplete="name" required>
                 </div>
                 <div class="field" id="fieldPhone">
@@ -1075,15 +991,23 @@ A wonderful collection of locally made items to purchase.  A great place to visi
                 </div>
                 <p class="contact-hint" id="contactHint">Either one is fine — we just need one way to get back to you.</p>
                 <div class="field">
-                  <label for="date">Day you'd like to come</label>
+                  <label for="country">Country</label>
+                  <input id="country" name="country" type="text" autocomplete="country-name" placeholder="e.g. United Kingdom">
+                </div>
+                <div class="field">
+                  <label for="date">Preferred date</label>
                   <input id="date" name="date" type="date">
                 </div>
                 <div class="field">
-                  <label for="people">How many of you</label>
+                  <label for="time">Preferred time</label>
+                  <input id="time" name="time" type="time" min="07:30" max="18:30">
+                </div>
+                <div class="field">
+                  <label for="people">Number of visitors</label>
                   <input id="people" name="people" type="number" min="1" placeholder="2">
                 </div>
                 <div class="field f-full">
-                  <label for="interest">What you'd like to see</label>
+                  <label for="interest">Experience type</label>
                   <select id="interest" name="interest" required>
                     <option value="" selected disabled>Choose one</option>
                     <option>Free visit — explore the full center</option>
@@ -1095,7 +1019,7 @@ A wonderful collection of locally made items to purchase.  A great place to visi
                   </select>
                 </div>
                 <div class="field f-full">
-                  <label for="msg">Anything we should know <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+                  <label for="msg">Notes / special requests <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
                   <textarea id="msg" name="message" placeholder="Arriving by tuk-tuk, travelling with kids, short on time — whatever helps."></textarea>
                 </div>
               </div>
@@ -1111,7 +1035,7 @@ A wonderful collection of locally made items to purchase.  A great place to visi
               <input type="hidden" name="seconds_on_page" id="secondsOnPage" value="">
 
               <div class="form-foot">
-                <button class="btn" type="submit">SEND ENQUIRY</button>
+                <button class="btn btn--primary" type="submit">RESERVE NOW</button>
                 <span class="fine">Submitting this form does not require payment. If you request a paid experience, our team will confirm availability, pricing and payment arrangements before your visit.</span>
               </div>
               <p class="form-error" id="formError" role="alert">
@@ -1122,12 +1046,96 @@ A wonderful collection of locally made items to purchase.  A great place to visi
           </div>
 
           <div class="sent" id="sentMsg">
-            <span class="eyebrow" style="color:var(--sea)">Request sent</span>
+            <span class="eyebrow" style="color:var(--sea)">Reservation request sent</span>
             <h3 class="h3">Thanks — we'll be in touch within a day.</h3>
             <p>Someone from the studio will reply on whichever you gave us — WhatsApp or email — with a time. If you don't hear back, just come by anyway during opening hours; the elephant is always there.</p>
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- PLEDGE -->
+  <div class="seam" aria-hidden="true"></div>
+  <section class="pledge">
+    <div class="pledge-in rise">
+      <span class="eyebrow">Before you leave</span>
+      <h2 class="h2">Scan the code. Add your voice.</h2>
+      <p>There's a QR code by the door. Scan it and you make a pledge: to cut the single-use plastic you carry, and to say something when you see it thrown away. It takes a minute and it costs nothing.</p>
+      <p>It is also the part of the visit that goes home with you. Sri Lanka's beaches, its scrub and its elephants are up against a problem that no clean-up on its own will fix. What changes it is enough people refusing the thing in the first place, and being loud about it.</p>
+      <a class="btn btn--primary" href="#plan">Reserve Your Experience</a>
+    </div>
+  </section>
+  <div class="seam" aria-hidden="true"></div>
+
+  <!-- COLLAGE -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head rise">
+        <span class="eyebrow">On an ordinary day</span>
+        <h2 class="h2">What it actually looks like.</h2>
+        <p>No staging, no stock photography. This is the bench, the elephant and the light in the late afternoon.</p>
+      </div>
+      <div class="collage rise">
+        <figure><img src="htmlimages/ic-evening-bench.jpg" width="900" height="675" decoding="async" loading="lazy" alt="Visitors seated around the long bench in the evening, lamps lit, jungle behind."><figcaption>The bench, most evenings</figcaption></figure>
+        <figure><img src="htmlimages/ic-hands-teaching.jpg" width="700" height="933" decoding="async" loading="lazy" alt="An artisan guiding a visitor's hands as he carves a coconut shell."><figcaption>Hands on, not hands off</figcaption></figure>
+        <figure><img src="htmlimages/ic-elephant-sun.jpg" width="800" height="800" decoding="async" loading="lazy" alt="A visitor standing beside the plastic elephant in the morning sun."><figcaption>Built entirely from what the village threw out</figcaption></figure>
+        <figure><img src="htmlimages/ic-carving-pair.jpg" width="700" height="933" decoding="async" loading="lazy" alt="Two visitors shaping coconut shells with hand tools at the workbench."><figcaption>Coconut shell, hand tools, no rush</figcaption></figure>
+        <figure><img src="htmlimages/ic-earrings-rack.jpg" width="700" height="933" decoding="async" loading="lazy" alt="A visitor laughing while working a coconut shell beside a rack of finished earrings."><figcaption>Over a hundred pieces, not one of them plastic</figcaption></figure>
+        <figure><img src="htmlimages/ic-elephant-touch.jpg" width="700" height="933" decoding="async" loading="lazy" alt="A visitor reaching out to touch the plastic elephant among the trees."><figcaption>Its belly is open on purpose</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- FITS YOUR SIGIRIYA TRIP -->
+  <section class="sec" id="around">
+    <div class="wrap">
+      <div class="rise">
+        <span class="eyebrow">Planning your trip</span>
+        <h2 class="h2">How it fits a day in Sigiriya.</h2>
+        <p class="lede" style="margin-top:.9rem;max-width:62ch">Exploring Sri Lanka's Cultural Triangle? Make the ZeroPlastic Impact Center part of your Sigiriya visit. Discover local crafts, meet artisans and explore creative alternatives to plastic. Entry is free, no ticket is required, and optional hands-on workshops can be booked in advance.</p>
+      </div>
+
+      <div class="visit-facts-grid rise" style="margin-top:2.2rem">
+        <dl class="visit-facts">
+          <div><dt>Coming to climb Sigiriya Rock</dt><dd>We're about 5 km before the Rock on the main road. Thirty minutes here before or after the climb, while it's too hot to be on the steps.</dd></div>
+          <div><dt>Staying in Dambulla or Habarana</dt><dd>Both are a short drive away. The centre sits on the route most people already take between Dambulla, Habarana and Sigiriya, so it slots into a Cultural Triangle day without a detour.</dd></div>
+          <div><dt>Travelling with children</dt><dd>Children are welcome and there's nothing to keep quiet for. As family activities in Sigiriya go, it is an unfussy one: they can get close to the elephant sculpture, watch carving happen and handle finished pieces. Entry is free, so a short visit costs nothing if they lose interest.</dd></div>
+          <div><dt>Looking for something calmer as a couple</dt><dd>It's an unhurried place to walk around, talk to the artisans and see how the work is made. No queue, no timed entry.</dd></div>
+          <div><dt>Interested in sustainable travel</dt><dd>The centre exists because plastic waste cost people their traditional livelihoods. Everything on the shelves is a plastic-free alternative made by local artisans. Walking around and understanding that is free; buying something or booking a workshop is how it's funded.</dd></div>
+          <div><dt>Short on time</dt><dd>Twenty minutes is enough to see the elephant, walk the shelves and meet whoever is working that day.</dd></div>
+        </dl>
+      </div>
+
+      <p class="visit-note rise" style="margin-top:1.8rem;max-width:68ch">If it's specifically the hands-on making you're after — coconut shell carving, mask painting, recycled plastic craft — those are paid workshops with their own page: <a href="/craft-experiences-sigiriya.html">craft workshops in Sigiriya</a>.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="sec" id="faq">
+    <div class="wrap">
+      <div class="rise">
+        <span class="eyebrow">Before you come</span>
+        <h2 class="h2">Questions we get asked.</h2>
+      </div>
+      <div class="faq rise" style="margin-top:2rem;max-width:74ch">
+        <details><summary><b>What is the ZeroPlastic Impact Center in Sigiriya?</b></summary>
+          <p>It's a working craft and environmental education centre run by ZeroPlastic Movement, a Sri Lankan nonprofit, on the main road in Sigiriya. You can see a life-size elephant built from salvaged plastic, watch local artisans working, and browse more than 1,000 plastic-free products made by 249 artisan families.</p></details>
+        <details><summary><b>Is it free to visit?</b></summary>
+          <p>Yes. Entry and looking around are free, every day. There's no ticket and no booking. Products are for sale and hands-on craft workshops are paid, but neither is required — plenty of people walk in, look around and leave.</p></details>
+        <details><summary><b>Do I need to book?</b></summary>
+          <p>Not for a normal visit — just turn up during opening hours. Booking ahead only applies to paid experiences: hands-on craft workshops, and the Tree of Life experience, which requires advance booking.</p></details>
+        <details><summary><b>Where exactly is it?</b></summary>
+          <p>Impact Center Sigiriya is on the main Sigiriya road, about 5 km before Sigiriya Rock, in Sigiriya, Central Province. It's an easy stop from Dambulla or Habarana.</p></details>
+        <details><summary><b>What are the opening hours?</b></summary>
+          <p>Open every day, 7:30 to 18:30.</p></details>
+        <details><summary><b>Is it suitable for children?</b></summary>
+          <p>Children are welcome. They can get close to the sculpture, watch artisans carve and handle finished work. Since entry is free, a short visit costs nothing if they've had enough.</p></details>
+        <details><summary><b>How long does a visit take?</b></summary>
+          <p>Twenty to thirty minutes is typical for a free walk-in visit. A paid hands-on workshop takes longer and is arranged separately.</p></details>
+        <details><summary><b>Is this the same as the craft workshops?</b></summary>
+          <p>No. The free visit is looking around. The hands-on craft workshops are a paid, separate activity where you make something yourself — see <a href="/craft-experiences-sigiriya.html">craft workshops in Sigiriya</a> for those.</p></details>
       </div>
     </div>
   </section>
@@ -1229,7 +1237,7 @@ A wonderful collection of locally made items to purchase.  A great place to visi
   form.email.addEventListener('input', function(){ if (haveContact()) clearContactError(); });
   form.phone.addEventListener('input', function(){ if (haveContact()) clearContactError(); });
 
-  console.log('[impact-center] build 2026-07-27e ready. endpoint:', form.action);
+  console.log('[impact-center] build 2026-11-11-reservation ready. endpoint:', form.action);
 
   form.addEventListener('submit', function(ev){
     ev.preventDefault();
@@ -1258,7 +1266,7 @@ A wonderful collection of locally made items to purchase.  A great place to visi
       .then(function(r){ if(!r.ok) throw new Error(r.status); showSent(); })
       .catch(function(err){
         console.error('[impact-center] send failed:', err);
-        btn.disabled = false; btn.textContent = 'SEND ENQUIRY';
+        btn.disabled = false; btn.textContent = 'RESERVE NOW';
         errBox.classList.add('is-on');
         errBox.scrollIntoView({block:'center', behavior:'smooth'});
       });
