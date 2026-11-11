@@ -24,6 +24,10 @@ const BASE_PATH = process.env.BASE_PATH || '/';
 const WP_HOSTS = [
   process.env.WORDPRESS_MEDIA_URL,
   process.env.WORDPRESS_BASE_URL,
+  'https://cms.zeroplastic.lk',
+  // Kept as well as the CMS host: older posts can still carry absolute
+  // www.zeroplastic.lk upload URLs, and dropping it would stop the image
+  // service accepting those.
   'https://www.zeroplastic.lk',
 ]
   .flatMap((value) => (value ? [new URL(value).hostname] : []));

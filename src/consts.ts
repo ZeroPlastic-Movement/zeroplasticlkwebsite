@@ -16,11 +16,14 @@
  *   WORDPRESS_BASE_URL   origin serving /wp-json/wp/v2
  *   WORDPRESS_MEDIA_URL  origin serving /wp-content/uploads (defaults to the base)
  *
- * The default deliberately stays on the current production host. Nothing moves
- * until cms.zeroplastic.lk is confirmed reachable and the variable is set, so
- * checking this code in cannot by itself change what a build fetches.
+ * The cutover is done: www.zeroplastic.lk is now the Cloudflare Pages site and
+ * serves no /wp-json/ at all (it 404s), while cms.zeroplastic.lk answers. So the
+ * fallback points at the CMS. An environment that sets WORDPRESS_BASE_URL is
+ * unaffected; one that does not (a Cloudflare Pages PREVIEW build, which only
+ * inherits production's variables if they were set on the preview environment
+ * too) now builds against a reachable origin instead of failing outright.
  */
-const WP_ORIGIN_FALLBACK = 'https://www.zeroplastic.lk';
+const WP_ORIGIN_FALLBACK = 'https://cms.zeroplastic.lk';
 
 function resolveOrigin(value: string | undefined, fallback: string): string {
   const raw = (value ?? '').trim();
